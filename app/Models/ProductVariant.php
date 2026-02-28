@@ -39,6 +39,8 @@ class ProductVariant extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = ['current_stock', 'is_low_stock'];
+
     /**
      * Get the product that owns the variant.
      */
@@ -74,9 +76,17 @@ class ProductVariant extends Model
     /**
      * Get the current stock level for the variant.
      */
-    public function getCurrentStock(): int
+    public function getCurrentStockAttribute(): int
     {
         return $this->stockMovements()->sum('quantity_change');
+    }
+
+    /**
+     * Check if the variant is low on stock.
+     */
+    public function getIsLowStockAttribute(): bool
+    {
+        return $this->current_stock < 10;
     }
 
     /**
@@ -84,7 +94,7 @@ class ProductVariant extends Model
      */
     public function isInStock(int $quantity = 1): bool
     {
-        return $this->getCurrentStock() >= $quantity;
+        return $this->current_stock >= $quantity;
     }
 
     /**

@@ -1,0 +1,119 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Address;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AddressManagementTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_user_can_view_their_addresses(): void
+    {
+        $this->markTestSkipped('View not implemented yet');
+    }
+
+    public function test_user_cannot_view_other_users_addresses(): void
+    {
+        $this->markTestSkipped('View not implemented yet');
+    }
+
+    public function test_user_can_create_address(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/addresses', [
+            'full_name' => 'John Doe',
+            'phone' => '+905555555555',
+            'address_line1' => 'Test Street 123',
+            'city' => 'Istanbul',
+            'postal_code' => '34000',
+            'country' => 'TR',
+        ]);
+
+        $response->assertRedirect('/addresses');
+
+        $this->assertDatabaseHas('addresses', [
+            'user_id' => $user->id,
+            'full_name' => 'John Doe',
+            'city' => 'Istanbul',
+        ]);
+    }
+
+    public function test_user_can_update_their_address(): void
+    {
+        $user = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->put('/addresses/' . $address->id, [
+            'full_name' => 'Updated Name',
+            'phone' => '+905555555555',
+            'address_line1' => 'Updated Street 456',
+            'city' => 'Ankara',
+            'postal_code' => '06000',
+            'country' => 'TR',
+        ]);
+
+        $response->assertRedirect('/addresses');
+
+        $this->assertDatabaseHas('addresses', [
+            'id' => $address->id,
+            'full_name' => 'Updated Name',
+            'city' => 'Ankara',
+        ]);
+    }
+
+    public function test_user_cannot_update_other_users_address(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($user)->put('/addresses/' . $address->id, [
+            'full_name' => 'Hacked Name',
+            'phone' => '+905555555555',
+            'address_line1' => 'Hacked Street',
+            'city' => 'Hack',
+            'postal_code' => '00000',
+            'country' => 'Hack',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_user_can_delete_their_address(): void
+    {
+        $this->markTestSkipped('View not implemented yet');
+    }
+
+    public function test_cannot_delete_address_with_orders(): void
+    {
+        $this->markTestSkipped('View not implemented yet');
+    }
+
+    public function test_guest_cannot_access_addresses(): void
+    {
+        $response = $this->get('/addresses');
+
+        $response->assertRedirect('/login');
+    }
+
+    public function test_address_validation_requires_all_fields(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/addresses', []);
+
+        $response->assertSessionHasErrors([
+            'full_name',
+            'phone',
+            'address_line1',
+            'city',
+            'postal_code',
+            'country',
+        ]);
+    }
+}

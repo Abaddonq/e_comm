@@ -21,7 +21,8 @@ class Order extends Model
         'user_id',
         'order_number',
         'status',
-        'shipping_full_name',
+        'payment_method',
+        'shipping_name',
         'shipping_phone',
         'shipping_address_line1',
         'shipping_address_line2',
@@ -34,6 +35,7 @@ class Order extends Model
         'tax',
         'total',
         'notes',
+        'paid_at',
         'cancelled_at',
         'cancellation_reason',
     ];
@@ -48,6 +50,7 @@ class Order extends Model
         'shipping_cost' => 'decimal:2',
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
+        'paid_at' => 'datetime',
         'cancelled_at' => 'datetime',
     ];
 

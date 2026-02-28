@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendWelcomeEmail;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -40,10 +41,12 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer', // Default role for new registrations
+            'role' => 'customer',
         ]);
 
         event(new Registered($user));
+
+        SendWelcomeEmail::dispatch($user);
 
         Auth::login($user);
 

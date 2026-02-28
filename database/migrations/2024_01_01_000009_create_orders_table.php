@@ -15,7 +15,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])->default('pending');
             
             // Address snapshot (denormalized for historical record)
-            $table->string('shipping_full_name');
+            $table->string('shipping_name');
             $table->string('shipping_phone', 20);
             $table->string('shipping_address_line1');
             $table->string('shipping_address_line2')->nullable();

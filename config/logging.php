@@ -117,6 +117,27 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'payment' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/payment.log'),
+            'level' => 'info',
+            'days' => 30,
+        ],
+
+        'stock' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/stock.log'),
+            'level' => 'info',
+            'days' => 30,
+        ],
+
+        'security' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/security.log'),
+            'level' => 'warning',
+            'days' => 90,
+        ],
     ],
 
 ];

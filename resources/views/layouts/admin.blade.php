@@ -6,54 +6,129 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }} - Admin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .admin-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            width: 100%;
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .admin-nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 24px;
+            max-width: 100%;
+        }
+        .admin-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .admin-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            text-decoration: none;
+        }
+        .admin-logo:hover {
+            color: #111827;
+        }
+        .admin-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+        .admin-nav-link:hover {
+            color: #374151;
+            background: #f9fafb;
+        }
+        .admin-nav-link.active {
+            color: #4f46e5;
+            background: #eef2ff;
+        }
+        .admin-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        .admin-logout {
+            font-size: 14px;
+            color: #6b7280;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .admin-logout:hover {
+            color: #111827;
+        }
+        .admin-main {
+            padding-top: 64px;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        <nav class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <div class="flex-shrink-0 flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-gray-800">
-                                Admin Panel
-                            </a>
-                        </div>
-                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Dashboard
-                            </a>
-                            <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Products
-                            </a>
-                            <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Categories
-                            </a>
-                            <a href="{{ route('admin.stock.index') }}" class="{{ request()->routeIs('admin.stock.*') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Stock
-                            </a>
-                            <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Orders
-                            </a>
-                        </div>
+        <nav class="admin-nav">
+            <div class="admin-nav-content">
+                <div class="admin-nav-left">
+                    <a href="{{ route('admin.dashboard') }}" class="admin-logo">
+                        DecorMotto
+                    </a>
+                    <div class="admin-nav-links">
+                        <a href="{{ route('admin.dashboard') }}" class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            Dashboard
+                        </a>
+                        <a href="{{ route('admin.products.index') }}" class="admin-nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                            Products
+                        </a>
+                        <a href="{{ route('admin.categories.index') }}" class="admin-nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                            Categories
+                        </a>
+                        <a href="{{ route('admin.stock.index') }}" class="admin-nav-link {{ request()->routeIs('admin.stock.*') ? 'active' : '' }}">
+                            Stock
+                        </a>
+                        <a href="{{ route('admin.orders.index') }}" class="admin-nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                            Orders
+                        </a>
                     </div>
-                    <div class="hidden sm:flex sm:items-center sm:ml-6">
-                        <div class="ml-3 relative">
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm text-gray-700">{{ auth()->user()->name }}</span>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="text-sm text-gray-500 hover:text-gray-700">
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div class="admin-nav-right">
+                    <span class="admin-user-name">{{ auth()->user()->name }}</span>
+                    <span style="color: #d1d5db;">|</span>
+                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="admin-logout">
+                            Çıkış
+                        </button>
+                    </form>
                 </div>
             </div>
         </nav>
 
-        <main>
+        <main class="admin-main">
             <div class="py-6">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     @if(session('success'))

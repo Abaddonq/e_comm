@@ -20,9 +20,10 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
-                <input type="text" name="slug" value="{{ old('slug', $category->slug) }}"
+                <input type="text" name="slug" value="{{ old('slug', $category->slug) }}" id="slugInput"
                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 @error('slug') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                <p class="text-gray-500 text-xs mt-1">Boşluklar otomatik olarak tireye (-) dönüştürülür</p>
             </div>
         </div>
 
@@ -88,4 +89,30 @@
         </div>
     </form>
 </div>
-@endsection
+
+@push('scripts')
+<script>
+    const slugInput = document.getElementById('slugInput');
+    const nameInput = document.querySelector('input[name="name"]');
+    
+    if (slugInput && nameInput) {
+        let isManualSlug = false;
+        
+        slugInput.addEventListener('input', () => {
+            isManualSlug = true;
+            slugInput.value = slugInput.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+        });
+        
+        nameInput.addEventListener('input', () => {
+            if (!isManualSlug && nameInput.value) {
+                let slug = nameInput.value.toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9\-]/g, '')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                slugInput.value = slug;
+            }
+        });
+    }
+</script>
+@endpush

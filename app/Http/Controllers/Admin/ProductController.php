@@ -59,6 +59,8 @@ class ProductController extends Controller
 
         if (empty($validated['slug'])) {
             $validated['slug'] = $this->seoService->generateSlug($validated['title'], Product::class);
+        } else {
+            $validated['slug'] = $this->sanitizeSlug($validated['slug']);
         }
 
         $product = Product::create($validated);
@@ -91,6 +93,8 @@ class ProductController extends Controller
                 Product::class ,
                 $product->id
             );
+        } else {
+            $validated['slug'] = $this->sanitizeSlug($validated['slug']);
         }
 
         $oldSlug = $product->slug;
@@ -128,5 +132,14 @@ class ProductController extends Controller
         $status = $product->featured ? 'added to' : 'removed from';
 
         return back()->with('success', "Product {$status} featured successfully.");
+    }
+
+    protected function sanitizeSlug(string $slug): string
+    {
+        $slug = strtolower($slug);
+        $slug = preg_replace('/\s+/', '-', $slug);
+        $slug = preg_replace('/[^a-z0-9\-]/', '', $slug);
+        $slug = preg_replace('/-+/', '-', $slug);
+        return trim($slug, '-');
     }
 }

@@ -48,7 +48,7 @@
                 Continue Shopping
             </a>
             @auth
-                <a href="{{ route('orders.index') }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                <a href="{{ route('profile.index', ['tab' => 'orders']) }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
                     View Orders
                 </a>
             @endauth

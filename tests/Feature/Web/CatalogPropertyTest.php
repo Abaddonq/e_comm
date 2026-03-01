@@ -33,7 +33,7 @@ class CatalogPropertyTest extends TestCase
 
         $products = $response->viewData('products');
         $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class , $products);
-        $this->assertEquals(20, $products->perPage()); // Based on $query->paginate(20) in CategoryController
+        $this->assertEquals(12, $products->perPage()); // Based on $query->paginate(12) in CategoryController
         $this->assertEquals(25, $products->total());
     }
 

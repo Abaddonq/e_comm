@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Webhooks\PaymentCallbackController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Web\SearchController;
 use App\Http\Controllers\RobotsController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,8 @@ Route::post('/webhooks/payment/callback', [PaymentCallbackController::class, 'ha
     ->withoutMiddleware(['web', 'csrf']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('product.show');
 

@@ -16,7 +16,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $orders = Order::where('user_id', $user->id)
-            ->with(['items', 'shipment'])
+            ->with(['items.variant.product.images', 'shipment'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();

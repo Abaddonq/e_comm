@@ -57,6 +57,212 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
+
+        /* Search Modal Styles */
+        .search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 100px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .search-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .search-modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            transform: translateY(-20px);
+            transition: transform 0.2s;
+        }
+
+        .search-modal.active .search-modal-content {
+            transform: translateY(0);
+        }
+
+        .search-modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: #999;
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #1a1a1a;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-close:hover {
+            color: #1a1a1a;
+        }
+
+        .search-suggestions {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a1a1a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .suggestions-list {
+            padding: 8px 0;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .suggestion-item:hover {
+            background: #f9f9f9;
+        }
+
+        .suggestion-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #f5f5f5;
+        }
+
+        .suggestion-info {
+            flex: 1;
+        }
+
+        .suggestion-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .suggestion-price {
+            font-size: 13px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .recent-searches {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .recent-header span {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .recent-header button {
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .recent-header button:hover {
+            color: #1a1a1a;
+        }
+
+        .recent-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .recent-item {
+            background: #f5f5f5;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #444;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .recent-item:hover {
+            background: #eee;
+        }
         
         /* Header Styles */
         .header {
@@ -596,9 +802,11 @@
             </nav>
             
             <div class="header-icons">
-                <svg class="header-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+                <button type="button" class="header-icon" id="searchOpenBtn" aria-label="Ara">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </button>
                 <div class="header-user-icon" style="position: relative;">
                     <a href="{{ auth()->check() ? route('profile.index') : route('login') }}" class="header-icon">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -633,6 +841,38 @@
             </div>
         </div>
     </header>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Ürün ara..." autocomplete="off">
+                    <button type="button" class="search-close" id="searchCloseBtn">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="search-suggestions" id="searchSuggestions">
+                <div class="search-loading" id="searchLoading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+                <div class="suggestions-list" id="suggestionsList"></div>
+                <div class="recent-searches" id="recentSearches" style="display: none;">
+                    <div class="recent-header">
+                        <span>Son Aramalar</span>
+                        <button type="button" id="clearRecentSearches">Temizle</button>
+                    </div>
+                    <div class="recent-list" id="recentList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main>
         @yield('content')
@@ -727,6 +967,163 @@
             userIcon.addEventListener('mouseleave', () => {
                 userDropdown.style.display = 'none';
             });
+        }
+
+        // Search Modal
+        const searchModal = document.getElementById('searchModal');
+        const searchOpenBtn = document.getElementById('searchOpenBtn');
+        const searchCloseBtn = document.getElementById('searchCloseBtn');
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsList = document.getElementById('suggestionsList');
+        const searchLoading = document.getElementById('searchLoading');
+        const recentSearches = document.getElementById('recentSearches');
+        const recentList = document.getElementById('recentList');
+        const clearRecentSearches = document.getElementById('clearRecentSearches');
+
+        const RECENT_SEARCHES_KEY = 'recentSearches';
+        const MAX_RECENT = 5;
+
+        function getRecentSearches() {
+            try {
+                return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveRecentSearch(query) {
+            if (!query.trim()) return;
+            let recent = getRecentSearches();
+            recent = recent.filter(s => s.toLowerCase() !== query.toLowerCase());
+            recent.unshift(query);
+            recent = recent.slice(0, MAX_RECENT);
+            localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recent));
+            showRecentSearches();
+        }
+
+        function clearRecentSearchesList() {
+            localStorage.removeItem(RECENT_SEARCHES_KEY);
+            showRecentSearches();
+        }
+
+        function showRecentSearches() {
+            const recent = getRecentSearches();
+            if (recent.length > 0) {
+                recentSearches.style.display = 'block';
+                recentList.innerHTML = recent.map(s => 
+                    `<span class="recent-item" onclick="document.getElementById('searchInput').value='${s.replace(/'/g, "\\'")}';performSearch();">${s}</span>`
+                ).join('');
+            } else {
+                recentSearches.style.display = 'none';
+            }
+        }
+
+        function openSearchModal() {
+            searchModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => searchInput.focus(), 100);
+            showRecentSearches();
+            suggestionsList.innerHTML = '';
+        }
+
+        function closeSearchModal() {
+            searchModal.classList.remove('active');
+            document.body.style.overflow = '';
+            searchInput.value = '';
+            suggestionsList.innerHTML = '';
+            recentSearches.style.display = 'none';
+        }
+
+        if (searchOpenBtn) {
+            searchOpenBtn.addEventListener('click', openSearchModal);
+        }
+        
+        if (searchCloseBtn) {
+            searchCloseBtn.addEventListener('click', closeSearchModal);
+        }
+
+        if (searchModal) {
+            searchModal.addEventListener('click', (e) => {
+                if (e.target === searchModal) {
+                    closeSearchModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && searchModal.classList.contains('active')) {
+                closeSearchModal();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                openSearchModal();
+            }
+        });
+
+        let searchTimeout;
+        function performSearch() {
+            const query = searchInput.value.trim();
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 2) {
+                suggestionsList.innerHTML = '';
+                recentSearches.style.display = getRecentSearches().length > 0 ? 'block' : 'none';
+                return;
+            }
+
+            recentSearches.style.display = 'none';
+            searchLoading.style.display = 'flex';
+            suggestionsList.innerHTML = '';
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/search/suggestions?q=${encodeURIComponent(query)}`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    searchLoading.style.display = 'none';
+                    
+                    if (data.products && data.products.length > 0) {
+                        suggestionsList.innerHTML = data.products.map(p => `
+                            <a href="/products/${p.slug}" class="suggestion-item">
+                                ${p.image ? `<img src="${p.image}" alt="${p.title}" class="suggestion-image">` : '<div class="suggestion-image"></div>'}
+                                <div class="suggestion-info">
+                                    <div class="suggestion-title">${p.title}</div>
+                                    ${p.price ? `<div class="suggestion-price">₺${p.price}</div>` : ''}
+                                </div>
+                            </a>
+                        `).join('');
+                    } else {
+                        suggestionsList.innerHTML = `
+                            <div style="padding: 20px; text-align: center; color: #666;">
+                                "${query}" için sonuç bulunamadı
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Search error:', error);
+                    searchLoading.style.display = 'none';
+                }
+            }, 300);
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', performSearch);
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && searchInput.value.trim()) {
+                    saveRecentSearch(searchInput.value.trim());
+                    window.location.href = `/search?q=${encodeURIComponent(searchInput.value.trim())}`;
+                }
+            });
+        }
+
+        if (clearRecentSearches) {
+            clearRecentSearches.addEventListener('click', clearRecentSearchesList);
         }
     </script>
     

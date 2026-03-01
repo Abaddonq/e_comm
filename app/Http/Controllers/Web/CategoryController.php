@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -17,21 +19,47 @@ class CategoryController extends Controller
 
         $query = $category->products()
             ->active()
+            ->select('products.*')
             ->with(['category', 'variants', 'images']);
 
-        if ($request->has('sort')) {
-            match ($request->sort) {
-                'price_asc' => $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')->orderBy('product_variants.price')->groupBy('products.id'),
-                'price_desc' => $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')->orderByDesc('product_variants.price')->groupBy('products.id'),
-                'newest' => $query->orderBy('created_at', 'desc'),
-                default => $query->orderBy('created_at', 'desc'),
-            };
-        } else {
-            $query->orderBy('created_at', 'desc');
+        // Price filter
+        if ($request->has('min_price') || $request->has('max_price')) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                if ($request->min_price) {
+                    $q->where('price', '>=', (float) $request->min_price);
+                }
+                if ($request->max_price) {
+                    $q->where('price', '<=', (float) $request->max_price);
+                }
+            });
         }
 
-        $products = $query->paginate(20)->appends($request->query());
+        // In stock filter
+        if ($request->has('in_stock') && $request->in_stock == 1) {
+            $query->whereHas('variants', function ($q) {
+                $q->where('current_stock', '>', 0);
+            });
+        }
 
-        return view('web.category', compact('category', 'products'));
+        // Sorting
+        $sort = $request->get('sort', 'newest');
+        match ($sort) {
+            'price_asc' => $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+                ->orderBy('product_variants.price')->groupBy('products.id'),
+            'price_desc' => $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+                ->orderByDesc('product_variants.price')->groupBy('products.id'),
+            'name_asc' => $query->orderBy('title', 'asc'),
+            'name_desc' => $query->orderBy('title', 'desc'),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+
+        $products = $query->paginate(12)->appends($request->except('page'));
+
+        // Get price range for filters
+        $priceRange = ProductVariant::whereHas('product', function ($q) use ($category) {
+            $q->where('category_id', $category->id)->where('is_active', true);
+        })->select(DB::raw('MIN(price) as min_price, MAX(price) as max_price'))->first();
+
+        return view('web.category', compact('category', 'products', 'priceRange'));
     }
 }

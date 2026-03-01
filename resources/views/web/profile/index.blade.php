@@ -267,6 +267,48 @@ $activeTab = request()->query('tab', 'account');
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
+    .order-products-preview {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .order-product-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f5f5f5;
+        flex-shrink: 0;
+    }
+
+    .order-product-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .order-product-thumb.placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+    }
+
+    .order-product-more {
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: #666;
+    }
+
     .order-header {
         display: flex;
         justify-content: space-between;
@@ -674,12 +716,32 @@ $activeTab = request()->query('tab', 'account');
                                             @endswitch
                                         </span>
                                     </div>
+                                    <div class="order-products-preview">
+                                        @foreach($order->items->take(4) as $item)
+                                            @php
+                                                $product = $item->variant->product ?? null;
+                                                $image = $product && $product->images->first() ? $product->images->first() : null;
+                                            @endphp
+                                            @if($image)
+                                                <div class="order-product-thumb">
+                                                    <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $product->title }}">
+                                                </div>
+                                            @else
+                                                <div class="order-product-thumb placeholder">
+                                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                        @if($order->items->count() > 4)
+                                            <div class="order-product-more">+{{ $order->items->count() - 4 }}</div>
+                                        @endif
+                                    </div>
                                     <div class="order-summary">
                                         <span class="order-items-count">{{ $order->items->count() }} ürün</span>
                                         <span class="order-total">₺{{ number_format($order->total, 2) }}</span>
                                     </div>
                                     <div class="order-actions">
-                                        <button onclick="showOrderDetail({{ $order->id }})" class="btn btn-secondary btn-sm">Sipariş Detayı</button>
+                                        <a href="{{ route('orders.show', $order->id) }}" class="btn btn-secondary btn-sm">Sipariş Detayı</a>
                                     </div>
                                 </div>
                             @endforeach
@@ -720,16 +782,6 @@ $activeTab = request()->query('tab', 'account');
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                             <span>Yeni Adres Ekle</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Order Detail Section -->
-                <div class="profile-section" id="section-order-detail">
-                    <button onclick="switchTab('orders')" class="btn btn-secondary btn-sm" style="margin-bottom: 20px;">
-                        ← Siparişlere Dön
-                    </button>
-                    <div id="order-detail-content">
-                        <!-- Order details will be loaded here -->
                     </div>
                 </div>
 
@@ -1023,93 +1075,4 @@ $activeTab = request()->query('tab', 'account');
             closeModal();
         }
     });
-
-    // Order Detail
-    const ordersData = @json($orders);
-
-    function showOrderDetail(orderId) {
-        const order = ordersData.find(o => o.id === orderId);
-        if (!order) return;
-
-        // Hide all sections
-        document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
-        
-        const detailSection = document.getElementById('section-order-detail');
-        const content = document.getElementById('order-detail-content');
-
-        const statusLabels = {
-            'pending': 'Beklemede',
-            'paid': 'Ödendi',
-            'processing': 'İşleniyor',
-            'shipped': 'Kargoya Verildi',
-            'delivered': 'Teslim Edildi',
-            'cancelled': 'İptal Edildi'
-        };
-
-        let itemsHtml = '';
-        if (order.items && order.items.length > 0) {
-            order.items.forEach(item => {
-                const productName = item.variant?.product?.title || 'Ürün';
-                const variantName = item.variant?.sku || '';
-                itemsHtml += `
-                    <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
-                        <div>
-                            <div style="font-weight: 500;">${productName}</div>
-                            <div style="font-size: 13px; color: #666;">${variantName}</div>
-                            <div style="font-size: 13px; color: #666;">Adet: ${item.quantity}</div>
-                        </div>
-                        <div style="font-weight: 600;">₺${parseFloat(item.price * item.quantity).toFixed(2)}</div>
-                    </div>
-                `;
-            });
-        }
-
-        content.innerHTML = `
-            <h2 class="section-title">Sipariş Detayı</h2>
-            <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <span style="color: #666;">Sipariş No:</span>
-                    <span style="font-weight: 600;">${order.order_number}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <span style="color: #666;">Tarih:</span>
-                    <span>${new Date(order.created_at).toLocaleDateString('tr-TR')}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: #666;">Durum:</span>
-                    <span class="order-status ${order.status}">${statusLabels[order.status] || order.status}</span>
-                </div>
-            </div>
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Ürünler</h3>
-            <div style="background: white; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-                ${itemsHtml}
-            </div>
-            <div style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span>Ara Toplam:</span>
-                    <span>₺${parseFloat(order.subtotal).toFixed(2)}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span>Kargo:</span>
-                    <span>₺${parseFloat(order.shipping_cost).toFixed(2)}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 600; padding-top: 12px; border-top: 1px solid #ddd;">
-                    <span>Toplam:</span>
-                    <span>₺${parseFloat(order.total).toFixed(2)}</span>
-                </div>
-            </div>
-            <div style="margin-top: 20px;">
-                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Teslimat Adresi</h3>
-                <div style="background: white; padding: 16px; border: 1px solid #eee; border-radius: 10px;">
-                    <div style="font-weight: 500;">${order.shipping_name}</div>
-                    <div style="color: #666; font-size: 14px;">${order.shipping_phone}</div>
-                    <div style="color: #666; font-size: 14px;">${order.shipping_address_line1}</div>
-                    ${order.shipping_address_line2 ? '<div style="color: #666; font-size: 14px;">' + order.shipping_address_line2 + '</div>' : ''}
-                    <div style="color: #666; font-size: 14px;">${order.shipping_city}, ${order.shipping_state} ${order.shipping_postal_code}</div>
-                </div>
-            </div>
-        `;
-
-        detailSection.classList.add('active');
-    }
 </script>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\OrderController;
+use App\Http\Controllers\Web\WishlistController;
 use App\Http\Controllers\Webhooks\PaymentCallbackController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Web\SearchController;
@@ -42,6 +43,10 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
+Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+Route::post('/wishlist/check', [WishlistController::class, 'check'])->name('wishlist.check');
+Route::get('/wishlist/count', [WishlistController::class, 'count'])->name('wishlist.count');
+
 Route::middleware(['auth', 'throttle.checkout'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
@@ -51,6 +56,7 @@ Route::middleware(['auth', 'throttle.checkout'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/wishlist', [WishlistController::class, 'index'])->name('profile.wishlist');
     Route::get('/profile/edit', fn() => redirect()->route('profile.index'))->name('profile.edit');
     Route::post('/profile/update-profile', [ProfileController::class, 'updateProfile'])->name('profile.update-profile');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');

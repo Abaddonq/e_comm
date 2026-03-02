@@ -71,6 +71,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the wishlist for the user.
+     */
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    /**
      * Check if the user is an admin.
      */
     public function isAdmin(): bool

@@ -589,6 +589,102 @@ $activeTab = request()->query('tab', 'account');
         color: #666;
         margin-bottom: 20px;
     }
+
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .wishlist-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .wishlist-item {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        background: #fafafa;
+        border-radius: 8px;
+    }
+
+    .wishlist-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .wishlist-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .wishlist-image .no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eee;
+        color: #999;
+        font-size: 12px;
+    }
+
+    .wishlist-info {
+        flex: 1;
+    }
+
+    .wishlist-info h3 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .wishlist-info h3 a {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+
+    .wishlist-info h3 a:hover {
+        text-decoration: underline;
+    }
+
+    .wishlist-price {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+    }
+
+    .wishlist-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .empty-wishlist {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-wishlist svg {
+        margin-bottom: 20px;
+    }
+
+    .empty-wishlist h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .empty-wishlist p {
+        color: #666;
+        margin-bottom: 20px;
+    }
 </style>
 
 <div class="profile-page">
@@ -609,6 +705,10 @@ $activeTab = request()->query('tab', 'account');
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     Siparişlerim
                 </button>
+                <button class="profile-nav-item {{ $activeTab === 'wishlist' ? 'active' : '' }}" onclick="switchTab('wishlist')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Favorilerim
+                </button>
                 <button class="profile-nav-item {{ $activeTab === 'addresses' ? 'active' : '' }}" onclick="switchTab('addresses')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     Adreslerim
@@ -628,6 +728,10 @@ $activeTab = request()->query('tab', 'account');
                 <button class="profile-nav-item {{ $activeTab === 'orders' ? 'active' : '' }}" onclick="switchTab('orders')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     Siparişler
+                </button>
+                <button class="profile-nav-item {{ $activeTab === 'wishlist' ? 'active' : '' }}" onclick="switchTab('wishlist')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Favoriler
                 </button>
                 <button class="profile-nav-item {{ $activeTab === 'addresses' ? 'active' : '' }}" onclick="switchTab('addresses')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -756,6 +860,52 @@ $activeTab = request()->query('tab', 'account');
                     @endif
                 </div>
 
+                <!-- Wishlist Section -->
+                <div class="profile-section {{ $activeTab === 'wishlist' ? 'active' : '' }}" id="section-wishlist">
+                    <h2 class="section-title">Favorilerim</h2>
+                    
+                    <div class="wishlist-grid" id="wishlistGrid">
+                        @php
+                        $wishlistProducts = \App\Models\Wishlist::where('user_id', auth()->id())->with('product.images', 'product.variants')->get();
+                        @endphp
+                        
+                        @if($wishlistProducts->count() > 0)
+                            @foreach($wishlistProducts as $wishlist)
+                                @php
+                                    $product = $wishlist->product;
+                                    if (!$product) continue;
+                                    $minPrice = $product->variants->count() > 0 ? $product->variants->min('price') : 0;
+                                    $image = $product->images->first();
+                                @endphp
+                                <div class="wishlist-item">
+                                    <a href="{{ route('product.show', $product->slug) }}" class="wishlist-image">
+                                        @if($image)
+                                            <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $product->title }}">
+                                        @else
+                                            <div class="no-image">Görsel Yok</div>
+                                        @endif
+                                    </a>
+                                    <div class="wishlist-info">
+                                        <h3><a href="{{ route('product.show', $product->slug) }}">{{ $product->title }}</a></h3>
+                                        <div class="wishlist-price">₺{{ number_format($minPrice, 2) }}</div>
+                                        <div class="wishlist-actions">
+                                            <button class="btn btn-sm btn-primary" onclick="quickAdd({{ $product->id }}, event)">Sepete Ekle</button>
+                                            <button class="btn btn-sm btn-secondary" onclick="removeFromWishlist({{ $product->id }})">Kaldır</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="empty-wishlist">
+                                <svg width="64" height="64" fill="none" stroke="#ccc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                <h3>Henüz Favoriniz Yok</h3>
+                                <p>Beğendiğiniz ürünleri favorilere ekleyin</p>
+                                <a href="{{ route('home') }}" class="btn btn-primary">Alışverişe Başla</a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Addresses Section -->
                 <div class="profile-section {{ $activeTab === 'addresses' ? 'active' : '' }}" id="section-addresses">
                     <h2 class="section-title">Adreslerim</h2>
@@ -871,6 +1021,32 @@ $activeTab = request()->query('tab', 'account');
         const url = new URL(window.location.href);
         url.searchParams.set('tab', tab);
         window.location.href = url.toString();
+    }
+
+    function removeFromWishlist(productId) {
+        fetch('{{ route("wishlist.toggle") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ 
+                product_id: wishlistId 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Ürün favorilerden kaldırıldı', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Bir hata oluştu', 'error');
+        });
     }
 
     // Profile form

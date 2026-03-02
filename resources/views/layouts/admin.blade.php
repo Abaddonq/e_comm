@@ -87,6 +87,36 @@
         .admin-main {
             padding-top: 64px;
         }
+        .admin-toast {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 10000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+        }
+        .admin-toast-success {
+            background: #10b981;
+            color: white;
+        }
+        .admin-toast-error {
+            background: #ef4444;
+            color: white;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -128,36 +158,42 @@
             </div>
         </nav>
 
+        @if(session('success'))
+            <div class="admin-toast admin-toast-success" id="toast-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="admin-toast admin-toast-error" id="toast-error">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="admin-toast admin-toast-error" id="toast-error">
+                @foreach($errors->all() as $error)
+                    {{ $error }}@if(!$loop->last)<br>@endif
+                @endforeach
+            </div>
+        @endif
+
         <main class="admin-main">
             <div class="py-6">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    @if(session('success'))
-                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                            <span class="block sm:inline">{{ session('success') }}</span>
-                        </div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <span class="block sm:inline">{{ session('error') }}</span>
-                        </div>
-                    @endif
-
-                    @if($errors->any())
-                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                            <ul class="list-disc list-inside">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
                     @yield('content')
                 </div>
             </div>
         </main>
     </div>
+    <script>
+        setTimeout(function() {
+            var toastSuccess = document.getElementById('toast-success');
+            var toastError = document.getElementById('toast-error');
+            if (toastSuccess) toastSuccess.style.display = 'none';
+            if (toastError) toastError.style.display = 'none';
+        }, 4000);
+    </script>
     @stack('scripts')
 </body>
 </html>

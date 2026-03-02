@@ -582,4 +582,34 @@
         url.searchParams.delete(param);
         window.location.href = url.toString();
     }
+
+    function quickAdd(productId, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        fetch('{{ route("cart.add") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('cart-count').textContent = data.cart_count;
+                showToast('Ürün sepete eklendi', 'success');
+            } else {
+                showToast(data.error || 'Sepete ekleme başarısız', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Bir hata oluştu', 'error');
+        });
+    }
 </script>

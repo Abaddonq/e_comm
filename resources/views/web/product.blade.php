@@ -784,7 +784,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         }
         
         if (!currentVariant || currentVariant.stock <= 0) {
-            alert('Bu ürün stokta mevcut değil');
+            showToast('Bu ürün stokta mevcut değil', 'error');
             return;
         }
         
@@ -806,16 +806,17 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
             if (data.success) {
                 document.getElementById('cart-count').textContent = data.cart_count;
                 document.getElementById('addToCartBtn').textContent = 'Sepete Eklendi!';
+                showToast('Ürün sepete eklendi', 'success');
                 setTimeout(() => {
                     document.getElementById('addToCartBtn').textContent = 'Sepete Ekle';
                 }, 2000);
             } else {
-                alert(data.error || 'Sepete ekleme başarısız');
+                showToast(data.error || 'Sepete ekleme başarısız', 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Bir hata oluştu');
+            showToast('Bir hata oluştu', 'error');
         });
     }
 

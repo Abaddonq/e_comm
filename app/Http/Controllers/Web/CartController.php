@@ -39,6 +39,17 @@ class CartController extends Controller
 
     public function add(Request $request): JsonResponse
     {
+        if ($request->has('product_id')) {
+            $product = \App\Models\Product::with('variants')->findOrFail($request->product_id);
+            $variant = $product->variants()->where('is_active', true)->orderBy('price')->first();
+            
+            if (!$variant) {
+                return response()->json(['error' => 'Bu ürün için stok bulunmuyor'], 400);
+            }
+            
+            $request->merge(['variant_id' => $variant->id]);
+        }
+
         $request->validate([
             'variant_id' => 'required|exists:product_variants,id',
             'quantity' => 'required|integer|min:1',

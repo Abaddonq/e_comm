@@ -1,18 +1,70 @@
+# ==============================================
+# LARAVEL FRAMEWORK
+# ==============================================
+/vendor/
+/node_modules/
 /.phpunit.cache
-/node_modules
+
+# ==============================================
+# ENVIRONMENT FILES (Sensitive)
+# ==============================================
+.env
+.env.backup
+.env.production
+.env.*.local
+
+# ==============================================
+# BUILD & ASSETS
+# ==============================================
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
-.env
-.env.backup
-.env.production
-Homestead.json
-Homestead.yaml
-auth.json
-npm-debug.log
-yarn-error.log
-/.fleet
+/storage/framework/cache/*
+/storage/framework/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# ==============================================
+# LARAVEL OPTIMIZE FILES
+# ==============================================
+/bootstrap/cache/*.php
+/bootstrap/cache/*
+
+# ==============================================
+# IDE & EDITORS
+# ==============================================
 /.idea
 /.vscode
+/.fleet
+*.swp
+*.swo
+*~
+
+# ==============================================
+# OPERATING SYSTEM
+# ==============================================
+.DS_Store
+Thumbs.db
+
+# ==============================================
+# DEVELOPMENT TOOLS
+# ==============================================
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# ==============================================
+# TESTING
+# ==============================================
+.phpunit.result.cache
+coverage/
+
+# ==============================================
+# LARAVEL BREEZE / UI
+# ==============================================
+auth.json

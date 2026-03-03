@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -9,8 +9,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    nginx \
-    supervisor \
     libzip-dev
 
 # Clear cache
@@ -30,18 +28,11 @@ COPY . /var/www
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
-RUN mkdir -p /var/run/php /var/log/php /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views
-RUN chown -R www-data:www-data /var/www
+RUN mkdir -p /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views
 RUN chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
-# Copy nginx config
-COPY default.conf /etc/nginx/sites-available/default
-
-# Copy supervisor config
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 # Expose port
-EXPOSE 80
+EXPOSE 8080
 
-# Run supervisor
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Run PHP built-in server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]

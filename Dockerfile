@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libzip-dev
+    libzip-dev \
+    nginx
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -31,8 +32,13 @@ RUN composer install --no-dev --optimize-autoloader
 RUN mkdir -p /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views
 RUN chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port
-EXPOSE 8080
+# Copy nginx config
+COPY nginx_default.conf /etc/nginx/sites-available/default
 
-# Run PHP server with PORT from environment
-CMD php /var/www/artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Run both services using a simple script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 80
+
+CMD /start.sh

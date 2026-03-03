@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildPack": "php",
+    "php": {
+      "version": "8.2",
+      "fpm": true
+    }
+  }
+}

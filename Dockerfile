@@ -22,14 +22,21 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy application
+WORKDIR /var/www
 COPY . /var/www
 
-# Set working directory
-WORKDIR /var/www
+# Install composer dependencies
+RUN composer install --no-dev --optimize-autoloader
 
 # Copy nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/sites-available/default
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose port
+EXPOSE 80
 
 # Run supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

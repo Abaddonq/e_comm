@@ -130,6 +130,7 @@
 
                 <form method="POST" action="{{ route('admin.orders.update-status', $order->id) }}">
                     @csrf
+                    @method('PUT')
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Change Status</label>
                         <select name="status" class="w-full border rounded-lg px-3 py-2">

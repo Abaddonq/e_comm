@@ -320,6 +320,20 @@
         background: #f5f5f5;
     }
 
+    .wishlist-btn.active {
+        background: #1a1a1a;
+        opacity: 1;
+    }
+
+    .wishlist-btn.active {
+        background: white;
+    }
+
+    .wishlist-btn.active svg {
+        fill: #1a1a1a;
+        color: #1a1a1a;
+    }
+
     .quick-add-btn {
         position: absolute;
         bottom: 12px;
@@ -539,8 +553,8 @@
                                 @if($product->is_new)
                                     <span class="product-badge">Yeni</span>
                                 @endif
-                                <button class="wishlist-btn" onclick="toggleWishlist({{ $product->id }}, event)">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                <button class="wishlist-btn{{ in_array($product->id, $wishlistProductIds ?? []) ? ' active' : '' }}" id="wishlist-btn-{{ $product->id }}" onclick="toggleWishlist({{ $product->id }}, event)">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                                 </button>
                                 <button class="quick-add-btn" onclick="quickAdd({{ $product->id }}, event)">Sepete Ekle</button>
                             </div>

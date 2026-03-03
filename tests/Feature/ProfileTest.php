@@ -59,11 +59,95 @@ class ProfileTest extends TestCase
 
     public function test_user_can_delete_their_account(): void
     {
-        $this->markTestSkipped('Account deletion not implemented in new profile page');
+        $user = User::factory()->create();
+        $userId = $user->id;
+
+        $response = $this->actingAs($user)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->delete('/profile/account', [
+                'password' => 'password',
+            ]);
+
+        $response->assertStatus(200);
+        
+        $this->assertDatabaseMissing('users', ['id' => $userId]);
     }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void
     {
-        $this->markTestSkipped('Account deletion not implemented in new profile page');
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->delete('/profile/account', [
+                'password' => 'wrong-password',
+            ]);
+
+        $response->assertStatus(422);
+        $response->assertJson(['success' => false]);
+        $this->assertDatabaseHas('users', ['id' => $user->id]);
+    }
+
+    public function test_cannot_delete_account_with_active_orders(): void
+    {
+        $user = User::factory()->create();
+        
+        \App\Models\Order::create([
+            'user_id' => $user->id,
+            'order_number' => 'TEST-001',
+            'status' => 'paid',
+            'shipping_name' => 'Test User',
+            'shipping_phone' => '05555555555',
+            'shipping_address_line1' => 'Test Street 123',
+            'shipping_city' => 'Istanbul',
+            'shipping_postal_code' => '34000',
+            'shipping_country' => 'TR',
+            'subtotal' => 100,
+            'shipping_cost' => 10,
+            'tax' => 10,
+            'total' => 120,
+            'payment_method' => 'credit_card',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->delete('/profile/account', [
+                'password' => 'password',
+            ]);
+
+        $response->assertStatus(422);
+        $response->assertJson(['success' => false]);
+        $this->assertDatabaseHas('users', ['id' => $user->id]);
+    }
+
+    public function test_can_delete_account_with_completed_orders(): void
+    {
+        $user = User::factory()->create();
+        
+        \App\Models\Order::create([
+            'user_id' => $user->id,
+            'order_number' => 'TEST-001',
+            'status' => 'delivered',
+            'shipping_name' => 'Test User',
+            'shipping_phone' => '05555555555',
+            'shipping_address_line1' => 'Test Street 123',
+            'shipping_city' => 'Istanbul',
+            'shipping_postal_code' => '34000',
+            'shipping_country' => 'TR',
+            'subtotal' => 100,
+            'shipping_cost' => 10,
+            'tax' => 10,
+            'total' => 120,
+            'payment_method' => 'credit_card',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->delete('/profile/account', [
+                'password' => 'password',
+            ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 }

@@ -80,6 +80,7 @@ class OrderService
 
             $order = Order::create([
                 'user_id' => $userId,
+                'address_id' => $address->id,
                 'order_number' => $this->generateOrderNumber(),
                 'status' => 'pending',
                 'subtotal' => $totals['subtotal'],

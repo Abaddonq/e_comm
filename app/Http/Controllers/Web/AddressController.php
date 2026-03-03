@@ -86,6 +86,29 @@ class AddressController extends Controller
     {
         $this->authorizeAddress($address);
 
+        $hasActiveOrders = \App\Models\Order::where('address_id', $address->id)
+            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+            ->exists();
+
+        if (!$hasActiveOrders) {
+            $hasActiveOrders = \App\Models\Order::where('user_id', Auth::id())
+                ->where('shipping_phone', $address->phone)
+                ->where('shipping_address_line1', $address->address_line1)
+                ->where('shipping_city', $address->city)
+                ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+                ->exists();
+        }
+        
+        if ($hasActiveOrders) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Bu adres aktif siparişlerde kullanıldığı için silinemez.'
+                ], 422);
+            }
+            return back()->with('error', 'Bu adres aktif siparişlerde kullanıldığı için silinemez.');
+        }
+
         $address->delete();
 
         if ($request->expectsJson()) {

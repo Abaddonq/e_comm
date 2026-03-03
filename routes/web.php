@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', fn() => redirect()->route('profile.index'))->name('profile.edit');
     Route::post('/profile/update-profile', [ProfileController::class, 'updateProfile'])->name('profile.update-profile');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    Route::delete('/profile/account', [ProfileController::class, 'destroyAccount'])->name('profile.destroy-account');
     
     Route::get('/addresses', [AddressController::class, 'index'])->name('addresses.index');
     Route::get('/addresses/create', [AddressController::class, 'create'])->name('addresses.create');

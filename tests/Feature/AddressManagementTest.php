@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Address;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,12 +14,25 @@ class AddressManagementTest extends TestCase
 
     public function test_user_can_view_their_addresses(): void
     {
-        $this->markTestSkipped('View not implemented yet');
+        $user = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->get('/profile?tab=addresses');
+
+        $response->assertStatus(200);
+        $response->assertSee($address->full_name);
     }
 
     public function test_user_cannot_view_other_users_addresses(): void
     {
-        $this->markTestSkipped('View not implemented yet');
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($user)->get('/profile?tab=addresses');
+
+        $response->assertStatus(200);
+        $response->assertDontSee($address->full_name);
     }
 
     public function test_user_can_create_address(): void
@@ -86,12 +100,74 @@ class AddressManagementTest extends TestCase
 
     public function test_user_can_delete_their_address(): void
     {
-        $this->markTestSkipped('View not implemented yet');
+        $user = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->delete('/addresses/' . $address->id);
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseMissing('addresses', ['id' => $address->id]);
     }
 
-    public function test_cannot_delete_address_with_orders(): void
+    public function test_cannot_delete_address_with_active_orders(): void
     {
-        $this->markTestSkipped('View not implemented yet');
+        $user = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $user->id]);
+
+        Order::create([
+            'user_id' => $user->id,
+            'address_id' => $address->id,
+            'order_number' => 'TEST-001',
+            'status' => 'paid',
+            'shipping_name' => $address->full_name,
+            'shipping_phone' => $address->phone,
+            'shipping_address_line1' => $address->address_line1,
+            'shipping_city' => $address->city,
+            'shipping_postal_code' => $address->postal_code,
+            'shipping_country' => $address->country,
+            'subtotal' => 100,
+            'shipping_cost' => 10,
+            'tax' => 10,
+            'total' => 120,
+            'payment_method' => 'credit_card',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->delete('/addresses/' . $address->id);
+
+        $response->assertStatus(422);
+        $response->assertJson(['success' => false]);
+        $this->assertDatabaseHas('addresses', ['id' => $address->id]);
+    }
+
+    public function test_can_delete_address_with_completed_orders(): void
+    {
+        $user = User::factory()->create();
+        $address = Address::factory()->create(['user_id' => $user->id]);
+
+        Order::create([
+            'user_id' => $user->id,
+            'address_id' => $address->id,
+            'order_number' => 'TEST-001',
+            'status' => 'delivered',
+            'shipping_name' => $address->full_name,
+            'shipping_phone' => $address->phone,
+            'shipping_address_line1' => $address->address_line1,
+            'shipping_city' => $address->city,
+            'shipping_postal_code' => $address->postal_code,
+            'shipping_country' => $address->country,
+            'subtotal' => 100,
+            'shipping_cost' => 10,
+            'tax' => 10,
+            'total' => 120,
+            'payment_method' => 'credit_card',
+        ]);
+
+        $response = $this->actingAs($user)->delete('/addresses/' . $address->id);
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseMissing('addresses', ['id' => $address->id]);
     }
 
     public function test_guest_cannot_access_addresses(): void

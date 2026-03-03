@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -60,6 +61,14 @@ class CategoryController extends Controller
             $q->where('category_id', $category->id)->where('is_active', true);
         })->select(DB::raw('MIN(price) as min_price, MAX(price) as max_price'))->first();
 
-        return view('web.category', compact('category', 'products', 'priceRange'));
+        // Get wishlist product IDs for authenticated user
+        $wishlistProductIds = [];
+        if (auth()->check()) {
+            $wishlistProductIds = Wishlist::where('user_id', auth()->id())
+                ->pluck('product_id')
+                ->toArray();
+        }
+
+        return view('web.category', compact('category', 'products', 'priceRange', 'wishlistProductIds'));
     }
 }

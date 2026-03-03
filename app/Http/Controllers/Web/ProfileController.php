@@ -127,6 +127,26 @@ class ProfileController extends Controller
             abort(403);
         }
 
+        $hasActiveOrders = \App\Models\Order::where('address_id', $address->id)
+            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+            ->exists();
+
+        if (!$hasActiveOrders) {
+            $hasActiveOrders = \App\Models\Order::where('user_id', Auth::id())
+                ->where('shipping_phone', $address->phone)
+                ->where('shipping_address_line1', $address->address_line1)
+                ->where('shipping_city', $address->city)
+                ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+                ->exists();
+        }
+        
+        if ($hasActiveOrders) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Bu adres aktif siparişlerde kullanıldığı için silinemez.'
+            ], 422);
+        }
+
         $address->delete();
 
         return response()->json(['success' => true, 'message' => 'Adres başarıyla silindi.']);
@@ -142,5 +162,40 @@ class ProfileController extends Controller
         $address->update(['is_default' => true]);
 
         return response()->json(['success' => true, 'message' => 'Varsayılan adres değiştirildi.']);
+    }
+
+    public function destroyAccount(Request $request)
+    {
+        $user = Auth::user();
+        $userId = $user->id;
+
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Şifreniz yanlış.'
+            ], 422);
+        }
+
+        $hasActiveOrders = \App\Models\Order::where('user_id', $userId)
+            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+            ->exists();
+
+        if ($hasActiveOrders) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Aktif siparişleriniz olduğu için hesabınız silinemez. Lütfen önce siparişlerinizi iptal edin veya teslim alın.'
+            ], 422);
+        }
+
+        Auth::logout();
+        
+        \App\Models\Order::where('user_id', $userId)->update(['user_id' => null]);
+        \Illuminate\Support\Facades\DB::table('users')->where('id', $userId)->delete();
+
+        return response()->json(['success' => true, 'message' => 'Hesabınız başarıyla silindi.']);
     }
 }

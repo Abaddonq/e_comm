@@ -1005,6 +1005,8 @@
             event.preventDefault();
             event.stopPropagation();
 
+            const btn = document.getElementById('wishlist-btn-' + productId);
+
             fetch('{{ route("wishlist.toggle") }}', {
                 method: 'POST',
                 headers: {
@@ -1016,6 +1018,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    if (btn) {
+                        btn.classList.toggle('active');
+                    }
                     showToast(data.is_added ? 'Ürün favorilere eklendi' : 'Ürün favorilerden kaldırıldı', 'success');
                 } else if (data.error) {
                     showToast(data.error, 'error');

@@ -213,6 +213,48 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         line-height: 1.2;
     }
     
+    .product-title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    
+    .product-title-row .product-title {
+        margin-bottom: 0;
+    }
+    
+    .wishlist-btn-detail {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    
+    .wishlist-btn-detail:hover {
+        border-color: #1a1a1a;
+        background: #fafafa;
+    }
+    
+    .wishlist-btn-detail.active {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+    }
+    
+    .wishlist-btn-detail svg {
+        width: 18px;
+        height: 18px;
+    }
+    
     .product-price {
         font-size: 28px;
         font-weight: 600;
@@ -550,7 +592,15 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         <!-- Product Info -->
         <div class="product-info">
             <p class="product-category">{{ $product->category->name ?? '' }}</p>
-            <h1 class="product-title">{{ $product->title }}</h1>
+            <div class="product-title-row">
+                <h1 class="product-title">{{ $product->title }}</h1>
+                <button class="wishlist-btn-detail" id="wishlistBtnDetail" onclick="toggleWishlistDetail({{ $product->id }})">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    <span id="wishlistText">Favorilere Ekle</span>
+                </button>
+            </div>
             
             <div class="product-price">
                 @if($minPrice && $minPrice == $maxPrice)
@@ -713,6 +763,69 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
 @section('scripts')
 <script>
     let currentVariant = null;
+
+    // Check if product is in wishlist on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        checkWishlistStatus();
+    });
+
+    function checkWishlistStatus() {
+        const productId = {{ $product->id }};
+        
+        fetch('{{ route("wishlist.check") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ product_id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.is_wishlisted) {
+                const btn = document.getElementById('wishlistBtnDetail');
+                btn.classList.add('active');
+                document.getElementById('wishlistText').textContent = 'Favorilerde';
+            }
+        })
+        .catch(error => {
+            console.error('Error checking wishlist:', error);
+        });
+    }
+
+    function toggleWishlistDetail(productId) {
+        fetch('{{ route("wishlist.toggle") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ product_id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const btn = document.getElementById('wishlistBtnDetail');
+                const text = document.getElementById('wishlistText');
+                
+                if (data.is_added) {
+                    btn.classList.add('active');
+                    text.textContent = 'Favorilerde';
+                    showToast('Ürün favorilere eklendi', 'success');
+                } else {
+                    btn.classList.remove('active');
+                    text.textContent = 'Favorilere Ekle';
+                    showToast('Ürün favorilerden kaldırıldı', 'success');
+                }
+            } else if (data.error) {
+                showToast(data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Bir hata oluştu', 'error');
+        });
+    }
 
     function initVariant() {
         const firstVariant = document.querySelector('.variant-option');

@@ -590,6 +590,22 @@ $activeTab = request()->query('tab', 'account');
         margin-bottom: 20px;
     }
 
+    .delete-account-section {
+        margin-top: 48px;
+        padding-top: 32px;
+        border-top: 1px solid #eee;
+    }
+
+    .delete-account-section .section-title {
+        color: #dc2626;
+    }
+
+    .warning-text {
+        color: #dc2626;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
     .wishlist-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -947,6 +963,24 @@ $activeTab = request()->query('tab', 'account');
                             </button>
                         </form>
                     </div>
+                    
+                    <div class="delete-account-section">
+                        <h2 class="section-title">Hesabı Sil</h2>
+                        <p class="warning-text">Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinecektir. Bu işlem geri alınamaz.</p>
+                        
+                        <div class="alert alert-error" id="deleteAccountError" style="display: none;"></div>
+                        <div class="alert alert-success" id="deleteAccountSuccess" style="display: none;"></div>
+                        
+                        <form id="deleteAccountForm">
+                            <div class="form-group">
+                                <label class="form-label">Şifrenizi doğrulayın</label>
+                                <input type="password" name="password" class="form-input" placeholder="Şifreniz" required>
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-danger">Hesabımı Sil</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1207,19 +1241,17 @@ $activeTab = request()->query('tab', 'account');
                 },
             });
             
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert(data.message || 'Bir hata oluştu');
-                }
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => window.location.reload(), 1000);
             } else {
-                alert('Bir hata oluştu: ' + response.status);
+                showToast(data.message || 'Bir hata oluştu', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Bir hata oluştu');
+            showToast('Bir hata oluştu', 'error');
         }
     }
 
@@ -1249,6 +1281,51 @@ $activeTab = request()->query('tab', 'account');
     document.getElementById('addressModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) {
             closeModal();
+        }
+    });
+
+    // Delete account form
+    document.getElementById('deleteAccountForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const errorAlert = document.getElementById('deleteAccountError');
+        const successAlert = document.getElementById('deleteAccountSuccess');
+        
+        errorAlert.style.display = 'none';
+        successAlert.style.display = 'none';
+        
+        if (!confirm('Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('{{ route("profile.destroy-account") }}', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData)),
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                successAlert.textContent = data.message;
+                successAlert.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = '{{ route("home") }}';
+                }, 2000);
+            } else {
+                errorAlert.textContent = data.message;
+                errorAlert.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorAlert.textContent = 'Bir hata oluştu';
+            errorAlert.style.display = 'block';
         }
     });
 </script>

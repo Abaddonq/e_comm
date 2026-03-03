@@ -8,20 +8,19 @@ echo "Starting Railway Deployment Environment Setup..."
 # Ensure we are in the correct directory
 cd /var/www
 
+# Ensure storage directory exists and is writable
+mkdir -p storage/framework/{cache,sessions,views}
+chmod -R 775 storage bootstrap/cache
+
 # Clear and rebuild caches for production
 echo "Caching configuration and routes..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Run migrations if database is available
-# --force is required for production
-echo "Running database migrations..."
-php artisan migrate --force
-
 # Create storage symlink
 echo "Creating storage symlink..."
-php artisan storage:link
+php artisan storage:link || true
 
 # Start the application
 # Using artisan serve for now as per current Dockerfile, 

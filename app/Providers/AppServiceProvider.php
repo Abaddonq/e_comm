@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+    //
     }
 
     /**
@@ -42,15 +42,16 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             $cartCount = 0;
-            
+
             if (auth()->check()) {
                 $cartService = app(CartService::class);
                 $cartCount = $cartService->getCartCount(auth()->id(), null);
-            } else {
+            }
+            else {
                 $cartService = app(CartService::class);
                 $cartCount = $cartService->getCartCount(null, session()->getId());
             }
-            
+
             $view->with('cartCount', $cartCount);
         });
     }
@@ -61,9 +62,9 @@ class AppServiceProvider extends ServiceProvider
     protected function validateEnvironment(): void
     {
         $requiredVars = [
-            'APP_KEY' => 'Application key is required. Run php artisan key:generate',
-            'DB_HOST' => 'Database host is required',
-            'DB_DATABASE' => 'Database name is required',
+            'app.key' => 'Application key is required. Run php artisan key:generate',
+            'database.connections.mysql.host' => 'Database host is required',
+            'database.connections.mysql.database' => 'Database name is required',
         ];
 
         $missing = [];
@@ -96,23 +97,25 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
-        RateLimiter::for('login', function (Request $request) {
-            $email = (string) $request->email;
+        RateLimiter::for ('login', function (Request $request) {
+            $email = (string)$request->email;
 
-            return Limit::perMinute(5)->by($email.$request->ip())->response(function () {
-                return back()->withErrors([
+            return Limit::perMinute(5)->by($email . $request->ip())->response(function () {
+                    return back()->withErrors([
                     'email' => __('Too many login attempts. Please try again in one minute.'),
-                ])->onlyInput('email');
+                    ])->onlyInput('email');
+                }
+                );
             });
-        });
 
-        RateLimiter::for('checkout', function (Request $request) {
+        RateLimiter::for ('checkout', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip())->response(function () {
-                return back()->withErrors([
+                    return back()->withErrors([
                     'checkout' => __('Too many checkout attempts. Please try again in a minute.'),
-                ]);
+                    ]);
+                }
+                );
             });
-        });
     }
 
     protected function registerObservers(): void

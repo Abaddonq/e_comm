@@ -30,11 +30,9 @@ COPY . /var/www
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
-RUN mkdir -p /var/run/php /var/log/php
+RUN mkdir -p /var/run/php /var/log/php /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views
 RUN chown -R www-data:www-data /var/www
-RUN chmod -R 755 /var/www/storage
-RUN chmod -R 755 /var/www/bootstrap/cache
-RUN chmod -R 777 /var/www/storage/uploads
+RUN chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
 # Copy nginx config
 COPY default.conf /etc/nginx/sites-available/default

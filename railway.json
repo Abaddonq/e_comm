@@ -4,8 +4,7 @@
     "builder": "NIXPACKS",
     "php": {
       "version": "8.2"
-    },
-    "nginxVersion": "stable"
+    }
   },
   "deploy": {
     "numReplicas": 1,

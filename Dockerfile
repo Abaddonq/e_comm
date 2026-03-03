@@ -34,5 +34,5 @@ RUN chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 # Expose port
 EXPOSE 8080
 
-# Run PHP built-in server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+# Run PHP server with PORT from environment
+CMD php /var/www/artisan serve --host=0.0.0.0 --port=${PORT:-8080}

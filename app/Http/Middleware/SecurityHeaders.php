@@ -20,6 +20,22 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
+        $this->setCacheHeaders($request, $response);
+
         return $response;
+    }
+
+    private function setCacheHeaders(Request $request, Response $response): void
+    {
+        $path = $request->getPathInfo();
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+        $cacheExtensions = ['css', 'js', 'woff2', 'webp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico'];
+
+        if (in_array($extension, $cacheExtensions)) {
+            $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
+        } elseif ($request->isMethod('GET')) {
+            $response->headers->set('Cache-Control', 'no-cache, must-revalidate');
+        }
     }
 }

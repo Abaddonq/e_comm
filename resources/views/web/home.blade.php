@@ -6,7 +6,13 @@
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-bg">
-        <img src="/img/background.webp" alt="Luxury Furniture" style="width:100%;height:100%;object-fit:cover;">
+        <img 
+            src="/img/background.webp" 
+            srcset="/img/background.webp 1920w, /img/background.webp 1280w, /img/background.webp 640w"
+            sizes="100vw"
+            alt="Luxury Furniture" 
+            style="width:100%;height:100%;object-fit:cover;"
+            fetchpriority="high">
     </div>
     <div class="hero-content">
         <h1 class="hero-title">DecorMotto</h1>

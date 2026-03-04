@@ -17,6 +17,10 @@
     @yield('open_graph')
     @yield('twitter_card')
     
+    <link rel="preload" href="/fonts/inter-v20-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/inter-v20-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/inter-v20-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+    
     <style>
         @font-face {
             font-family: 'Inter';

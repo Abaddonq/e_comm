@@ -747,7 +747,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                         @if($relImage)
                             <img src="{{ asset('storage/' . $relImage->path) }}" alt="{{ $related->title }}" loading="lazy">
                         @else
-                            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80" alt="{{ $related->title }}" loading="lazy">
+                            <img src="/img/mock-img.jpg" alt="{{ $related->title }}" loading="lazy">
                         @endif
                     </div>
                     <h4 class="product-name">{{ $related->title }}</h4>

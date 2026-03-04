@@ -62,10 +62,10 @@
                         @if($firstImage)
                             <img src="{{ asset('storage/' . $firstImage->path) }}" alt="{{ $product->title }}">
                         @else
-                            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" alt="{{ $product->title }}">
+                            <img src="/img/mock-img.jpg" alt="{{ $product->title }}">
                         @endif
                         <button class="product-quick-add" data-variant-id="{{ $variantId }}" {{ !$variantId ? 'disabled' : '' }}>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                             </svg>
                         </button>
@@ -100,7 +100,7 @@
                     @if($category->image)
                         <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
                     @else
-                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" alt="{{ $category->name }}">
+                        <img src="/img/mock-img.jpg" alt="{{ $category->name }}">
                     @endif
                 </div>
                 <h3 class="product-name" style="text-align:center;">{{ $category->name }}</h3>

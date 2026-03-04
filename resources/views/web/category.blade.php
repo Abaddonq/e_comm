@@ -312,13 +312,11 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .product-card:hover .wishlist-btn,
-    .product-card:active .wishlist-btn {
+    .product-card:hover .wishlist-btn {
         opacity: 1;
     }
 
-    .wishlist-btn:hover,
-    .wishlist-btn:active {
+    .wishlist-btn:hover {
         background: #f5f5f5;
     }
 
@@ -351,8 +349,7 @@
         min-height: 44px;
     }
 
-    .product-card:hover .quick-add-btn,
-    .product-card:active .quick-add-btn {
+    .product-card:hover .quick-add-btn {
         opacity: 1;
         transform: translateY(0);
     }

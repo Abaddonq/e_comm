@@ -664,14 +664,12 @@
             border: none;
         }
         
-        .product-card:hover .product-quick-add,
-        .product-card:active .product-quick-add {
+        .product-card:hover .product-quick-add {
             opacity: 1;
             transform: translateY(0);
         }
         
-        .product-quick-add:hover,
-        .product-quick-add:active {
+        .product-quick-add:hover {
             background: var(--color-secondary);
             color: white;
         }

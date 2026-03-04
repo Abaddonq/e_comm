@@ -17,13 +17,38 @@
     @yield('open_graph')
     @yield('twitter_card')
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
     <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/inter-v20-latin-300.woff2') format('woff2');
+            font-weight: 300;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/inter-v20-latin-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/inter-v20-latin-500.woff2') format('woff2');
+            font-weight: 500;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/inter-v20-latin-600.woff2') format('woff2');
+            font-weight: 600;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/inter-v20-latin-700.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+        
         :root {
             --color-primary: #FFFFFF;
             --color-secondary: #212121;

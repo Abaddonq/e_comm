@@ -24,10 +24,8 @@ class ImageService
         $directory = "products/{$productId}";
         $path = "{$directory}/{$filename}";
 
-        // Convert the image to actual webp format before saving
-        $img = \Intervention\Image\ImageManager::gd()->read($file->getRealPath());
-        $encoded = $img->toWebp(85);
-        Storage::disk('public')->put($path, $encoded->toString());
+        // Save the original file directly
+        Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
 
         $image = ProductImage::create([
             'product_id' => $productId,
@@ -43,27 +41,7 @@ class ImageService
 
     public function generateThumbnails(ProductImage $image): array
     {
-        $sizes = [
-            'thumbnail' => 150,
-            'medium' => 500,
-            'large' => 1200,
-        ];
-
-        $paths = [];
-        $originalPath = storage_path("app/public/{$image->path}");
-
-        if (!file_exists($originalPath)) {
-            return $paths;
-        }
-
-        foreach ($sizes as $sizeName => $size) {
-            $resizedPath = $this->resizeImage($originalPath, $size, $sizeName, $image->product_id);
-            if ($resizedPath) {
-                $paths[$sizeName] = $resizedPath;
-            }
-        }
-
-        return $paths;
+        return [];
     }
 
     protected function resizeImage(
@@ -147,7 +125,7 @@ class ImageService
 
     protected function generateFilename(UploadedFile $file): string
     {
-        $extension = 'webp';
+        $extension = $file->getClientOriginalExtension();
         $randomString = Str::random(8);
 
         return "{$randomString}.{$extension}";

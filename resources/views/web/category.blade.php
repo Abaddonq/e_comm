@@ -298,8 +298,8 @@
         position: absolute;
         top: 12px;
         right: 12px;
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         background: white;
         border: none;
@@ -312,21 +312,19 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .product-card:hover .wishlist-btn {
+    .product-card:hover .wishlist-btn,
+    .product-card:active .wishlist-btn {
         opacity: 1;
     }
 
-    .wishlist-btn:hover {
+    .wishlist-btn:hover,
+    .wishlist-btn:active {
         background: #f5f5f5;
     }
 
     .wishlist-btn.active {
-        background: #1a1a1a;
-        opacity: 1;
-    }
-
-    .wishlist-btn.active {
         background: white;
+        opacity: 1;
     }
 
     .wishlist-btn.active svg {
@@ -350,9 +348,11 @@
         opacity: 0;
         transform: translateY(10px);
         transition: all 0.3s ease;
+        min-height: 44px;
     }
 
-    .product-card:hover .quick-add-btn {
+    .product-card:hover .quick-add-btn,
+    .product-card:active .quick-add-btn {
         opacity: 1;
         transform: translateY(0);
     }

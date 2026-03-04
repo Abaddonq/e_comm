@@ -391,6 +391,10 @@
             background: transparent;
             border: none;
             padding: 0;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
         }
         
         .header-icon:focus {
@@ -399,8 +403,8 @@
         }
         
         .header-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 26px;
+            height: 27px;
         }
         
         .header-icon:hover {
@@ -593,6 +597,28 @@
         
         @media (max-width: 640px) {
             .product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            
+            /* Hero Mobile */
+            .hero-title { font-size: 36px; }
+            .hero-subtitle { font-size: 12px; letter-spacing: 0.2em; }
+            .hero-cta { padding: 14px 32px; font-size: 12px; }
+            
+            /* Header Mobile */
+            .header { height: 70px; }
+            .header-inner { padding: 0 20px; }
+            .logo { font-size: 18px; }
+            
+            /* Touch-friendly buttons */
+            .quick-add-btn, .wishlist-btn, .hero-cta {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        
+        /* Smooth scroll snap for sections */
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y proximity;
         }
         
         .product-card {
@@ -638,12 +664,14 @@
             border: none;
         }
         
-        .product-card:hover .product-quick-add {
+        .product-card:hover .product-quick-add,
+        .product-card:active .product-quick-add {
             opacity: 1;
             transform: translateY(0);
         }
         
-        .product-quick-add:hover {
+        .product-quick-add:hover,
+        .product-quick-add:active {
             background: var(--color-secondary);
             color: white;
         }
@@ -802,9 +830,14 @@
         .mobile-menu-btn {
             display: none;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
             gap: 5px;
             cursor: pointer;
-            padding: 10px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
         }
         
         .mobile-menu-btn span {

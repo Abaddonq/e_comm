@@ -21,8 +21,9 @@ RUN npm install && npm run build
 # Make startup script executable
 RUN chmod +x /var/www/start-railway.sh
 
-RUN mkdir -p /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views && \
-    chmod -R 755 /var/www/storage /var/www/bootstrap/cache
+RUN mkdir -p /var/www/storage/app/public /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views && \
+    chmod -R 755 /var/www/storage /var/www/bootstrap/cache && \
+    chmod -R 777 /var/www/storage/app/public
 
 EXPOSE 9000
 

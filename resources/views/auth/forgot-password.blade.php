@@ -1,25 +1,168 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+@extends('layouts.web')
+
+@section('title', ' - Forgot Password')
+
+<style>
+    .auth-page {
+        min-height: 100vh;
+        padding-top: 85px;
+        background: #fafafa;
+    }
+
+    .auth-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+    }
+
+    .auth-card {
+        max-width: 560px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid var(--color-border);
+        border-radius: 14px;
+        padding: 28px;
+    }
+
+    .auth-title {
+        font-size: 32px;
+        font-weight: 400;
+        letter-spacing: 0.03em;
+        color: var(--color-secondary);
+        margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+        color: var(--color-muted);
+        font-size: 14px;
+        margin-bottom: 22px;
+        line-height: 1.7;
+    }
+
+    .status-box {
+        margin-bottom: 14px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .field {
+        margin-bottom: 14px;
+    }
+
+    .field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+    }
+
+    .field input {
+        width: 100%;
+        height: 46px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 0 12px;
+        background: #fff;
+        font-size: 14px;
+        color: var(--color-secondary);
+    }
+
+    .field input:focus {
+        outline: none;
+        border-color: var(--color-secondary);
+    }
+
+    .error-text {
+        margin-top: 6px;
+        color: #b91c1c;
+        font-size: 12px;
+    }
+
+    .auth-btn {
+        width: 100%;
+        margin-top: 10px;
+        height: 48px;
+        border: 1px solid var(--color-secondary);
+        border-radius: 8px;
+        background: var(--color-secondary);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .auth-btn:hover {
+        background: var(--color-hover);
+        border-color: var(--color-hover);
+    }
+
+    .auth-footer {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--color-muted);
+    }
+
+    .text-link {
+        color: var(--color-secondary);
+        text-decoration: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .text-link:hover {
+        color: var(--color-hover);
+    }
+
+    @media (max-width: 640px) {
+        .auth-page { padding-top: 70px; }
+        .auth-container { padding: 28px 16px 52px; }
+        .auth-card { padding: 22px 16px; }
+        .auth-title { font-size: 26px; }
+    }
+</style>
+
+@section('content')
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1 class="auth-title">Sifre Sifirlama</h1>
+            <p class="auth-subtitle">E-posta adresinizi girin, size sifre yenileme baglantisini gonderelim.</p>
+
+            @if (session('status'))
+                <div class="status-box">{{ session('status') }}</div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}">
+                @csrf
+
+                <div class="field">
+                    <label for="email">E-Posta</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
+                    @error('email')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <button type="submit" class="auth-btn">Sifirlama Baglantisi Gonder</button>
+            </form>
+
+            <p class="auth-footer">
+                <a href="{{ route('login') }}" class="text-link">Giris Ekranina Don</a>
+            </p>
+        </div>
     </div>
-
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</div>
+@endsection

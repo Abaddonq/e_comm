@@ -10,7 +10,29 @@ if ($uri !== '/') {
 
     if ($candidatePath !== false && str_starts_with($candidatePath, $publicPath) && is_file($candidatePath)) {
         $extension = strtolower(pathinfo($candidatePath, PATHINFO_EXTENSION));
-        $mimeType = (string) (mime_content_type($candidatePath) ?: 'application/octet-stream');
+        $mimeTypeMap = [
+            'css' => 'text/css; charset=UTF-8',
+            'js' => 'application/javascript; charset=UTF-8',
+            'mjs' => 'application/javascript; charset=UTF-8',
+            'json' => 'application/json; charset=UTF-8',
+            'map' => 'application/json; charset=UTF-8',
+            'svg' => 'image/svg+xml',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            'ttf' => 'font/ttf',
+            'otf' => 'font/otf',
+            'eot' => 'application/vnd.ms-fontobject',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'avif' => 'image/avif',
+            'ico' => 'image/x-icon',
+            'html' => 'text/html; charset=UTF-8',
+            'txt' => 'text/plain; charset=UTF-8',
+        ];
+        $mimeType = $mimeTypeMap[$extension] ?? 'application/octet-stream';
         $lastModified = filemtime($candidatePath) ?: time();
 
         header('Content-Type: ' . $mimeType);

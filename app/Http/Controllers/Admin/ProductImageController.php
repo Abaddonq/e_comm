@@ -21,7 +21,7 @@ class ProductImageController extends Controller
     {
         $validated = $request->validate([
             'images' => 'required|array',
-            'images.*' => 'image|mimes:jpeg,png,webp|max:5120',
+            'images.*' => 'required|file|mimetypes:image/avif,image/webp|max:5120',
             'alt_text' => 'nullable|string|max:255',
         ]);
 

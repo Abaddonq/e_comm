@@ -11,6 +11,8 @@
             srcset="/img/background.webp 1920w, /img/background.webp 1280w, /img/background.webp 640w"
             sizes="100vw"
             alt="Luxury Furniture" 
+            width="1534"
+            height="1080"
             style="width:100%;height:100%;object-fit:cover;"
             fetchpriority="high">
     </div>
@@ -60,9 +62,9 @@
                 <a href="{{ route('product.show', $product->slug) }}">
                     <div class="product-image">
                         @if($firstImage)
-                            <img src="{{ asset('storage/' . $firstImage->path) }}" alt="{{ $product->title }}">
+                            <img src="{{ asset('storage/' . $firstImage->path) }}" alt="{{ $product->title }}" loading="lazy" decoding="async">
                         @else
-                            <img src="/img/mock-img.jpg" alt="{{ $product->title }}">
+                            <img src="/img/mock-img.jpg" alt="{{ $product->title }}" loading="lazy" decoding="async" width="401" height="400">
                         @endif
                         <button class="product-quick-add" data-variant-id="{{ $variantId }}" {{ !$variantId ? 'disabled' : '' }}>
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,9 +100,9 @@
             <a href="{{ route('category.show', $category->slug) }}" class="product-card" style="text-decoration:none;">
                 <div class="product-image">
                     @if($category->image)
-                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" loading="lazy" decoding="async">
                     @else
-                        <img src="/img/mock-img.jpg" alt="{{ $category->name }}">
+                        <img src="/img/mock-img.jpg" alt="{{ $category->name }}" loading="lazy" decoding="async" width="401" height="400">
                     @endif
                 </div>
                 <h3 class="product-name" style="text-align:center;">{{ $category->name }}</h3>

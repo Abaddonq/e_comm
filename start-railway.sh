@@ -23,7 +23,7 @@ echo "Creating storage symlink..."
 php artisan storage:link || true
 
 # Start the application
-# Using artisan serve for now as per current Dockerfile, 
-# but consider PHP-FPM/Nginx for true production.
+# Use PHP built-in server with a custom router so we can
+# apply cache headers and conditional responses for static assets.
 echo "Starting application server..."
-php artisan serve --host=0.0.0.0 --port=9000
+php -S 0.0.0.0:9000 -t public server-router.php

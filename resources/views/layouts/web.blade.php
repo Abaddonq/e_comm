@@ -107,17 +107,6 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Page Loader Script - Inline for immediate execution -->
-    <script>
-        window.addEventListener('load', function() {
-            var loader = document.getElementById('pageLoader');
-            if (loader) {
-                loader.classList.add('hidden');
-                setTimeout(function() { loader.remove(); }, 300);
-            }
-        });
-    </script>
-    
     <style>
         @font-face {
             font-family: 'Inter';
@@ -1343,8 +1332,8 @@
     </footer>
 
     <script>
-        // Hide page loader when ready
-        window.addEventListener('load', function() {
+        // Hide page loader early for better LCP
+        function hidePageLoader() {
             const loader = document.getElementById('pageLoader');
             if (loader) {
                 loader.classList.add('hidden');
@@ -1352,7 +1341,9 @@
                     loader.remove();
                 }, 300);
             }
-        });
+        }
+        document.addEventListener('DOMContentLoaded', hidePageLoader);
+        window.addEventListener('load', hidePageLoader);
         
         // Toast notification function
         function showToast(message, type = 'success') {

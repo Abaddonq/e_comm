@@ -184,9 +184,9 @@
             <h3 class="text-lg font-medium mb-2">Upload Images</h3>
             <form action="{{ route('admin.products.images.store', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp" 
+                <input type="file" name="images[]" multiple accept="image/avif,image/webp" 
                     class="w-full rounded-md border-gray-300 shadow-sm mb-2">
-                <p class="text-sm text-gray-500 mb-2">Max 5MB per file. JPEG, PNG, WebP allowed.</p>
+                <p class="text-sm text-gray-500 mb-2">Max 5MB per file. AVIF and WebP only.</p>
                 <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
                     Upload
                 </button>

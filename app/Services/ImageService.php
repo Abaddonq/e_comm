@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class ImageService
 {
-    protected array $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    protected array $allowedMimeTypes = ['image/avif', 'image/webp'];
     protected int $maxFileSize = 5 * 1024 * 1024; // 5MB
 
     public function uploadProductImage(
@@ -112,7 +112,7 @@ class ImageService
     {
         if (!in_array($file->getMimeType(), $this->allowedMimeTypes)) {
             throw new \InvalidArgumentException(
-                'Invalid file type. Allowed types: JPEG, PNG, WebP'
+                'Invalid file type. Allowed types: AVIF, WebP'
                 );
         }
 

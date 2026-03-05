@@ -6,6 +6,7 @@
 $activeTab = request()->query('tab', 'account');
 @endphp
 
+@section('content')
 <style>
     .profile-page {
         padding-top: 85px;
@@ -76,7 +77,553 @@ $activeTab = request()->query('tab', 'account');
     .profile-nav-item {
         display: flex;
         align-items: center;
-        
+        gap: 12px;
+        width: 100%;
+        padding: 14px 16px;
+        border: none;
+        background: none;
+        font-size: 14px;
+        color: #666;
+        cursor: pointer;
+        border-radius: 8px;
+        text-align: left;
+        transition: all 0.2s;
+    }
+
+    .profile-nav-item:hover {
+        background: #f5f5f5;
+        color: #1a1a1a;
+    }
+
+    .profile-nav-item.active {
+        background: #1a1a1a;
+        color: white;
+    }
+
+    .profile-nav-item svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .profile-content {
+        min-height: 500px;
+    }
+
+    .profile-section {
+        display: none;
+    }
+
+    .profile-section.active {
+        display: block;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #1a1a1a;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        background: #1a1a1a;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #333;
+    }
+
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .btn-secondary:hover {
+        background: #eee;
+    }
+
+    .btn-danger {
+        background: #dc2626;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #b91c1c;
+    }
+
+    .btn-sm {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .alert-error {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    /* Orders */
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .order-number {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .order-date {
+        font-size: 13px;
+        color: #666;
+        margin-top: 4px;
+    }
+
+    .order-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .order-status.pending { background: #fef3c7; color: #92400e; }
+    .order-status.paid { background: #dbeafe; color: #1e40af; }
+    .order-status.processing { background: #e0e7ff; color: #3730a3; }
+    .order-status.shipped { background: #d1fae5; color: #065f46; }
+    .order-status.delivered { background: #d1fae5; color: #065f46; }
+    .order-status.cancelled { background: #fef2f2; color: #991b1b; }
+
+    .order-products-preview {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .order-product-thumb {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f5f5f5;
+    }
+
+    .order-product-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .order-product-thumb.placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+    }
+
+    .order-product-more {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .order-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+    }
+
+    .order-items-count {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .order-total {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .order-actions {
+        margin-top: 16px;
+    }
+
+    /* Wishlist */
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+        .wishlist-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+        .wishlist-grid { grid-template-columns: 1fr; }
+    }
+
+    .wishlist-item {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .wishlist-image {
+        display: block;
+        aspect-ratio: 1;
+        background: #f5f5f5;
+    }
+
+    .wishlist-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .wishlist-image .no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+    }
+
+    .wishlist-info {
+        padding: 16px;
+    }
+
+    .wishlist-info h3 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .wishlist-info h3 a {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+
+    .wishlist-price {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .wishlist-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .empty-state, .empty-wishlist {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+    }
+
+    .empty-state svg, .empty-wishlist svg {
+        width: 64px;
+        height: 64px;
+        color: #ccc;
+        margin-bottom: 16px;
+    }
+
+    .empty-state h3, .empty-wishlist h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p, .empty-wishlist p {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    /* Addresses */
+    .addresses-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .addresses-grid { grid-template-columns: 1fr; }
+    }
+
+    .address-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    .address-card.default {
+        border: 2px solid #1a1a1a;
+    }
+
+    .address-default-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #1a1a1a;
+        color: white;
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .address-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+    }
+
+    .address-phone {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .address-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+    }
+
+    .address-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+    }
+
+    .address-actions button {
+        background: none;
+        border: none;
+        font-size: 13px;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .address-actions button:hover {
+        color: #1a1a1a;
+    }
+
+    .address-actions .delete-btn:hover {
+        color: #dc2626;
+    }
+
+    .add-address-card {
+        background: white;
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-height: 180px;
+    }
+
+    .add-address-card:hover {
+        border-color: #1a1a1a;
+    }
+
+    .add-address-card svg {
+        width: 32px;
+        height: 32px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .add-address-card span {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #666;
+        padding: 4px;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .checkbox-label input {
+        width: 18px;
+        height: 18px;
+    }
+
+    .warning-text {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .logout-section, .delete-account-section {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+</style>
+
+<div class="profile-page">
     <div class="profile-container">
         <div class="profile-header">
             <h1>Hesabım</h1>
@@ -190,7 +737,7 @@ $activeTab = request()->query('tab', 'account');
                     
                     @if($orders->count() > 0)
                         <div class="orders-list">
-                            @foreach($orders as $index => $order)
+                            @foreach($orders as $order)
                                 <div class="order-card">
                                     <div class="order-header">
                                         <div>
@@ -338,7 +885,7 @@ $activeTab = request()->query('tab', 'account');
                     </div>
                     
                     <div class="delete-account-section">
-                        <h2 class="section-title">Hesabı Sil</h2>
+                        <h2 class="section-title">HESABI Sil</h2>
                         <p class="warning-text">Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinecektir. Bu işlem geri alınamaz.</p>
                         
                         <div class="alert alert-error" id="deleteAccountError" style="display: none;"></div>
@@ -438,7 +985,7 @@ $activeTab = request()->query('tab', 'account');
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
             body: JSON.stringify({ 
-                product_id: wishlistId 
+                product_id: productId
             })
         })
         .then(response => response.json())
@@ -702,3 +1249,4 @@ $activeTab = request()->query('tab', 'account');
         }
     });
 </script>
+@endsection

@@ -176,6 +176,7 @@
 
                 <form method="POST" action="{{ route('admin.orders.update-shipment', $order->id) }}">
                     @csrf
+                    @method('PUT')
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tracking Number</label>
                         <input type="text" name="tracking_number" value="{{ $order->shipment->tracking_number ?? '' }}" 

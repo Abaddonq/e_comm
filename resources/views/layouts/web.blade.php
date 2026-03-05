@@ -1226,6 +1226,16 @@
             </nav>
             
             <div class="header-icons">
+                <div class="lang-toggle" role="radiogroup" aria-label="{{ __('Language') }}">
+                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
+                        @csrf
+                        <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'tr' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'tr' ? 'true' : 'false' }}">TR</button>
+                    </form>
+                    <form method="POST" action="{{ route('locale.switch', 'en') }}" style="display:contents;">
+                        @csrf
+                        <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}">EN</button>
+                    </form>
+                </div>
                 <button type="button" class="header-icon" id="searchOpenBtn" aria-label="{{ __('Search') }}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -1251,16 +1261,6 @@
                             <a href="{{ route('register') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">{{ __('Sign Up Nav') }}</a>
                         @endauth
                     </div>
-                </div>
-                <div class="lang-toggle" role="radiogroup" aria-label="{{ __('Language') }}">
-                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
-                        @csrf
-                        <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'tr' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'tr' ? 'true' : 'false' }}">TR</button>
-                    </form>
-                    <form method="POST" action="{{ route('locale.switch', 'en') }}" style="display:contents;">
-                        @csrf
-                        <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}">EN</button>
-                    </form>
                 </div>
                 <a href="{{ route('cart.index') }}" class="header-icon">
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24">

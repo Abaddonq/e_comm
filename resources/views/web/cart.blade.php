@@ -40,6 +40,103 @@
         overflow-x: auto;
     }
 
+    .cart-mobile-list {
+        display: none;
+    }
+
+    .cart-mobile-item {
+        padding: 16px;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .cart-mobile-item:last-child {
+        border-bottom: none;
+    }
+
+    .cart-mobile-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .cart-mobile-image {
+        width: 72px;
+        height: 72px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #f5f5f5;
+        flex-shrink: 0;
+    }
+
+    .cart-mobile-image-placeholder {
+        width: 72px;
+        height: 72px;
+        border-radius: 10px;
+        border: 1px solid var(--color-border);
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-muted);
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+
+    .cart-mobile-meta {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .cart-mobile-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--color-secondary);
+        margin-bottom: 3px;
+        line-height: 1.4;
+    }
+
+    .cart-mobile-sku {
+        font-size: 12px;
+        color: var(--color-muted);
+    }
+
+    .cart-mobile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 12px;
+        margin-bottom: 12px;
+    }
+
+    .cart-mobile-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .cart-mobile-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+    }
+
+    .cart-mobile-value {
+        font-size: 14px;
+        color: var(--color-secondary);
+    }
+
+    .cart-mobile-qty {
+        width: 100%;
+        max-width: 110px;
+    }
+
+    .cart-mobile-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
     .cart-items-table {
         width: 100%;
         border-collapse: collapse;
@@ -79,6 +176,20 @@
         border-radius: 10px;
         object-fit: cover;
         background: #f5f5f5;
+        flex-shrink: 0;
+    }
+
+    .cart-product-image-placeholder {
+        width: 78px;
+        height: 78px;
+        border-radius: 10px;
+        border: 1px solid var(--color-border);
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-muted);
+        font-size: 11px;
         flex-shrink: 0;
     }
 
@@ -142,6 +253,10 @@
         position: sticky;
         top: 110px;
         height: fit-content;
+    }
+
+    .cart-mobile-bar {
+        display: none;
     }
 
     .summary-title {
@@ -246,12 +361,70 @@
         }
 
         .cart-container {
-            padding: 28px 16px 52px;
+            padding: 28px 16px 120px;
         }
 
         .cart-heading {
             font-size: 28px;
             margin-bottom: 22px;
+        }
+
+        .cart-items-table-wrap {
+            display: none;
+        }
+
+        .cart-mobile-list {
+            display: block;
+        }
+
+        .cart-summary-card {
+            padding: 18px;
+        }
+
+        .cart-mobile-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1200;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+            background: #fff;
+            border-top: 1px solid var(--color-border);
+            box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .cart-mobile-bar-total {
+            min-width: 0;
+        }
+
+        .cart-mobile-bar-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-muted);
+            margin-bottom: 2px;
+        }
+
+        .cart-mobile-bar-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-secondary);
+            line-height: 1.2;
+        }
+
+        .cart-mobile-bar .theme-btn {
+            width: auto;
+            min-width: 180px;
+            min-height: 44px;
+            padding: 10px 14px;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
         }
     }
 </style>
@@ -286,6 +459,8 @@
                                                         alt="{{ $item['item']->variant->product->title }}"
                                                         class="cart-product-image"
                                                     >
+                                                @else
+                                                    <div class="cart-product-image-placeholder">{{ __('No Image') }}</div>
                                                 @endif
                                                 <div>
                                                     <div class="cart-product-title">{{ $item['item']->variant->product->title }}</div>
@@ -317,6 +492,60 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="cart-mobile-list">
+                        @foreach($cartData['items'] as $item)
+                            <div class="cart-mobile-item">
+                                <div class="cart-mobile-top">
+                                    @if($item['item']->variant->product->images->first())
+                                        <img
+                                            src="{{ asset('storage/' . $item['item']->variant->product->images->first()->path) }}"
+                                            alt="{{ $item['item']->variant->product->title }}"
+                                            class="cart-mobile-image"
+                                        >
+                                    @else
+                                        <div class="cart-mobile-image-placeholder">{{ __('No Image') }}</div>
+                                    @endif
+                                    <div class="cart-mobile-meta">
+                                        <div class="cart-mobile-title">{{ $item['item']->variant->product->title }}</div>
+                                        <div class="cart-mobile-sku">{{ $item['item']->variant->sku }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="cart-mobile-grid">
+                                    <div class="cart-mobile-row">
+                                        <span class="cart-mobile-label">{{ __('Price') }}</span>
+                                        <div class="cart-mobile-value">
+                                            @if($item['price_changed'])
+                                                <span class="price-old">₺{{ number_format($item['original_price'], 2) }}</span>
+                                            @endif
+                                            <span>₺{{ number_format($item['current_price'], 2) }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="cart-mobile-row">
+                                        <span class="cart-mobile-label">{{ __('Total') }}</span>
+                                        <div class="cart-mobile-value item-total">₺{{ number_format($item['subtotal'], 2) }}</div>
+                                    </div>
+
+                                    <div class="cart-mobile-row" style="grid-column: span 2;">
+                                        <span class="cart-mobile-label">{{ __('Quantity') }}</span>
+                                        <input
+                                            type="number"
+                                            value="{{ $item['item']->quantity }}"
+                                            min="1"
+                                            onchange="updateQuantity({{ $item['item']->id }}, this.value)"
+                                            class="quantity-input cart-mobile-qty"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="cart-mobile-actions">
+                                    <button type="button" onclick="removeItem({{ $item['item']->id }})" class="remove-btn">{{ __('Remove') }}</button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="cart-summary-card">
@@ -338,6 +567,18 @@
                         <strong>₺{{ number_format($cartData['subtotal'], 2) }}</strong>
                     </div>
 
+                    @auth
+                        <a href="{{ route('checkout.index') }}" class="theme-btn">{{ __('Proceed to Checkout') }}</a>
+                    @else
+                        <a href="{{ route('login') . '?redirect=' . urlencode(route('checkout.index')) }}" class="theme-btn">{{ __('Login to Checkout') }}</a>
+                    @endauth
+                </div>
+
+                <div class="cart-mobile-bar">
+                    <div class="cart-mobile-bar-total">
+                        <span class="cart-mobile-bar-label">{{ __('Total') }}</span>
+                        <strong class="cart-mobile-bar-value">₺{{ number_format($cartData['subtotal'], 2) }}</strong>
+                    </div>
                     @auth
                         <a href="{{ route('checkout.index') }}" class="theme-btn">{{ __('Proceed to Checkout') }}</a>
                     @else

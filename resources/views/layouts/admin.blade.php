@@ -5,7 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }} - Admin</title>
+    
+    <style>
+        /* Critical CSS */
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; }
+        .admin-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 9999; width: 100%; height: 64px; background: #ffffff; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .page-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #f3f4f6; z-index: 9998; display: flex; align-items: center; justify-content: center; }
+        .page-loader.hidden { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .loader-spinner { width: 40px; height: 40px; border: 3px solid #e5e7eb; border-top: 3px solid #374151; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <style>
         .admin-nav {
             position: fixed;
@@ -120,6 +132,11 @@
     </style>
 </head>
 <body class="font-sans antialiased">
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+    </div>
+    
     <div class="min-h-screen bg-gray-100">
         <nav class="admin-nav">
             <div class="admin-nav-content">
@@ -187,6 +204,15 @@
         </main>
     </div>
     <script>
+        // Hide page loader
+        window.addEventListener('load', function() {
+            var loader = document.getElementById('pageLoader');
+            if (loader) {
+                loader.classList.add('hidden');
+                setTimeout(function() { loader.remove(); }, 300);
+            }
+        });
+        
         setTimeout(function() {
             var toastSuccess = document.getElementById('toast-success');
             var toastError = document.getElementById('toast-error');

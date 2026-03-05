@@ -22,7 +22,16 @@
     <link rel="preload" href="/fonts/inter-v20-latin-600.woff2" as="font" type="font/woff2" crossorigin>
     
     <style>
-        @font-face {
+        /* Critical CSS for initial load */
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; }
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 85px; z-index: 1000; background: transparent; }
+        .page-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #fff; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .page-loader.hidden { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .loader-spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #333; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    
+    @font-face {
             font-family: 'Inter';
             src: url('/fonts/inter-v20-latin-300.woff2') format('woff2');
             font-weight: 300;
@@ -891,6 +900,11 @@
     @yield('schema')
 </head>
 <body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+    </div>
+    
     <!-- Header -->
     <header class="header" id="header">
         <div class="header-inner">
@@ -1054,6 +1068,17 @@
     </footer>
 
     <script>
+        // Hide page loader when ready
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
+            if (loader) {
+                loader.classList.add('hidden');
+                setTimeout(function() {
+                    loader.remove();
+                }, 300);
+            }
+        });
+        
         // Toast notification function
         function showToast(message, type = 'success') {
             const existing = document.querySelector('.toast-notification');

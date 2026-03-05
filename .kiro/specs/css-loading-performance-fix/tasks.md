@@ -1,0 +1,110 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Fault Condition** - CSS Loading Performance Issues
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the performance bugs exist
+  - **Scoped PBT Approach**: Test concrete failing cases across both layouts (app.blade.php and admin.blade.php)
+  - Test implementation details from Fault Condition in design:
+    - Verify external stylesheet position relative to inline styles in DOM
+    - Verify page loader script position and execution timing
+    - Verify font preconnect has crossorigin attribute
+    - Measure resource loading order and timing
+    - Detect FOUC by capturing screenshots during page load
+  - The test assertions should match the Expected Behavior Properties from design:
+    - ASSERT externalStylesheetPosition < inlineStylesPosition
+    - ASSERT pageLoaderHiddenWithin(100ms, windowLoadEvent)
+    - ASSERT noFOUCDetected(screenshots)
+    - ASSERT fontPreconnect.crossorigin == true
+    - ASSERT renderingNotBlocked(performanceMetrics)
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bugs exist)
+  - Document counterexamples found:
+    - Resource timing showing inline styles blocking rendering
+    - Page loader remaining visible indefinitely
+    - Screenshots showing unstyled content flash
+    - Missing crossorigin attribute on font preconnect
+  - Mark task complete when test is written, run, and failures are documented
+  - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Visual and Functional Consistency
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for all pages that currently render correctly:
+    - Capture full-page screenshots of major routes (home, product pages, admin dashboard)
+    - Record JavaScript functionality (page loader hiding, toast notifications, navigation)
+    - Document font rendering (Figtree font family display)
+    - Test responsive layouts across viewport sizes
+  - Write property-based tests capturing observed behavior patterns from Preservation Requirements:
+    - Property: For all page loads, final rendered appearance is identical to baseline
+    - Property: For all interactive features, JavaScript behavior is unchanged
+    - Property: For all text elements, font rendering is identical
+    - Property: For all viewport sizes, responsive layouts render identically
+  - Property-based testing generates many test cases for stronger guarantees
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+
+- [x] 3. Fix CSS loading performance issues
+
+  - [x] 3.1 Fix app.blade.php layout
+    - Reorder head section: move @vite directive immediately after meta tags, before inline styles
+    - Add crossorigin attribute to font preconnect: `<link rel="preconnect" href="https://fonts.bunny.net" crossorigin>`
+    - Move page loader hiding script from end of body to inline script in head (after critical CSS)
+    - Ensure critical CSS remains minimal (page loader and essential body styles only)
+    - Verify optimal head section order: meta tags → @vite → font preconnect with crossorigin → critical CSS → page loader script
+    - _Bug_Condition: isBugCondition(pageLoad) where externalStylesheetPosition > inlineStylesPosition OR pageLoaderScript.position == 'end-of-body' OR fontPreconnect.crossorigin == null_
+    - _Expected_Behavior: externalStylesheetPosition < inlineStylesPosition AND pageLoaderHiddenWithin(100ms) AND fontPreconnect.crossorigin == true AND noFOUCDetected_
+    - _Preservation: All existing visual styles, JavaScript functionality, and font rendering must remain unchanged (Requirements 3.1-3.5)_
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5_
+
+  - [x] 3.2 Fix admin.blade.php layout
+    - Reorder head section: move @vite directive immediately after meta tags, before all inline styles
+    - Move page loader hiding script from end of body to inline script in head (after critical CSS)
+    - Consolidate duplicate styles: remove duplicate admin-nav definition from critical CSS section
+    - Consider moving large inline styles (150+ lines) to external stylesheet or optimize size
+    - Add font preconnect with crossorigin if using custom fonts
+    - Verify optimal head section order: meta tags → @vite → font preconnect (if needed) → critical CSS → page loader script → remaining inline styles
+    - _Bug_Condition: isBugCondition(pageLoad) where externalStylesheetPosition > inlineStylesPosition OR pageLoaderScript.position == 'end-of-body' OR inlineStyles.size > 1000_
+    - _Expected_Behavior: externalStylesheetPosition < inlineStylesPosition AND pageLoaderHiddenWithin(100ms) AND renderingNotBlocked_
+    - _Preservation: All admin panel visual styles, navigation, and interactions must remain unchanged (Requirements 3.1-3.5)_
+    - _Requirements: 2.1, 2.2, 2.3, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5_
+
+  - [x] 3.3 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Optimal Resource Loading Order
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bugs are fixed)
+    - Verify all assertions pass:
+      - External stylesheet loads before inline styles
+      - Page loader hides within 100ms of window.load
+      - No FOUC detected in screenshots
+      - Font preconnect has crossorigin attribute
+      - Rendering is not blocked by resource loading order
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+
+  - [x] 3.4 Verify preservation tests still pass
+    - **Property 2: Preservation** - Visual and Functional Consistency
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Verify all preservation properties hold:
+      - Final rendered appearance is identical to baseline screenshots
+      - JavaScript functionality works exactly as before
+      - Font rendering displays the same font families
+      - Responsive layouts render identically across viewport sizes
+    - Confirm all tests still pass after fix (no regressions)
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Run full test suite to verify all tests pass
+  - Manually test page loading on both public and admin sections
+  - Verify page loader hides correctly on all pages
+  - Verify no visual regressions or FOUC on slow network conditions
+  - Test cross-browser compatibility (Chrome, Firefox, Safari)
+  - Ask the user if questions arise

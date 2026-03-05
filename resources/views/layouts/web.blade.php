@@ -22,16 +22,101 @@
     <link rel="preload" href="/fonts/inter-v20-latin-600.woff2" as="font" type="font/woff2" crossorigin>
     
     <style>
-        /* Critical CSS for initial load */
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; }
-        .header { position: fixed; top: 0; left: 0; right: 0; height: 85px; z-index: 1000; background: transparent; }
-        .page-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #fff; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        /* Critical CSS for initial load - Prevents FOUC */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; 
+            background: #fff; 
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Page Loader - Highest Priority */
+        .page-loader { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: #fff; 
+            z-index: 9999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
         .page-loader.hidden { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .loader-spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #333; border-radius: 50%; animation: spin 1s linear infinite; }
+        .loader-spinner { 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid #f3f3f3; 
+            border-top: 3px solid #333; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Header Structure - Prevents Layout Shift */
+        .header { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            height: 85px; 
+            z-index: 1000; 
+            background: transparent; 
+            transition: all 0.3s ease;
+        }
+        .header-inner { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        .logo { 
+            font-size: 24px; 
+            font-weight: 700; 
+            letter-spacing: 0.2em; 
+            color: #fff; 
+            text-decoration: none; 
+        }
+        
+        /* Basic Layout Structure */
+        .profile-page, .product-page, .cart-page, .checkout-page { 
+            min-height: 100vh; 
+            padding-top: 85px; 
+        }
+        
+        /* Prevent Content Jump */
+        img { max-width: 100%; height: auto; display: block; }
+        button, a { cursor: pointer; }
+        
+        /* Mobile Adjustments */
+        @media (max-width: 640px) {
+            .header { height: 70px; }
+            .header-inner { padding: 0 20px; }
+            .logo { font-size: 18px; }
+            .profile-page, .product-page, .cart-page, .checkout-page { padding-top: 70px; }
+        }
     </style>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Page Loader Script - Inline for immediate execution -->
+    <script>
+        window.addEventListener('load', function() {
+            var loader = document.getElementById('pageLoader');
+            if (loader) {
+                loader.classList.add('hidden');
+                setTimeout(function() { loader.remove(); }, 300);
+            }
+        });
+    </script>
     
     <style>
         @font-face {

@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $publicPath = __DIR__ . '/public';
+$storagePublicPath = realpath(__DIR__ . '/storage/app/public');
 
 if ($uri !== '/') {
     $candidatePath = realpath($publicPath . DIRECTORY_SEPARATOR . ltrim($uri, '/'));
+    $isInsidePublic = $candidatePath !== false && str_starts_with($candidatePath, $publicPath);
+    $isInsideStoragePublic = $candidatePath !== false && $storagePublicPath !== false && str_starts_with($candidatePath, $storagePublicPath);
 
-    if ($candidatePath !== false && str_starts_with($candidatePath, $publicPath) && is_file($candidatePath)) {
+    if ($candidatePath !== false && is_file($candidatePath) && ($isInsidePublic || $isInsideStoragePublic)) {
         $extension = strtolower(pathinfo($candidatePath, PATHINFO_EXTENSION));
         $mimeTypeMap = [
             'css' => 'text/css; charset=UTF-8',

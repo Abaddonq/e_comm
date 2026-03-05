@@ -23,6 +23,7 @@ class ImageService
         $filename = $this->generateFilename($file);
         $directory = "products/{$productId}";
         $path = "{$directory}/{$filename}";
+        $nextSortOrder = (int) ProductImage::where('product_id', $productId)->max('sort_order') + 1;
 
         // Save the original file directly
         Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
@@ -31,6 +32,7 @@ class ImageService
             'product_id' => $productId,
             'path' => $path,
             'alt_text' => $altText ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+            'sort_order' => $nextSortOrder,
             'is_primary' => false,
         ]);
 

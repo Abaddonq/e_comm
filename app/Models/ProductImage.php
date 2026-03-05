@@ -23,6 +23,7 @@ class ProductImage extends Model
         'large_path',
         'alt_text',
         'sort_order',
+        'is_primary',
     ];
 
     /**
@@ -32,6 +33,7 @@ class ProductImage extends Model
      */
     protected $casts = [
         'sort_order' => 'integer',
+        'is_primary' => 'boolean',
     ];
 
     /**

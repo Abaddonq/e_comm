@@ -947,6 +947,9 @@
             height: 44px;
             min-width: 44px;
             min-height: 44px;
+            border: none;
+            background: transparent;
+            padding: 0;
         }
         
         .mobile-menu-btn span {
@@ -958,6 +961,132 @@
         
         .header.scrolled .mobile-menu-btn span {
             background: var(--color-secondary);
+        }
+
+        .mobile-nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(88vw, 360px);
+            height: 100vh;
+            background: #fff;
+            z-index: 1999;
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .mobile-nav-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--color-muted);
+        }
+
+        .mobile-nav-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .mobile-nav-body {
+            padding: 12px 16px 24px;
+            overflow-y: auto;
+        }
+
+        .mobile-nav-section {
+            margin-bottom: 18px;
+        }
+
+        .mobile-nav-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mobile-nav-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+            margin-bottom: 8px;
+        }
+
+        .mobile-nav-link {
+            display: block;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: var(--color-secondary);
+            text-decoration: none;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            line-height: 1.4;
+            transition: border-color var(--transition-fast), background var(--transition-fast);
+        }
+
+        .mobile-nav-link:hover {
+            border-color: var(--color-secondary);
+            background: #f7f7f7;
+        }
+
+        .mobile-nav-link-btn {
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        @media (max-width: 640px) {
+            .header-inner { padding: 0 12px; }
+            .header-icons { gap: 8px; }
+            .header-icon { width: 38px; height: 38px; min-width: 38px; min-height: 38px; }
+            .header-icon svg { width: 22px; height: 22px; }
+            .header-user-icon { display: none; }
+            .logo {
+                font-size: 16px;
+                letter-spacing: 0.12em;
+                white-space: nowrap;
+            }
         }
 
         /* Toast Notification */
@@ -1008,27 +1137,24 @@
     </div>
     
     <!-- Header -->
+    @php
+        $desktopLeftCategories = ($menuCategories ?? collect())->take(6);
+        $desktopRightCategories = ($menuCategories ?? collect())->slice(6, 6);
+    @endphp
     <header class="header" id="header">
         <div class="header-inner">
             <nav class="nav-left">
-                <a href="#" class="nav-link">Berjer</a>
-                <a href="#" class="nav-link">Sehpa</a>
-                <a href="#" class="nav-link">Puf</a>
-                <a href="#" class="nav-link">Kırlent</a>
-                <a href="#" class="nav-link">Aksesuar</a>
-                <a href="#" class="nav-link">Tablo</a>
-                <a href="#" class="nav-link">Sandalye</a>
+                @foreach($desktopLeftCategories as $category)
+                    <a href="{{ route('category.show', $category->slug) }}" class="nav-link">{{ $category->name }}</a>
+                @endforeach
             </nav>
             
             <a href="{{ route('home') }}" class="logo">DECORMOTTO</a>
             
             <nav class="nav-right">
-                <a href="#" class="nav-link">Etnik</a>
-                <a href="#" class="nav-link">Vip</a>
-                <a href="#" class="nav-link">Hikayemiz</a>
-                <a href="#" class="nav-link">İletişim</a>
-                <a href="#" class="nav-link">Mağazalar</a>
-                <a href="#" class="nav-link">Blog</a>
+                @foreach($desktopRightCategories as $category)
+                    <a href="{{ route('category.show', $category->slug) }}" class="nav-link">{{ $category->name }}</a>
+                @endforeach
             </nav>
             
             <div class="header-icons">
@@ -1064,14 +1190,61 @@
                     </svg>
                     <span class="cart-badge" id="cart-count">{{ $cartCount }}</span>
                 </a>
-                <div class="mobile-menu-btn">
+                <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Mobil menuyu ac" aria-expanded="false" aria-controls="mobileNav">
                     <span></span>
                     <span></span>
                     <span></span>
-                </div>
+                </button>
             </div>
         </div>
     </header>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+    <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <div class="mobile-nav-header">
+            <span class="mobile-nav-title">Menu</span>
+            <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Mobil menuyu kapat">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-body">
+            <div class="mobile-nav-section">
+                <span class="mobile-nav-label">Hizli Islemler</span>
+                <div class="mobile-nav-list">
+                    <button type="button" class="mobile-nav-link mobile-nav-link-btn" id="mobileSearchBtn">Ara</button>
+                    <a href="{{ route('cart.index') }}" class="mobile-nav-link">Sepetim</a>
+                    <a href="{{ auth()->check() ? route('profile.index') : route('login') }}" class="mobile-nav-link">Hesabim</a>
+                </div>
+            </div>
+            <div class="mobile-nav-section">
+                <span class="mobile-nav-label">Kategoriler</span>
+                <div class="mobile-nav-list">
+                    @forelse(($menuCategories ?? collect()) as $category)
+                        <a href="{{ route('category.show', $category->slug) }}" class="mobile-nav-link">{{ $category->name }}</a>
+                    @empty
+                        <a href="{{ route('home') }}" class="mobile-nav-link">Anasayfa</a>
+                    @endforelse
+                </div>
+            </div>
+            <div class="mobile-nav-section">
+                <span class="mobile-nav-label">Sayfalar</span>
+                <div class="mobile-nav-list">
+                    <a href="{{ route('home') }}" class="mobile-nav-link">Anasayfa</a>
+                    <a href="{{ route('search') }}" class="mobile-nav-link">Arama</a>
+                    @auth
+                        <a href="{{ route('profile.wishlist') }}" class="mobile-nav-link">Favoriler</a>
+                        <a href="{{ route('orders.index') }}" class="mobile-nav-link">Siparislerim</a>
+                        <a href="{{ route('addresses.index') }}" class="mobile-nav-link">Adreslerim</a>
+                    @else
+                        <a href="{{ route('login') }}" class="mobile-nav-link">Giris Yap</a>
+                        <a href="{{ route('register') }}" class="mobile-nav-link">Uye Ol</a>
+                    @endauth
+                </div>
+            </div>
+        </div>
+    </aside>
 
     <!-- Search Modal -->
     <div class="search-modal" id="searchModal">
@@ -1253,18 +1426,88 @@
             }
         });
         
-        // User dropdown hover effect
+        // User dropdown interactions (hover + touch)
         const userIcon = document.querySelector('.header-user-icon');
         const userDropdown = document.querySelector('.user-dropdown');
+        const userIconLink = userIcon ? userIcon.querySelector('.header-icon') : null;
+        const isAuthenticated = "{{ auth()->check() ? '1' : '0' }}" === '1';
         
         if (userIcon && userDropdown) {
             userIcon.addEventListener('mouseenter', () => {
-                userDropdown.style.display = 'block';
+                if (window.innerWidth > 768) {
+                    userDropdown.style.display = 'block';
+                }
             });
             userIcon.addEventListener('mouseleave', () => {
-                userDropdown.style.display = 'none';
+                if (window.innerWidth > 768) {
+                    userDropdown.style.display = 'none';
+                }
+            });
+
+            if (userIconLink) {
+                userIconLink.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && isAuthenticated) {
+                        e.preventDefault();
+                        userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                    }
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                if (!userIcon.contains(e.target)) {
+                    userDropdown.style.display = 'none';
+                }
             });
         }
+
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+        const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+
+        function openMobileNav() {
+            if (!mobileNav || !mobileNavOverlay || !mobileMenuBtn) return;
+            mobileNav.classList.add('active');
+            mobileNavOverlay.classList.add('active');
+            mobileNav.setAttribute('aria-hidden', 'false');
+            mobileMenuBtn.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileNav() {
+            if (!mobileNav || !mobileNavOverlay || !mobileMenuBtn) return;
+            mobileNav.classList.remove('active');
+            mobileNavOverlay.classList.remove('active');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            const searchModalEl = document.getElementById('searchModal');
+            if (!searchModalEl || !searchModalEl.classList.contains('active')) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileNav);
+        if (mobileNavClose) mobileNavClose.addEventListener('click', closeMobileNav);
+        if (mobileNavOverlay) mobileNavOverlay.addEventListener('click', closeMobileNav);
+        if (mobileSearchBtn) {
+            mobileSearchBtn.addEventListener('click', () => {
+                closeMobileNav();
+                if (searchOpenBtn) searchOpenBtn.click();
+            });
+        }
+        if (mobileNav) {
+            mobileNav.querySelectorAll('a.mobile-nav-link').forEach((link) => {
+                link.addEventListener('click', closeMobileNav);
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                closeMobileNav();
+            }
+        });
 
         // Search Modal
         const searchModal = document.getElementById('searchModal');
@@ -1348,8 +1591,11 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && searchModal.classList.contains('active')) {
-                closeSearchModal();
+            if (e.key === 'Escape') {
+                if (searchModal.classList.contains('active')) {
+                    closeSearchModal();
+                }
+                closeMobileNav();
             }
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();

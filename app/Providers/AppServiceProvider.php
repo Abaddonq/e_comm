@@ -42,6 +42,13 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             $cartCount = 0;
+            $menuCategories = Category::query()
+                ->active()
+                ->whereNull('parent_id')
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->limit(12)
+                ->get(['id', 'name', 'slug']);
 
             if (auth()->check()) {
                 $cartService = app(CartService::class);
@@ -53,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $view->with('cartCount', $cartCount);
+            $view->with('menuCategories', $menuCategories);
         });
     }
 

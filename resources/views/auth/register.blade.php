@@ -1,52 +1,178 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@extends('layouts.web')
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+@section('title', ' - Register')
+
+<style>
+    .auth-page {
+        min-height: 100vh;
+        padding-top: 85px;
+        background: #fafafa;
+    }
+
+    .auth-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+    }
+
+    .auth-card {
+        max-width: 560px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid var(--color-border);
+        border-radius: 14px;
+        padding: 28px;
+    }
+
+    .auth-title {
+        font-size: 32px;
+        font-weight: 400;
+        letter-spacing: 0.03em;
+        color: var(--color-secondary);
+        margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+        color: var(--color-muted);
+        font-size: 14px;
+        margin-bottom: 22px;
+    }
+
+    .field {
+        margin-bottom: 14px;
+    }
+
+    .field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+    }
+
+    .field input {
+        width: 100%;
+        height: 46px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 0 12px;
+        background: #fff;
+        font-size: 14px;
+        color: var(--color-secondary);
+    }
+
+    .field input:focus {
+        outline: none;
+        border-color: var(--color-secondary);
+    }
+
+    .error-text {
+        margin-top: 6px;
+        color: #b91c1c;
+        font-size: 12px;
+    }
+
+    .auth-btn {
+        width: 100%;
+        margin-top: 10px;
+        height: 48px;
+        border: 1px solid var(--color-secondary);
+        border-radius: 8px;
+        background: var(--color-secondary);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .auth-btn:hover {
+        background: var(--color-hover);
+        border-color: var(--color-hover);
+    }
+
+    .auth-footer {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--color-muted);
+    }
+
+    .text-link {
+        color: var(--color-secondary);
+        text-decoration: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .text-link:hover {
+        color: var(--color-hover);
+    }
+
+    @media (max-width: 640px) {
+        .auth-page { padding-top: 70px; }
+        .auth-container { padding: 28px 16px 52px; }
+        .auth-card { padding: 22px 16px; }
+        .auth-title { font-size: 26px; }
+    }
+</style>
+
+@section('content')
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1 class="auth-title">Uye Ol</h1>
+            <p class="auth-subtitle">DecorMotto hesabini olustur ve alisverisine hizli basla.</p>
+
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <div class="field">
+                    <label for="name">Ad Soyad</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
+                    @error('name')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="field">
+                    <label for="email">E-Posta</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username">
+                    @error('email')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="field">
+                    <label for="password">Sifre</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password">
+                    @error('password')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="field">
+                    <label for="password_confirmation">Sifre Tekrar</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password">
+                    @error('password_confirmation')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <button type="submit" class="auth-btn">Kayit Ol</button>
+            </form>
+
+            <p class="auth-footer">
+                Zaten hesabin var mi?
+                <a href="{{ route('login') }}" class="text-link">Giris Yap</a>
+            </p>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</div>
+@endsection

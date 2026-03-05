@@ -31,7 +31,10 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
     
-    @font-face {
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        @font-face {
             font-family: 'Inter';
             src: url('/fonts/inter-v20-latin-300.woff2') format('woff2');
             font-weight: 300;

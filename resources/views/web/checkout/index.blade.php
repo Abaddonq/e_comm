@@ -1,11 +1,543 @@
 @extends('layouts.web')
 
+@section('title', ' - Checkout')
+
+<style>
+    .checkout-page {
+        min-height: 100vh;
+        padding-top: 85px;
+        background: #fafafa;
+    }
+
+    .checkout-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+    }
+
+    .checkout-heading {
+        font-size: 36px;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        color: var(--color-secondary);
+        margin-bottom: 28px;
+    }
+
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 28px;
+    }
+
+    .checkout-main {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .panel {
+        background: #fff;
+        border: 1px solid var(--color-border);
+        border-radius: 14px;
+        padding: 22px;
+    }
+
+    .panel-title {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-bottom: 14px;
+    }
+
+    .notice {
+        margin-bottom: 14px;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+
+    .notice a {
+        color: inherit;
+        font-weight: 600;
+    }
+
+    .error-text {
+        font-size: 13px;
+        color: #b91c1c;
+        margin-bottom: 10px;
+    }
+
+    .text-link {
+        color: var(--color-secondary);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .text-link:hover {
+        color: var(--color-hover);
+    }
+
+    .option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .option-card {
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        padding: 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        cursor: pointer;
+        transition: border-color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .option-card.active {
+        border-color: var(--color-secondary);
+        background: #f7f7f7;
+    }
+
+    .option-card input[type="radio"] {
+        margin-top: 3px;
+        accent-color: #1a1a1a;
+    }
+
+    .option-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--color-secondary);
+        margin-bottom: 2px;
+    }
+
+    .option-sub {
+        font-size: 12px;
+        color: var(--color-muted);
+        line-height: 1.6;
+    }
+
+    .option-badge {
+        display: inline-block;
+        margin-top: 8px;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-secondary);
+    }
+
+    .card-fields {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .field-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .field {
+        margin-bottom: 12px;
+    }
+
+    .field label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        height: 44px;
+        border-radius: 8px;
+        border: 1px solid var(--color-border);
+        background: #fff;
+        padding: 0 12px;
+        font-size: 14px;
+        color: var(--color-secondary);
+    }
+
+    .field input:focus,
+    .field select:focus {
+        outline: none;
+        border-color: var(--color-secondary);
+    }
+
+    .field-note {
+        font-size: 12px;
+        color: var(--color-muted);
+        margin-top: 8px;
+    }
+
+    .checkout-summary {
+        position: sticky;
+        top: 110px;
+        height: fit-content;
+    }
+
+    .summary-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .summary-item-title {
+        color: var(--color-secondary);
+        margin-bottom: 2px;
+    }
+
+    .summary-item-sub {
+        color: var(--color-muted);
+        font-size: 12px;
+    }
+
+    .price-warning {
+        color: #92400e;
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .summary-rows {
+        border-top: 1px solid var(--color-border);
+        padding-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: var(--color-secondary);
+    }
+
+    .summary-row span:last-child {
+        font-weight: 600;
+    }
+
+    .terms-wrap {
+        margin-top: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .terms-wrap input {
+        margin-top: 2px;
+        accent-color: #1a1a1a;
+    }
+
+    .terms-text {
+        font-size: 12px;
+        color: var(--color-muted);
+    }
+
+    .terms-text a {
+        color: var(--color-secondary);
+    }
+
+    .theme-btn {
+        width: 100%;
+        margin-top: 16px;
+        min-height: 48px;
+        border-radius: 8px;
+        border: 1px solid var(--color-secondary);
+        background: var(--color-secondary);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .theme-btn:hover {
+        background: var(--color-hover);
+        border-color: var(--color-hover);
+    }
+
+    .theme-btn:disabled {
+        background: #9ca3af;
+        border-color: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    .login-note {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--color-muted);
+        text-align: center;
+    }
+
+    .empty-box {
+        background: #fff;
+        border: 1px solid var(--color-border);
+        border-radius: 14px;
+        text-align: center;
+        padding: 74px 20px;
+    }
+
+    .empty-box p {
+        font-size: 16px;
+        color: var(--color-muted);
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 1024px) {
+        .checkout-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-summary {
+            position: static;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .checkout-page {
+            padding-top: 70px;
+        }
+
+        .checkout-container {
+            padding: 28px 16px 52px;
+        }
+
+        .checkout-heading {
+            font-size: 28px;
+            margin-bottom: 22px;
+        }
+
+        .field-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 @section('content')
+<div class="checkout-page">
+    <div class="checkout-container">
+        <h1 class="checkout-heading">Odeme</h1>
+
+        @if($cart->items->isEmpty())
+            <div class="empty-box">
+                <p>Sepetiniz bos. Odeme adimina devam etmek icin urun ekleyin.</p>
+                <a href="{{ route('home') }}" class="text-link">Alisverise Devam Et</a>
+            </div>
+        @else
+            <form action="{{ route('checkout.process') }}" method="POST">
+                @csrf
+
+                <div class="checkout-grid">
+                    <div class="checkout-main">
+                        <section class="panel">
+                            <h2 class="panel-title">Teslimat Adresi</h2>
+
+                            @if(!Auth::check())
+                                <div class="notice">
+                                    Odeme icin lutfen <a href="{{ route('login') }}">giris yapin</a> veya <a href="{{ route('register') }}">hesap olusturun</a>.
+                                </div>
+                            @endif
+
+                            @if($addresses->isEmpty() && Auth::check())
+                                <a href="{{ route('addresses.create', ['redirect_to' => 'checkout']) }}" class="text-link">+ Yeni Adres Ekle</a>
+                            @endif
+
+                            @error('address_id')
+                                <p class="error-text">{{ $message }}</p>
+                            @enderror
+
+                            @if($addresses->isNotEmpty())
+                                <div class="option-list" data-selectable-group="address">
+                                    @foreach($addresses as $address)
+                                        <label class="option-card {{ old('address_id') == $address->id ? 'active' : '' }}">
+                                            <input type="radio" name="address_id" value="{{ $address->id }}" {{ old('address_id') == $address->id ? 'checked' : '' }}>
+                                            <span>
+                                                <span class="option-title">{{ $address->full_name }}</span>
+                                                <span class="option-sub">
+                                                    {{ $address->address_line1 }}
+                                                    @if($address->address_line2)
+                                                        , {{ $address->address_line2 }}
+                                                    @endif
+                                                    <br>{{ $address->city }}, {{ $address->state }} {{ $address->postal_code }}
+                                                    <br>{{ $address->country }} - {{ $address->phone }}
+                                                </span>
+                                                @if($address->is_default)
+                                                    <span class="option-badge">Varsayilan</span>
+                                                @endif
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                                @if(Auth::check())
+                                    <div style="margin-top: 12px;">
+                                        <a href="{{ route('addresses.create', ['redirect_to' => 'checkout']) }}" class="text-link">+ Yeni Adres Ekle</a>
+                                    </div>
+                                @endif
+                            @endif
+                        </section>
+
+                        <section class="panel">
+                            <h2 class="panel-title">Odeme Yontemi</h2>
+
+                            @error('payment_method')
+                                <p class="error-text">{{ $message }}</p>
+                            @enderror
+
+                            <div class="option-list" data-selectable-group="payment-method">
+                                <label class="option-card {{ old('payment_method') == 'iyzico' ? 'active' : '' }}">
+                                    <input type="radio" name="payment_method" value="iyzico" {{ old('payment_method') == 'iyzico' ? 'checked' : '' }}>
+                                    <span>
+                                        <span class="option-title">Iyzico</span>
+                                        <span class="option-sub">Kredi karti ile guvenli odeme</span>
+                                    </span>
+                                </label>
+
+                                <label class="option-card {{ old('payment_method') == 'stripe' ? 'active' : '' }}">
+                                    <input type="radio" name="payment_method" value="stripe" {{ old('payment_method') == 'stripe' ? 'checked' : '' }}>
+                                    <span>
+                                        <span class="option-title">Stripe</span>
+                                        <span class="option-sub">Stripe altyapisi ile kredi karti odemesi</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div id="card-fields" class="card-fields" style="display: none;">
+                                <div class="field">
+                                    <label for="card_number">Kart Numarasi</label>
+                                    <input id="card_number" type="text" name="card_number" placeholder="5526 0800 0000 0005">
+                                </div>
+
+                                <div class="field">
+                                    <label for="card_holder">Kart Uzerindeki Isim</label>
+                                    <input id="card_holder" type="text" name="card_holder" placeholder="John Doe">
+                                </div>
+
+                                <div class="field-grid">
+                                    <div class="field">
+                                        <label for="expire_month">Ay</label>
+                                        <select id="expire_month" name="expire_month">
+                                            @for($m = 1; $m <= 12; $m++)
+                                                <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}">{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="expire_year">Yil</label>
+                                        <select id="expire_year" name="expire_year">
+                                            @for($y = date('Y'); $y <= date('Y') + 10; $y++)
+                                                <option value="{{ $y }}">{{ $y }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="cvv">CVV</label>
+                                        <input id="cvv" type="text" name="cvv" placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+
+                                <p class="field-note">Test kartlari: 5526 0800 0000 0005 (basarili), 5526 0800 0000 0006 (basarisiz)</p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <aside class="panel checkout-summary">
+                        <h2 class="panel-title">Siparis Ozeti</h2>
+
+                        <div class="summary-items">
+                            @foreach($cartData['items'] as $item)
+                                <div class="summary-item">
+                                    <div>
+                                        <p class="summary-item-title">{{ $item['item']->variant->product->title }}</p>
+                                        <p class="summary-item-sub">{{ $item['item']->variant->sku ?? 'Varyant' }} x {{ $item['item']->quantity }}</p>
+                                        @if($item['price_changed'])
+                                            <p class="price-warning">Fiyat degisikligi algilandi</p>
+                                        @endif
+                                    </div>
+                                    <p class="summary-item-title">₺{{ number_format($item['subtotal'], 2) }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="summary-rows">
+                            <div class="summary-row">
+                                <span>Ara Toplam</span>
+                                <span>₺{{ number_format($cartData['subtotal'], 2) }}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Kargo</span>
+                                <span>Sonraki adimda hesaplanir</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Vergi</span>
+                                <span>Sonraki adimda hesaplanir</span>
+                            </div>
+                        </div>
+
+                        <div class="terms-wrap">
+                            <input type="checkbox" name="terms_accepted" id="terms_accepted" value="1" {{ old('terms_accepted') ? 'checked' : '' }}>
+                            <label for="terms_accepted" class="terms-text">
+                                <span>Kullanim Kosullari ve Gizlilik Politikasini kabul ediyorum.</span>
+                                <a href="#">Detaylar</a>
+                            </label>
+                        </div>
+                        @error('terms_accepted')
+                            <p class="error-text" style="margin-top: 8px;">{{ $message }}</p>
+                        @enderror
+
+                        <button type="submit" class="theme-btn" {{ !Auth::check() ? 'disabled' : '' }}>
+                            {{ Auth::check() ? 'Odemeye Devam Et' : 'Giris Yaparak Devam Et' }}
+                        </button>
+
+                        @if(!Auth::check())
+                            <p class="login-note">Siparisi tamamlamak icin giris yapmaniz gerekir.</p>
+                        @endif
+                    </aside>
+                </div>
+            </form>
+        @endif
+    </div>
+</div>
+@endsection
+
+@section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
     const cardFields = document.getElementById('card-fields');
-    
+
     function toggleCardFields() {
         const selected = document.querySelector('input[name="payment_method"]:checked');
         if (selected && selected.value === 'iyzico') {
@@ -14,208 +546,36 @@ document.addEventListener('DOMContentLoaded', function() {
             cardFields.style.display = 'none';
         }
     }
-    
+
+    function syncSelectableCards(groupSelector) {
+        const group = document.querySelector('[data-selectable-group="' + groupSelector + '"]');
+        if (!group) {
+            return;
+        }
+
+        group.querySelectorAll('.option-card').forEach(card => {
+            const input = card.querySelector('input[type="radio"]');
+            card.classList.toggle('active', !!input && input.checked);
+        });
+    }
+
     paymentMethods.forEach(method => {
-        method.addEventListener('change', toggleCardFields);
+        method.addEventListener('change', function() {
+            toggleCardFields();
+            syncSelectableCards('payment-method');
+        });
     });
-    
-    // Initial state on page load
+
+    const addressInputs = document.querySelectorAll('input[name="address_id"]');
+    addressInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            syncSelectableCards('address');
+        });
+    });
+
     toggleCardFields();
+    syncSelectableCards('payment-method');
+    syncSelectableCards('address');
 });
 </script>
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Checkout</h1>
-
-    @if($cart->items->isEmpty())
-        <div class="text-center py-12">
-            <p class="text-gray-500 mb-4">Your cart is empty.</p>
-            <a href="{{ route('home') }}" class="text-indigo-600 hover:text-indigo-800">
-                Continue shopping
-            </a>
-        </div>
-    @else
-        <form action="{{ route('checkout.process') }}" method="POST">
-            @csrf
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h2>
-                        
-                        @if(!Auth::check())
-                            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded mb-4">
-                                Please <a href="{{ route('login') }}" class="underline">login</a> to checkout or <a href="{{ route('register') }}" class="underline">register</a> to create an account.
-                            </div>
-                        @endif
-
-                        @if($addresses->isEmpty() && Auth::check())
-                            <div class="mb-4">
-                                <a href="{{ route('addresses.create') }}" class="text-indigo-600 hover:text-indigo-800">
-                                    + Add a new address
-                                </a>
-                            </div>
-                        @endif
-
-                        @error('address_id')
-                            <p class="text-sm text-red-600 mb-2">{{ $message }}</p>
-                        @enderror
-
-                        <div class="space-y-4">
-                            @foreach($addresses as $address)
-                                <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50 {{ old('address_id') == $address->id ? 'border-indigo-500 bg-indigo-50' : '' }}">
-                                    <input type="radio" name="address_id" value="{{ $address->id }}" {{ old('address_id') == $address->id ? 'checked' : '' }} class="mt-1">
-                                    <div class="ml-3">
-                                        <p class="font-medium">{{ $address->full_name }}</p>
-                                        <p class="text-sm text-gray-600">{{ $address->address_line1 }}</p>
-                                        @if($address->address_line2)
-                                            <p class="text-sm text-gray-600">{{ $address->address_line2 }}</p>
-                                        @endif
-                                        <p class="text-sm text-gray-600">{{ $address->city }}, {{ $address->state }} {{ $address->postal_code }}</p>
-                                        <p class="text-sm text-gray-600">{{ $address->country }}</p>
-                                        <p class="text-sm text-gray-600">{{ $address->phone }}</p>
-                                        @if($address->is_default)
-                                            <span class="inline-block mt-1 text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">Default</span>
-                                        @endif
-                                    </div>
-                                </label>
-                            @endforeach
-                        </div>
-
-                        @if(Auth::check())
-                            <div class="mt-4">
-                                <a href="{{ route('addresses.create') }}" class="text-indigo-600 hover:text-indigo-800">
-                                    + Add a new address
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
-                        
-                        @error('payment_method')
-                            <p class="text-sm text-red-600 mb-2">{{ $message }}</p>
-                        @enderror
-
-                        <div class="space-y-3">
-                            <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 {{ old('payment_method') == 'iyzico' ? 'border-indigo-500 bg-indigo-50' : '' }}">
-                                <input type="radio" name="payment_method" value="iyzico" {{ old('payment_method') == 'iyzico' ? 'checked' : '' }} class="h-4 w-4 text-indigo-600">
-                                <div class="ml-3">
-                                    <p class="font-medium">Iyzico</p>
-                                    <p class="text-sm text-gray-500">Pay securely with credit card</p>
-                                </div>
-                            </label>
-                            
-                            <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 {{ old('payment_method') == 'stripe' ? 'border-indigo-500 bg-indigo-50' : '' }}">
-                                <input type="radio" name="payment_method" value="stripe" {{ old('payment_method') == 'stripe' ? 'checked' : '' }} class="h-4 w-4 text-indigo-600">
-                                <div class="ml-3">
-                                    <p class="font-medium">Stripe</p>
-                                    <p class="text-sm text-gray-500">Pay with credit card via Stripe</p>
-                                </div>
-                            </label>
-                        </div>
-
-                        <div id="card-fields" class="mt-6 space-y-4" style="display: none;">
-                            <h3 class="text-md font-medium text-gray-900">Card Information</h3>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                                <input type="text" name="card_number" placeholder="5526 0800 0000 0005" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Card Holder Name</label>
-                                <input type="text" name="card_holder" placeholder="John Doe"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
-                                    <select name="expire_month" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                        @for($m = 1; $m <= 12; $m++)
-                                            <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}">{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                                    <select name="expire_year" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                        @for($y = date('Y'); $y <= date('Y') + 10; $y++)
-                                            <option value="{{ $y }}">{{ $y }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                                    <input type="text" name="cvv" placeholder="123" maxlength="4"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                </div>
-                            </div>
-                            
-                            <p class="text-xs text-gray-500">Test cards: 5526 0800 0000 0005 (success), 5526 0800 0000 0006 (fail)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow p-6 sticky top-4">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
-                        
-                        <div class="space-y-3 mb-4">
-                            @foreach($cartData['items'] as $item)
-                                <div class="flex justify-between text-sm">
-                                    <div>
-                                        <p class="text-gray-900">{{ $item['item']->variant->product->title }}</p>
-                                        <p class="text-gray-500">{{ $item['item']->variant->sku ?? 'Variant' }} × {{ $item['item']->quantity }}</p>
-                                        @if($item['price_changed'])
-                                            <p class="text-xs text-yellow-600">Price changed</p>
-                                        @endif
-                                    </div>
-                                    <p class="font-medium">₺{{ number_format($item['subtotal'], 2) }}</p>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div class="border-t pt-4 space-y-2">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Subtotal</span>
-                                <span class="font-medium">₺{{ number_format($cartData['subtotal'], 2) }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Shipping</span>
-                                <span class="font-medium">Calculated at next step</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Tax</span>
-                                <span class="font-medium">Calculated at next step</span>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="flex items-start">
-                                <input type="checkbox" name="terms_accepted" value="1" {{ old('terms_accepted') ? 'checked' : '' }} class="mt-1 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                <span class="ml-2 text-sm text-gray-600">
-                                    I agree to the <a href="#" class="text-indigo-600 hover:underline">Terms and Conditions</a> and <a href="#" class="text-indigo-600 hover:underline">Privacy Policy</a>
-                                </span>
-                            </label>
-                            @error('terms_accepted')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <button type="submit" {{ !Auth::check() ? 'disabled' : '' }}
-                            class="w-full mt-6 bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                            {{ Auth::check() ? 'Proceed to Payment' : 'Login to Checkout' }}
-                        </button>
-
-                        @if(!Auth::check())
-                            <p class="text-sm text-gray-500 text-center mt-2">You need to login to complete your purchase</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </form>
-    @endif
-</div>
 @endsection

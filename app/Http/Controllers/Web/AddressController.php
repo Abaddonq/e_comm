@@ -44,6 +44,12 @@ class AddressController extends Controller
             return response()->json(['success' => true, 'message' => 'Adres başarıyla eklendi.']);
         }
 
+        $redirectTo = $request->input('redirect_to');
+
+        if ($redirectTo === 'checkout') {
+            return redirect()->route('checkout.index')->with('success', 'Address added successfully.');
+        }
+
         return redirect()->route('addresses.index')->with('success', 'Address added successfully.');
     }
 

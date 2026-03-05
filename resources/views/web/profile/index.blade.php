@@ -6,7 +6,77 @@
 $activeTab = request()->query('tab', 'account');
 @endphp
 
-<div class="profile-page">
+<style>
+    .profile-page {
+        padding-top: 85px;
+        min-height: 100vh;
+        background: #fafafa;
+    }
+
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+    }
+
+    .profile-header {
+        margin-bottom: 32px;
+    }
+
+    .profile-header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+
+    .profile-header p {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 32px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .profile-sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 24px 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        height: fit-content;
+    }
+
+    .profile-sidebar.mobile {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .profile-sidebar.desktop {
+            display: none;
+        }
+        .profile-sidebar.mobile {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+    }
+
+    .profile-nav-item {
+        display: flex;
+        align-items: center;
+        
     <div class="profile-container">
         <div class="profile-header">
             <h1>Hesabım</h1>

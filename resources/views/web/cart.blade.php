@@ -259,7 +259,7 @@
 @section('content')
 <div class="cart-page">
     <div class="cart-container">
-        <h1 class="cart-heading">Sepetim</h1>
+        <h1 class="cart-heading">{{ __('My Cart') }}</h1>
 
         @if(count($cartData['items']) > 0)
             <div class="cart-layout">
@@ -268,10 +268,10 @@
                         <table class="cart-items-table">
                             <thead>
                                 <tr>
-                                    <th>Urun</th>
-                                    <th>Fiyat</th>
-                                    <th>Adet</th>
-                                    <th>Toplam</th>
+                                    <th>{{ __('Product') }}</th>
+                                    <th>{{ __('Price') }}</th>
+                                    <th>{{ __('Quantity') }}</th>
+                                    <th>{{ __('Total') }}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -310,7 +310,7 @@
                                         </td>
                                         <td class="item-total">₺{{ number_format($item['subtotal'], 2) }}</td>
                                         <td>
-                                            <button type="button" onclick="removeItem({{ $item['item']->id }})" class="remove-btn">Kaldir</button>
+                                            <button type="button" onclick="removeItem({{ $item['item']->id }})" class="remove-btn">{{ __('Remove') }}</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -320,35 +320,35 @@
                 </div>
 
                 <div class="cart-summary-card">
-                    <h2 class="summary-title">Siparis Ozeti</h2>
+                    <h2 class="summary-title">{{ __('Order Summary') }}</h2>
 
                     <div class="summary-row">
-                        <span>Ara Toplam</span>
+                        <span>{{ __('Subtotal') }}</span>
                         <strong>₺{{ number_format($cartData['subtotal'], 2) }}</strong>
                     </div>
                     <div class="summary-row">
-                        <span>Urun Sayisi</span>
+                        <span>{{ __('Item Count') }}</span>
                         <strong>{{ $cartData['item_count'] }}</strong>
                     </div>
 
                     <hr class="summary-divider">
 
                     <div class="summary-row summary-total">
-                        <span>Toplam</span>
+                        <span>{{ __('Total') }}</span>
                         <strong>₺{{ number_format($cartData['subtotal'], 2) }}</strong>
                     </div>
 
                     @auth
-                        <a href="{{ route('checkout.index') }}" class="theme-btn">Odeme Adimina Gec</a>
+                        <a href="{{ route('checkout.index') }}" class="theme-btn">{{ __('Proceed to Checkout') }}</a>
                     @else
-                        <a href="{{ route('login') . '?redirect=' . urlencode(route('checkout.index')) }}" class="theme-btn">Giris Yap ve Devam Et</a>
+                        <a href="{{ route('login') . '?redirect=' . urlencode(route('checkout.index')) }}" class="theme-btn">{{ __('Login to Checkout') }}</a>
                     @endauth
                 </div>
             </div>
         @else
             <div class="cart-empty">
-                <p>Sepetinizde henuz urun bulunmuyor.</p>
-                <a href="{{ route('home') }}" class="continue-link">Alisverise Devam Et</a>
+                <p>{{ __('Your cart is empty.') }}</p>
+                <a href="{{ route('home') }}" class="continue-link">{{ __('Continue Shopping') }}</a>
             </div>
         @endif
     </div>
@@ -378,7 +378,7 @@ function updateQuantity(itemId, quantity) {
 }
 
 function removeItem(itemId) {
-    if (confirm('Sepetten bu urunu kaldirmak istiyor musunuz?')) {
+    if (confirm(window.__t['Confirm Remove Item'])) {
         fetch('{{ route("cart.remove") }}', {
             method: 'POST',
             headers: {

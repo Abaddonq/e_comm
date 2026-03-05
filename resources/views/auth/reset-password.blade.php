@@ -127,15 +127,15 @@
 <div class="auth-page">
     <div class="auth-container">
         <div class="auth-card">
-            <h1 class="auth-title">Yeni Sifre Belirle</h1>
-            <p class="auth-subtitle">Hesabiniz icin yeni sifrenizi olusturun.</p>
+            <h1 class="auth-title">{{ __('Set New Password') }}</h1>
+            <p class="auth-subtitle">{{ __('Set new password subtitle') }}</p>
 
             <form method="POST" action="{{ route('password.store') }}">
                 @csrf
                 <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
                 <div class="field">
-                    <label for="email">E-Posta</label>
+                    <label for="email">{{ __('Email') }}</label>
                     <input id="email" type="email" name="email" value="{{ old('email', $request->email) }}" required autofocus autocomplete="username">
                     @error('email')
                         <p class="error-text">{{ $message }}</p>
@@ -143,7 +143,7 @@
                 </div>
 
                 <div class="field">
-                    <label for="password">Yeni Sifre</label>
+                    <label for="password">{{ __('New Password') }}</label>
                     <input id="password" type="password" name="password" required autocomplete="new-password">
                     @error('password')
                         <p class="error-text">{{ $message }}</p>
@@ -151,18 +151,18 @@
                 </div>
 
                 <div class="field">
-                    <label for="password_confirmation">Yeni Sifre Tekrar</label>
+                    <label for="password_confirmation">{{ __('New Password Confirm') }}</label>
                     <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password">
                     @error('password_confirmation')
                         <p class="error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <button type="submit" class="auth-btn">Sifreyi Guncelle</button>
+                <button type="submit" class="auth-btn">{{ __('Update Password') }}</button>
             </form>
 
             <p class="auth-footer">
-                <a href="{{ route('login') }}" class="text-link">Giris Ekranina Don</a>
+                <a href="{{ route('login') }}" class="text-link">{{ __('Back to Login') }}</a>
             </p>
         </div>
     </div>

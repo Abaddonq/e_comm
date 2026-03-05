@@ -29,6 +29,16 @@ Route::post('/webhooks/payment/callback', [PaymentCallbackController::class, 'ha
     ->name('webhooks.payment.callback')
     ->withoutMiddleware(['web', 'csrf']);
 
+// Language switcher
+Route::post('/locale/{lang}', function (string $lang) {
+    $available = config('app.available_locales', ['tr', 'en']);
+    if (!in_array($lang, $available, true)) {
+        abort(400);
+    }
+    $cookie = cookie('locale', $lang, 60 * 24 * 365); // 1 year
+    return redirect()->back()->withCookie($cookie);
+})->name('locale.switch');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');

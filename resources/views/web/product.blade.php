@@ -559,7 +559,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
     <!-- Breadcrumb -->
     <div class="product-container">
         <nav class="breadcrumb">
-            <a href="{{ route('home') }}">Ana Sayfa</a>
+            <a href="{{ route('home') }}">{{ __('Home') }}</a>
             <span>/</span>
             <a href="{{ route('category.show', $product->category->slug ?? '#') }}">{{ $product->category->name ?? '' }}</a>
             <span>/</span>
@@ -583,7 +583,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                 <img id="mainImage" src="{{ asset('storage/' . $product->images->first()->path) }}" alt="{{ $product->title }}" class="main-image" loading="lazy">
                 @else
                 <div class="main-image-container" style="display:flex;align-items:center;justify-content:center;">
-                    <span style="color: var(--color-muted);">Resim Yok</span>
+                    <span style="color: var(--color-muted);">{{ __('No Image') }}</span>
                 </div>
                 @endif
             </div>
@@ -598,7 +598,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
-                    <span id="wishlistText">Favorilere Ekle</span>
+                    <span id="wishlistText">{{ __('Add to Wishlist') }}</span>
                 </button>
             </div>
             
@@ -608,7 +608,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                 @elseif($minPrice && $maxPrice)
                     ₺{{ number_format($minPrice, 2) }} - ₺{{ number_format($maxPrice, 2) }}
                 @else
-                    Fiyat bilgisi için iletişime geçin
+                    {{ __('Contact for price') }}
                 @endif
             </div>
 
@@ -616,16 +616,16 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
             <div class="stock-status {{ $inStock ? 'in-stock' : 'out-of-stock' }}">
                 <span class="stock-dot"></span>
                 @if($inStock)
-                    Stokta ({{ $selectedVariant->current_stock }} adet)
+                    {{ __('In Stock') }} ({{ $selectedVariant->current_stock }} {{ __('pieces') }})
                 @else
-                    Stokta Yok
+                    {{ __('Out of Stock') }}
                 @endif
             </div>
 
             <!-- Variant Selection -->
             @if($product->variants->count() > 0)
             <div class="variant-section">
-                <p class="variant-label">Seçenekler</p>
+                <p class="variant-label">{{ __('Options') }}</p>
                 <div class="variant-options" id="variantOptions">
                     @foreach($product->variants as $variant)
                     <button type="button" 
@@ -650,7 +650,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
 
             <!-- Quantity -->
             <div class="quantity-section">
-                <p class="variant-label">Adet</p>
+                <p class="variant-label">{{ __('Quantity') }}</p>
                 <div class="quantity-selector">
                     <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">−</button>
                     <input type="number" id="quantity" value="1" min="1" max="{{ $selectedVariant->current_stock ?? 1 }}" class="quantity-input">
@@ -661,13 +661,13 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
             <!-- Add to Cart -->
             <div class="add-to-cart-section">
                 <button type="button" class="add-to-cart-btn" id="addToCartBtn" onclick="addToCartFromDetail()">
-                    Sepete Ekle
+                    {{ __('Add to Cart') }}
                 </button>
             </div>
             @else
             <div class="add-to-cart-section">
                 <button type="button" class="add-to-cart-btn" disabled>
-                    Ürün Mevcut Değil
+                    {{ __('Product Not Available') }}
                 </button>
             </div>
             @endif
@@ -678,28 +678,28 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
                     </svg>
-                    Ücretsiz Kargo
+                    {{ __('Free Shipping') }}
                 </div>
                 <div class="trust-badge">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
-                    30 Gün İade
+                    {{ __('30 Day Returns') }}
                 </div>
                 <div class="trust-badge">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
-                    Güvenli Ödeme
+                    {{ __('Secure Payment') }}
                 </div>
             </div>
 
             <!-- Product Tabs -->
             <div class="product-tabs">
                 <div class="tab-buttons">
-                    <button type="button" class="tab-btn active" onclick="openTab('description')">Açıklama</button>
-                    <button type="button" class="tab-btn" onclick="openTab('specs')">Özellikler</button>
-                    <button type="button" class="tab-btn" onclick="openTab('shipping')">Kargo & İade</button>
+                    <button type="button" class="tab-btn active" onclick="openTab('description')">{{ __('Description') }}</button>
+                    <button type="button" class="tab-btn" onclick="openTab('specs')">{{ __('Specifications') }}</button>
+                    <button type="button" class="tab-btn" onclick="openTab('shipping')">{{ __('Shipping & Returns') }}</button>
                 </div>
                 
                 <div id="description" class="tab-content active">
@@ -724,9 +724,9 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                 </div>
                 
                 <div id="shipping" class="tab-content">
-                    <p><strong>Teslimat:</strong> Siparişiniz 3-5 iş günü içinde kargoya verilir. Ücretsiz kargo seçeneği ile kapınıza kadar teslim edilir.</p>
+                    <p><strong>{{ __('Delivery:') }}</strong> {{ __('Shipping info') }}</p>
                     <br>
-                    <p><strong>İade:</strong> Ürünü 30 gün içinde herhangi bir nedenle iade edebilirsiniz. İade koşulları için iletişim sayfamızı ziyaret edin.</p>
+                    <p><strong>{{ __('Return:') }}</strong> {{ __('Return info') }}</p>
                 </div>
             </div>
         </div>
@@ -735,7 +735,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
     <!-- Related Products -->
     @if($relatedProducts->count() > 0)
     <section class="related-section">
-        <h3 class="related-title">Benzer Ürünler</h3>
+        <h3 class="related-title">{{ __('Related Products') }}</h3>
         <div class="related-grid">
             @foreach($relatedProducts as $related)
                 @php
@@ -785,7 +785,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
             if (data.is_wishlisted) {
                 const btn = document.getElementById('wishlistBtnDetail');
                 btn.classList.add('active');
-                document.getElementById('wishlistText').textContent = 'Favorilerde';
+                document.getElementById('wishlistText').textContent = window.__t['In Wishlist'];
             }
         })
         .catch(error => {
@@ -810,12 +810,12 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
                 
                 if (data.is_added) {
                     btn.classList.add('active');
-                    text.textContent = 'Favorilerde';
-                    showToast('Ürün favorilere eklendi', 'success');
+                    text.textContent = window.__t['In Wishlist'];
+                    showToast(window.__t['Product added to wishlist'], 'success');
                 } else {
                     btn.classList.remove('active');
-                    text.textContent = 'Favorilere Ekle';
-                    showToast('Ürün favorilerden kaldırıldı', 'success');
+                    text.textContent = window.__t['Add to Wishlist'];
+                    showToast(window.__t['Product removed from wishlist'], 'success');
                 }
             } else if (data.error) {
                 showToast(data.error, 'error');
@@ -823,7 +823,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         })
         .catch(error => {
             console.error('Error:', error);
-            showToast('Bir hata oluştu', 'error');
+            showToast(window.__t['An error occurred'], 'error');
         });
     }
 
@@ -854,15 +854,15 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         const stockStatus = document.querySelector('.stock-status');
         if (currentVariant.stock > 0) {
             stockStatus.className = 'stock-status in-stock';
-            stockStatus.innerHTML = '<span class="stock-dot"></span>Stokta (' + currentVariant.stock + ' adet)';
+            stockStatus.innerHTML = '<span class="stock-dot"></span>' + window.__t['In Stock'] + ' (' + currentVariant.stock + ' ' + window.__t['pieces'] + ')';
             document.getElementById('addToCartBtn').disabled = false;
-            document.getElementById('addToCartBtn').textContent = 'Sepete Ekle';
+            document.getElementById('addToCartBtn').textContent = window.__t['Add to Cart'];
             document.getElementById('quantity').max = currentVariant.stock;
         } else {
             stockStatus.className = 'stock-status out-of-stock';
-            stockStatus.innerHTML = '<span class="stock-dot"></span>Stokta Yok';
+            stockStatus.innerHTML = '<span class="stock-dot"></span>' + window.__t['Out of Stock'];
             document.getElementById('addToCartBtn').disabled = true;
-            document.getElementById('addToCartBtn').textContent = 'Stokta Yok';
+            document.getElementById('addToCartBtn').textContent = window.__t['Out of Stock'];
         }
     }
 
@@ -897,7 +897,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         }
         
         if (!currentVariant || currentVariant.stock <= 0) {
-            showToast('Bu ürün stokta mevcut değil', 'error');
+            showToast(window.__t['Product not in stock'], 'error');
             return;
         }
         
@@ -918,18 +918,18 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         .then(data => {
             if (data.success) {
                 document.getElementById('cart-count').textContent = data.cart_count;
-                document.getElementById('addToCartBtn').textContent = 'Sepete Eklendi!';
-                showToast('Ürün sepete eklendi', 'success');
+                document.getElementById('addToCartBtn').textContent = window.__t['Added to Cart!'];
+                showToast(window.__t['Product added to cart'], 'success');
                 setTimeout(() => {
-                    document.getElementById('addToCartBtn').textContent = 'Sepete Ekle';
+                    document.getElementById('addToCartBtn').textContent = window.__t['Add to Cart'];
                 }, 2000);
             } else {
-                showToast(data.error || 'Sepete ekleme başarısız', 'error');
+                showToast(data.error || window.__t['Add to cart failed'], 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showToast('Bir hata oluştu', 'error');
+            showToast(window.__t['An error occurred'], 'error');
         });
     }
 

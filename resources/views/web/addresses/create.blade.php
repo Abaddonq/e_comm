@@ -186,8 +186,8 @@
 <div class="address-create-page">
     <div class="address-create-container">
         <div class="address-create-card">
-            <h1 class="address-create-title">Yeni Adres</h1>
-            <p class="address-create-subtitle">Teslimat icin kullanacaginiz adres bilgilerini ekleyin.</p>
+            <h1 class="address-create-title">{{ __('New Address') }}</h1>
+            <p class="address-create-subtitle">{{ __('New address subtitle') }}</p>
 
             <form action="{{ route('addresses.store') }}" method="POST">
                 @csrf
@@ -195,7 +195,7 @@
 
                 <div class="form-grid">
                     <div class="field">
-                        <label for="full_name">Ad Soyad</label>
+                        <label for="full_name">{{ __('Full Name') }}</label>
                         <input type="text" id="full_name" name="full_name" value="{{ old('full_name') }}" required>
                         @error('full_name')
                             <p class="error-text">{{ $message }}</p>
@@ -203,7 +203,7 @@
                     </div>
 
                     <div class="field">
-                        <label for="phone">Telefon</label>
+                        <label for="phone">{{ __('Phone') }}</label>
                         <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required>
                         @error('phone')
                             <p class="error-text">{{ $message }}</p>
@@ -211,7 +211,7 @@
                     </div>
 
                     <div class="field field-full">
-                        <label for="address_line1">Adres Satiri 1</label>
+                        <label for="address_line1">{{ __('Address Line 1') }}</label>
                         <input type="text" id="address_line1" name="address_line1" value="{{ old('address_line1') }}" required>
                         @error('address_line1')
                             <p class="error-text">{{ $message }}</p>
@@ -219,12 +219,12 @@
                     </div>
 
                     <div class="field field-full">
-                        <label for="address_line2">Adres Satiri 2 (Opsiyonel)</label>
+                        <label for="address_line2">{{ __('Address Line 2 (Optional)') }}</label>
                         <input type="text" id="address_line2" name="address_line2" value="{{ old('address_line2') }}">
                     </div>
 
                     <div class="field">
-                        <label for="city">Sehir</label>
+                        <label for="city">{{ __('City') }}</label>
                         <input type="text" id="city" name="city" value="{{ old('city') }}" required>
                         @error('city')
                             <p class="error-text">{{ $message }}</p>
@@ -232,12 +232,12 @@
                     </div>
 
                     <div class="field">
-                        <label for="state">Ilce / Bolge</label>
+                        <label for="state">{{ __('District') }}</label>
                         <input type="text" id="state" name="state" value="{{ old('state') }}">
                     </div>
 
                     <div class="field">
-                        <label for="postal_code">Posta Kodu</label>
+                        <label for="postal_code">{{ __('Postal Code') }}</label>
                         <input type="text" id="postal_code" name="postal_code" value="{{ old('postal_code') }}" required>
                         @error('postal_code')
                             <p class="error-text">{{ $message }}</p>
@@ -245,7 +245,7 @@
                     </div>
 
                     <div class="field">
-                        <label for="country">Ulke</label>
+                        <label for="country">{{ __('Country') }}</label>
                         <select id="country" name="country" required>
                             <option value="TR" {{ old('country') == 'TR' ? 'selected' : '' }}>Turkey</option>
                             <option value="US" {{ old('country') == 'US' ? 'selected' : '' }}>United States</option>
@@ -263,13 +263,13 @@
 
                     <div class="checkbox-row">
                         <input type="checkbox" id="is_default" name="is_default" value="1" {{ old('is_default') ? 'checked' : '' }}>
-                        <label for="is_default">Varsayilan adres olarak ayarla</label>
+                        <label for="is_default">{{ __('Set as default address') }}</label>
                     </div>
                 </div>
 
                 <div class="actions">
-                    <a href="{{ $cancelRoute }}" class="btn btn-secondary">Iptal</a>
-                    <button type="submit" class="btn btn-primary">Adresi Kaydet</button>
+                    <a href="{{ $cancelRoute }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Address') }}</button>
                 </div>
             </form>
         </div>

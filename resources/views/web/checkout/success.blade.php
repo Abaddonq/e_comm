@@ -181,35 +181,35 @@
                 </svg>
             </div>
 
-            <h1 class="success-title">Siparisiniz Alindi</h1>
+            <h1 class="success-title">{{ __('Order Received') }}</h1>
             <p class="success-subtitle">
-                Siparisiniz basariyla olusturuldu. Siparis numaraniz: <strong>{{ $order->order_number }}</strong>
+                {{ __('Order success message') }} <strong>{{ $order->order_number }}</strong>
             </p>
 
             <div class="details-card">
-                <h2 class="details-title">Siparis Detaylari</h2>
+                <h2 class="details-title">{{ __('Order Details') }}</h2>
 
                 <div class="details-grid">
                     <div>
-                        <p class="details-item-label">Siparis No</p>
+                        <p class="details-item-label">{{ __('Order No') }}</p>
                         <p class="details-item-value">{{ $order->order_number }}</p>
                     </div>
                     <div>
-                        <p class="details-item-label">Durum</p>
+                        <p class="details-item-label">{{ __('Status') }}</p>
                         <p class="details-item-value" style="text-transform: capitalize;">{{ $order->status }}</p>
                     </div>
                     <div>
-                        <p class="details-item-label">Tarih</p>
+                        <p class="details-item-label">{{ __('Date') }}</p>
                         <p class="details-item-value">{{ $order->created_at->format('d.m.Y') }}</p>
                     </div>
                     <div>
-                        <p class="details-item-label">Toplam</p>
+                        <p class="details-item-label">{{ __('Total') }}</p>
                         <p class="details-item-value">₺{{ number_format($order->total, 2) }}</p>
                     </div>
                 </div>
 
                 <div class="address-box">
-                    <p class="details-item-label">Teslimat Adresi</p>
+                    <p class="details-item-label">{{ __('Shipping Address Label') }}</p>
                     <div class="address-lines">
                         <p>{{ $order->shipping_full_name }}</p>
                         <p>{{ $order->shipping_address_line1 }}</p>
@@ -220,9 +220,9 @@
             </div>
 
             <div class="success-actions">
-                <a href="{{ route('home') }}" class="theme-btn theme-btn-primary">Alisverise Devam Et</a>
+                <a href="{{ route('home') }}" class="theme-btn theme-btn-primary">{{ __('Continue Shopping') }}</a>
                 @auth
-                    <a href="{{ route('profile.index', ['tab' => 'orders']) }}" class="theme-btn theme-btn-ghost">Siparislerim</a>
+                    <a href="{{ route('profile.index', ['tab' => 'orders']) }}" class="theme-btn theme-btn-ghost">{{ __('My Orders') }}</a>
                 @endauth
             </div>
         </div>

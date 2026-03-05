@@ -31,7 +31,7 @@ class IyzicoGateway implements PaymentGatewayInterface
     {
         try {
             $request = new CreatePaymentRequest();
-            $request->setLocale(Locale::EN);
+            $request->setLocale(app()->getLocale() === 'tr' ? Locale::TR : Locale::EN);
             $request->setConversationId((string) $paymentData['order_id']);
             $request->setPrice($this->formatAmount($paymentData['amount']));
             $request->setPaidPrice($this->formatAmount($paymentData['amount']));

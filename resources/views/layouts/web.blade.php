@@ -1078,6 +1078,85 @@
             }
         }
 
+        /* Language Toggle */
+        .lang-toggle {
+            display: inline-flex;
+            align-items: center;
+            height: 34px;
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+            overflow: hidden;
+            background: transparent;
+            padding: 0;
+            gap: 0;
+        }
+
+        .lang-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 10px;
+            border: none;
+            background: transparent;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--color-muted);
+            cursor: pointer;
+            transition: background var(--transition-fast), color var(--transition-fast);
+        }
+
+        .lang-toggle-btn.active {
+            background: var(--color-secondary);
+            color: #fff;
+        }
+
+        .header.scrolled .lang-toggle {
+            border-color: var(--color-border);
+        }
+
+        .header:not(.scrolled) .lang-toggle {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .header:not(.scrolled) .lang-toggle-btn {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .header:not(.scrolled) .lang-toggle-btn.active {
+            background: var(--color-primary);
+            color: var(--color-secondary);
+        }
+
+        .mobile-lang-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mobile-lang-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--color-muted);
+            cursor: pointer;
+            transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+        }
+
+        .mobile-lang-btn.active {
+            background: var(--color-secondary);
+            border-color: var(--color-secondary);
+            color: #fff;
+        }
+
         /* Toast Notification */
         .toast-notification {
             position: fixed;
@@ -1147,7 +1226,7 @@
             </nav>
             
             <div class="header-icons">
-                <button type="button" class="header-icon" id="searchOpenBtn" aria-label="Ara">
+                <button type="button" class="header-icon" id="searchOpenBtn" aria-label="{{ __('Search') }}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -1162,16 +1241,26 @@
                     <div class="user-dropdown" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-radius: 8px; min-width: 150px; display: none; z-index: 100;">
                         @auth
                             <span style="display: block; padding: 12px 16px; color: #666; font-size: 12px; border-bottom: 1px solid #eee;">{{ auth()->user()->name }}</span>
-                            <a href="{{ route('profile.index') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">Hesabım</a>
-                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">Çıkış Yap</a>
+                            <a href="{{ route('profile.index') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">{{ __('My Account') }}</a>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">{{ __('Logout') }}</a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                         @else
-                            <a href="{{ route('login') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">Giriş Yap</a>
-                            <a href="{{ route('register') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">Üye Ol</a>
+                            <a href="{{ route('login') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">{{ __('Sign In') }}</a>
+                            <a href="{{ route('register') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">{{ __('Sign Up Nav') }}</a>
                         @endauth
                     </div>
+                </div>
+                <div class="lang-toggle" role="radiogroup" aria-label="{{ __('Language') }}">
+                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
+                        @csrf
+                        <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'tr' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'tr' ? 'true' : 'false' }}">TR</button>
+                    </form>
+                    <form method="POST" action="{{ route('locale.switch', 'en') }}" style="display:contents;">
+                        @csrf
+                        <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}">EN</button>
+                    </form>
                 </div>
                 <a href="{{ route('cart.index') }}" class="header-icon">
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24">
@@ -1179,7 +1268,7 @@
                     </svg>
                     <span class="cart-badge" id="cart-count">{{ $cartCount }}</span>
                 </a>
-                <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Mobil menuyu ac" aria-expanded="false" aria-controls="mobileNav">
+                <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="{{ __('Open mobile menu') }}" aria-expanded="false" aria-controls="mobileNav">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -1191,8 +1280,8 @@
     <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
     <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
         <div class="mobile-nav-header">
-            <span class="mobile-nav-title">Menu</span>
-            <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Mobil menuyu kapat">
+            <span class="mobile-nav-title">{{ __('Menu') }}</span>
+            <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="{{ __('Close mobile menu') }}">
                 <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
@@ -1200,36 +1289,49 @@
         </div>
         <div class="mobile-nav-body">
             <div class="mobile-nav-section">
-                <span class="mobile-nav-label">Hizli Islemler</span>
+                <span class="mobile-nav-label">{{ __('Quick Actions') }}</span>
                 <div class="mobile-nav-list">
-                    <button type="button" class="mobile-nav-link mobile-nav-link-btn" id="mobileSearchBtn">Ara</button>
-                    <a href="{{ route('cart.index') }}" class="mobile-nav-link">Sepetim</a>
-                    <a href="{{ auth()->check() ? route('profile.index') : route('login') }}" class="mobile-nav-link">Hesabim</a>
+                    <button type="button" class="mobile-nav-link mobile-nav-link-btn" id="mobileSearchBtn">{{ __('Search') }}</button>
+                    <a href="{{ route('cart.index') }}" class="mobile-nav-link">{{ __('My Cart') }}</a>
+                    <a href="{{ auth()->check() ? route('profile.index') : route('login') }}" class="mobile-nav-link">{{ __('My Account') }}</a>
                 </div>
             </div>
             <div class="mobile-nav-section">
-                <span class="mobile-nav-label">Kategoriler</span>
+                <span class="mobile-nav-label">{{ __('Categories') }}</span>
                 <div class="mobile-nav-list">
                     @forelse(($menuCategories ?? collect()) as $category)
                         <a href="{{ route('category.show', $category->slug) }}" class="mobile-nav-link">{{ $category->name }}</a>
                     @empty
-                        <a href="{{ route('home') }}" class="mobile-nav-link">Anasayfa</a>
+                        <a href="{{ route('home') }}" class="mobile-nav-link">{{ __('Homepage') }}</a>
                     @endforelse
                 </div>
             </div>
             <div class="mobile-nav-section">
-                <span class="mobile-nav-label">Sayfalar</span>
+                <span class="mobile-nav-label">{{ __('Pages') }}</span>
                 <div class="mobile-nav-list">
-                    <a href="{{ route('home') }}" class="mobile-nav-link">Anasayfa</a>
-                    <a href="{{ route('search') }}" class="mobile-nav-link">Arama</a>
+                    <a href="{{ route('home') }}" class="mobile-nav-link">{{ __('Homepage') }}</a>
+                    <a href="{{ route('search') }}" class="mobile-nav-link">{{ __('Search') }}</a>
                     @auth
-                        <a href="{{ route('profile.wishlist') }}" class="mobile-nav-link">Favoriler</a>
-                        <a href="{{ route('orders.index') }}" class="mobile-nav-link">Siparislerim</a>
-                        <a href="{{ route('addresses.index') }}" class="mobile-nav-link">Adreslerim</a>
+                        <a href="{{ route('profile.wishlist') }}" class="mobile-nav-link">{{ __('Favorites') }}</a>
+                        <a href="{{ route('orders.index') }}" class="mobile-nav-link">{{ __('My Orders') }}</a>
+                        <a href="{{ route('addresses.index') }}" class="mobile-nav-link">{{ __('My Addresses') }}</a>
                     @else
-                        <a href="{{ route('login') }}" class="mobile-nav-link">Giris Yap</a>
-                        <a href="{{ route('register') }}" class="mobile-nav-link">Uye Ol</a>
+                        <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('Sign In') }}</a>
+                        <a href="{{ route('register') }}" class="mobile-nav-link">{{ __('Sign Up Nav') }}</a>
                     @endauth
+                </div>
+            </div>
+            <div class="mobile-nav-section">
+                <span class="mobile-nav-label">{{ __('Language') }}</span>
+                <div class="mobile-lang-toggle">
+                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
+                        @csrf
+                        <button type="submit" class="mobile-lang-btn {{ app()->getLocale() === 'tr' ? 'active' : '' }}">TR</button>
+                    </form>
+                    <form method="POST" action="{{ route('locale.switch', 'en') }}" style="display:contents;">
+                        @csrf
+                        <button type="submit" class="mobile-lang-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -1243,7 +1345,7 @@
                     <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Ürün ara..." autocomplete="off">
+                    <input type="text" id="searchInput" class="search-input" placeholder="{{ __('Search products...') }}" autocomplete="off">
                     <button type="button" class="search-close" id="searchCloseBtn">
                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -1258,8 +1360,8 @@
                 <div class="suggestions-list" id="suggestionsList"></div>
                 <div class="recent-searches" id="recentSearches" style="display: none;">
                     <div class="recent-header">
-                        <span>Son Aramalar</span>
-                        <button type="button" id="clearRecentSearches">Temizle</button>
+                        <span>{{ __('Recent Searches') }}</span>
+                        <button type="button" id="clearRecentSearches">{{ __('Clear') }}</button>
                     </div>
                     <div class="recent-list" id="recentList"></div>
                 </div>
@@ -1277,45 +1379,45 @@
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand">DECORMOTTO</div>
-                    <p class="footer-desc">Ev dekorasyonunda lüks ve zarafeti bir araya getiren koleksiyonlarımızla yaşam alanlarınızı yeniden tanımlıyoruz.</p>
+                    <p class="footer-desc">{{ __('Footer Description') }}</p>
                     <form class="newsletter-form">
-                        <input type="email" class="newsletter-input" placeholder="E-posta adresiniz">
-                        <button type="submit" class="newsletter-btn">Abone Ol</button>
+                        <input type="email" class="newsletter-input" placeholder="{{ __('Your email address') }}">
+                        <button type="submit" class="newsletter-btn">{{ __('Subscribe') }}</button>
                     </form>
                 </div>
                 <div>
-                    <h4 class="footer-title">Kategoriler</h4>
+                    <h4 class="footer-title">{{ __('Categories') }}</h4>
                     <ul class="footer-links">
                         <li><a href="#">Berjer</a></li>
                         <li><a href="#">Sehpa</a></li>
                         <li><a href="#">Puf</a></li>
-                        <li><a href="#">Kırlent</a></li>
+                        <li><a href="#">{{ __('Cushion') }}</a></li>
                         <li><a href="#">Aksesuar</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-title">Bilgi</h4>
+                    <h4 class="footer-title">{{ __('Information') }}</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Hakkımızda</a></li>
-                        <li><a href="#">İletişim</a></li>
-                        <li><a href="#">Mağazalar</a></li>
+                        <li><a href="#">{{ __('About Us') }}</a></li>
+                        <li><a href="#">{{ __('Contact') }}</a></li>
+                        <li><a href="#">{{ __('Stores') }}</a></li>
                         <li><a href="#">Blog</a></li>
-                        <li><a href="#">Kariyer</a></li>
+                        <li><a href="#">{{ __('Careers') }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-title">Müşteri Hizmetleri</h4>
+                    <h4 class="footer-title">{{ __('Customer Service') }}</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Teslimat</a></li>
-                        <li><a href="#">İade</a></li>
-                        <li><a href="#">Gizlilik</a></li>
-                        <li><a href="#">Kullanım Şartları</a></li>
-                        <li><a href="#">SSS</a></li>
+                        <li><a href="#">{{ __('Delivery') }}</a></li>
+                        <li><a href="#">{{ __('Return') }}</a></li>
+                        <li><a href="#">{{ __('Privacy') }}</a></li>
+                        <li><a href="#">{{ __('Terms of Use') }}</a></li>
+                        <li><a href="#">{{ __('FAQ') }}</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>&copy; {{ date('Y') }} DecorMotto. Tüm hakları saklıdır.</span>
+                <span>&copy; {{ date('Y') }} DecorMotto. {{ __('All rights reserved.') }}</span>
                 <div class="social-links">
                     <a href="#" class="social-link">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
@@ -1332,6 +1434,24 @@
     </footer>
 
     <script>
+        window.__t = {
+            'Confirm Remove Item': @json(__('Confirm Remove Item')),
+            'Product added to cart': @json(__('Product added to cart')),
+            'Add to cart failed': @json(__('Add to cart failed')),
+            'An error occurred': @json(__('An error occurred')),
+            'Product added to wishlist': @json(__('Product added to wishlist')),
+            'Product removed from wishlist': @json(__('Product removed from wishlist')),
+            'No search results for': @json(__('No search results for')),
+            'In Wishlist': @json(__('In Wishlist')),
+            'Add to Wishlist': @json(__('Add to Wishlist')),
+            'In Stock': @json(__('In Stock')),
+            'pieces': @json(__('pieces')),
+            'Out of Stock': @json(__('Out of Stock')),
+            'Product not in stock': @json(__('Product not in stock')),
+            'Added to Cart!': @json(__('Added to Cart!')),
+            'Add to Cart': @json(__('Add to Cart'))
+        };
+
         // Hide page loader early for better LCP
         function hidePageLoader() {
             const loader = document.getElementById('pageLoader');
@@ -1389,14 +1509,14 @@
                     if (btn) {
                         btn.classList.toggle('active');
                     }
-                    showToast(data.is_added ? 'Ürün favorilere eklendi' : 'Ürün favorilerden kaldırıldı', 'success');
+                    showToast(data.is_added ? window.__t['Product added to wishlist'] : window.__t['Product removed from wishlist'], 'success');
                 } else if (data.error) {
                     showToast(data.error, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showToast('Bir hata oluştu', 'error');
+                showToast(window.__t['An error occurred'], 'error');
             });
         }
 
@@ -1635,7 +1755,7 @@
                     } else {
                         suggestionsList.innerHTML = `
                             <div style="padding: 20px; text-align: center; color: #666;">
-                                "${query}" için sonuç bulunamadı
+                                "${query}" ${window.__t['No search results for']}
                             </div>
                         `;
                     }

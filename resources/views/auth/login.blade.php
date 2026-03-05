@@ -161,8 +161,8 @@
 <div class="auth-page">
     <div class="auth-container">
         <div class="auth-card">
-            <h1 class="auth-title">Giris Yap</h1>
-            <p class="auth-subtitle">Hesabina giris yaparak siparislerini ve favorilerini yonet.</p>
+            <h1 class="auth-title">{{ __('Login') }}</h1>
+            <p class="auth-subtitle">{{ __('Login subtitle') }}</p>
 
             @if (session('status'))
                 <div class="status-box">{{ session('status') }}</div>
@@ -172,7 +172,7 @@
                 @csrf
 
                 <div class="field">
-                    <label for="email">E-Posta</label>
+                    <label for="email">{{ __('Email') }}</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
                     @error('email')
                         <p class="error-text">{{ $message }}</p>
@@ -180,7 +180,7 @@
                 </div>
 
                 <div class="field">
-                    <label for="password">Sifre</label>
+                    <label for="password">{{ __('Password') }}</label>
                     <input id="password" type="password" name="password" required autocomplete="current-password">
                     @error('password')
                         <p class="error-text">{{ $message }}</p>
@@ -190,20 +190,20 @@
                 <div class="auth-row">
                     <label for="remember_me" class="remember-wrap">
                         <input id="remember_me" type="checkbox" name="remember">
-                        <span>Beni hatirla</span>
+                        <span>{{ __('Remember me') }}</span>
                     </label>
 
                     @if (Route::has('password.request'))
-                        <a class="text-link" href="{{ route('password.request') }}">Sifremi Unuttum</a>
+                        <a class="text-link" href="{{ route('password.request') }}">{{ __('Forgot Password') }}</a>
                     @endif
                 </div>
 
-                <button type="submit" class="auth-btn">Giris Yap</button>
+                <button type="submit" class="auth-btn">{{ __('Login') }}</button>
             </form>
 
             <p class="auth-footer">
-                Hesabin yok mu?
-                <a href="{{ route('register') }}" class="text-link">Uye Ol</a>
+                {{ __('No account?') }}
+                <a href="{{ route('register') }}" class="text-link">{{ __('Register') }}</a>
             </p>
         </div>
     </div>

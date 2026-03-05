@@ -127,14 +127,14 @@
 <div class="auth-page">
     <div class="auth-container">
         <div class="auth-card">
-            <h1 class="auth-title">Uye Ol</h1>
-            <p class="auth-subtitle">DecorMotto hesabini olustur ve alisverisine hizli basla.</p>
+            <h1 class="auth-title">{{ __('Register') }}</h1>
+            <p class="auth-subtitle">{{ __('Register subtitle') }}</p>
 
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
                 <div class="field">
-                    <label for="name">Ad Soyad</label>
+                    <label for="name">{{ __('Full Name') }}</label>
                     <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
                     @error('name')
                         <p class="error-text">{{ $message }}</p>
@@ -142,7 +142,7 @@
                 </div>
 
                 <div class="field">
-                    <label for="email">E-Posta</label>
+                    <label for="email">{{ __('Email') }}</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username">
                     @error('email')
                         <p class="error-text">{{ $message }}</p>
@@ -150,7 +150,7 @@
                 </div>
 
                 <div class="field">
-                    <label for="password">Sifre</label>
+                    <label for="password">{{ __('Password') }}</label>
                     <input id="password" type="password" name="password" required autocomplete="new-password">
                     @error('password')
                         <p class="error-text">{{ $message }}</p>
@@ -158,19 +158,19 @@
                 </div>
 
                 <div class="field">
-                    <label for="password_confirmation">Sifre Tekrar</label>
+                    <label for="password_confirmation">{{ __('Password Confirm') }}</label>
                     <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password">
                     @error('password_confirmation')
                         <p class="error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <button type="submit" class="auth-btn">Kayit Ol</button>
+                <button type="submit" class="auth-btn">{{ __('Sign Up') }}</button>
             </form>
 
             <p class="auth-footer">
-                Zaten hesabin var mi?
-                <a href="{{ route('login') }}" class="text-link">Giris Yap</a>
+                {{ __('Already have account?') }}
+                <a href="{{ route('login') }}" class="text-link">{{ __('Login') }}</a>
             </p>
         </div>
     </div>

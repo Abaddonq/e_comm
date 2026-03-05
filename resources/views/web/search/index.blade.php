@@ -1,6 +1,6 @@
 @extends('layouts.web')
 
-@section('title', ' - Ara: ' . $query)
+@section('title', ' - ' . __('Search') . ': ' . $query)
 
 <style>
     .search-page {
@@ -179,8 +179,8 @@
 <div class="search-page">
     <div class="search-container">
         <div class="search-header">
-            <h1>Arama Sonuçları</h1>
-            <p>"<span class="search-query">{{ e($query) }}</span>" için {{ $products->total() }} sonuç bulundu</p>
+            <h1>{{ __('Search Results') }}</h1>
+            <p>"<span class="search-query">{{ e($query) }}</span>" {{ __('Search results found', ['count' => $products->total()]) }}</p>
         </div>
 
         @if($products->count() > 0)
@@ -220,8 +220,8 @@
         @else
             <div class="no-results">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <h2>Sonuç Bulunamadı</h2>
-                <p>"{{ e($query }}" için ürün bulunamadı. Farklı anahtar kelimeler deneyebilirsiniz.</p>
+                <h2>{{ __('No Results Found') }}</h2>
+                <p>"{{ e($query) }}" {{ __('No results for query') }}</p>
             </div>
         @endif
     </div>

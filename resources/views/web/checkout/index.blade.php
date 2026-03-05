@@ -346,12 +346,12 @@
 @section('content')
 <div class="checkout-page">
     <div class="checkout-container">
-        <h1 class="checkout-heading">Odeme</h1>
+        <h1 class="checkout-heading">{{ __('Checkout') }}</h1>
 
         @if($cart->items->isEmpty())
             <div class="empty-box">
-                <p>Sepetiniz bos. Odeme adimina devam etmek icin urun ekleyin.</p>
-                <a href="{{ route('home') }}" class="text-link">Alisverise Devam Et</a>
+                <p>{{ __('Cart empty for checkout') }}</p>
+                <a href="{{ route('home') }}" class="text-link">{{ __('Continue Shopping') }}</a>
             </div>
         @else
             <form action="{{ route('checkout.process') }}" method="POST">
@@ -360,16 +360,16 @@
                 <div class="checkout-grid">
                     <div class="checkout-main">
                         <section class="panel">
-                            <h2 class="panel-title">Teslimat Adresi</h2>
+                            <h2 class="panel-title">{{ __('Shipping Address') }}</h2>
 
                             @if(!Auth::check())
                                 <div class="notice">
-                                    Odeme icin lutfen <a href="{{ route('login') }}">giris yapin</a> veya <a href="{{ route('register') }}">hesap olusturun</a>.
+                                    {{ __('Login notice for checkout') }} <a href="{{ route('login') }}">{{ __('login') }}</a> {{ __('or') }} <a href="{{ route('register') }}">{{ __('create account') }}</a>.
                                 </div>
                             @endif
 
                             @if($addresses->isEmpty() && Auth::check())
-                                <a href="{{ route('addresses.create', ['redirect_to' => 'checkout']) }}" class="text-link">+ Yeni Adres Ekle</a>
+                                <a href="{{ route('addresses.create', ['redirect_to' => 'checkout']) }}" class="text-link">{{ __('+ Add New Address') }}</a>
                             @endif
 
                             @error('address_id')
@@ -392,7 +392,7 @@
                                                     <br>{{ $address->country }} - {{ $address->phone }}
                                                 </span>
                                                 @if($address->is_default)
-                                                    <span class="option-badge">Varsayilan</span>
+                                                    <span class="option-badge">{{ __('Default') }}</span>
                                                 @endif
                                             </span>
                                         </label>
@@ -401,14 +401,14 @@
 
                                 @if(Auth::check())
                                     <div style="margin-top: 12px;">
-                                        <a href="{{ route('addresses.create', ['redirect_to' => 'checkout']) }}" class="text-link">+ Yeni Adres Ekle</a>
+                                        <a href="{{ route('addresses.create', ['redirect_to' => 'checkout']) }}" class="text-link">{{ __('+ Add New Address') }}</a>
                                     </div>
                                 @endif
                             @endif
                         </section>
 
                         <section class="panel">
-                            <h2 class="panel-title">Odeme Yontemi</h2>
+                            <h2 class="panel-title">{{ __('Payment Method') }}</h2>
 
                             @error('payment_method')
                                 <p class="error-text">{{ $message }}</p>
@@ -419,7 +419,7 @@
                                     <input type="radio" name="payment_method" value="iyzico" {{ old('payment_method') == 'iyzico' ? 'checked' : '' }}>
                                     <span>
                                         <span class="option-title">Iyzico</span>
-                                        <span class="option-sub">Kredi karti ile guvenli odeme</span>
+                                        <span class="option-sub">{{ __('Secure payment with credit card') }}</span>
                                     </span>
                                 </label>
 
@@ -427,25 +427,25 @@
                                     <input type="radio" name="payment_method" value="stripe" {{ old('payment_method') == 'stripe' ? 'checked' : '' }}>
                                     <span>
                                         <span class="option-title">Stripe</span>
-                                        <span class="option-sub">Stripe altyapisi ile kredi karti odemesi</span>
+                                        <span class="option-sub">{{ __('Credit card payment via Stripe') }}</span>
                                     </span>
                                 </label>
                             </div>
 
                             <div id="card-fields" class="card-fields" style="display: none;">
                                 <div class="field">
-                                    <label for="card_number">Kart Numarasi</label>
+                                    <label for="card_number">{{ __('Card Number') }}</label>
                                     <input id="card_number" type="text" name="card_number" placeholder="5526 0800 0000 0005">
                                 </div>
 
                                 <div class="field">
-                                    <label for="card_holder">Kart Uzerindeki Isim</label>
+                                    <label for="card_holder">{{ __('Name on Card') }}</label>
                                     <input id="card_holder" type="text" name="card_holder" placeholder="John Doe">
                                 </div>
 
                                 <div class="field-grid">
                                     <div class="field">
-                                        <label for="expire_month">Ay</label>
+                                        <label for="expire_month">{{ __('Month') }}</label>
                                         <select id="expire_month" name="expire_month">
                                             @for($m = 1; $m <= 12; $m++)
                                                 <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}">{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
@@ -454,7 +454,7 @@
                                     </div>
 
                                     <div class="field">
-                                        <label for="expire_year">Yil</label>
+                                        <label for="expire_year">{{ __('Year') }}</label>
                                         <select id="expire_year" name="expire_year">
                                             @for($y = date('Y'); $y <= date('Y') + 10; $y++)
                                                 <option value="{{ $y }}">{{ $y }}</option>
@@ -468,22 +468,22 @@
                                     </div>
                                 </div>
 
-                                <p class="field-note">Test kartlari: 5526 0800 0000 0005 (basarili), 5526 0800 0000 0006 (basarisiz)</p>
+                                <p class="field-note">{{ __('Test cards info') }}</p>
                             </div>
                         </section>
                     </div>
 
                     <aside class="panel checkout-summary">
-                        <h2 class="panel-title">Siparis Ozeti</h2>
+                        <h2 class="panel-title">{{ __('Order Summary') }}</h2>
 
                         <div class="summary-items">
                             @foreach($cartData['items'] as $item)
                                 <div class="summary-item">
                                     <div>
                                         <p class="summary-item-title">{{ $item['item']->variant->product->title }}</p>
-                                        <p class="summary-item-sub">{{ $item['item']->variant->sku ?? 'Varyant' }} x {{ $item['item']->quantity }}</p>
+                                        <p class="summary-item-sub">{{ $item['item']->variant->sku ?? __('Variant') }} x {{ $item['item']->quantity }}</p>
                                         @if($item['price_changed'])
-                                            <p class="price-warning">Fiyat degisikligi algilandi</p>
+                                            <p class="price-warning">{{ __('Price change detected') }}</p>
                                         @endif
                                     </div>
                                     <p class="summary-item-title">₺{{ number_format($item['subtotal'], 2) }}</p>
@@ -493,24 +493,24 @@
 
                         <div class="summary-rows">
                             <div class="summary-row">
-                                <span>Ara Toplam</span>
+                                <span>{{ __('Subtotal') }}</span>
                                 <span>₺{{ number_format($cartData['subtotal'], 2) }}</span>
                             </div>
                             <div class="summary-row">
-                                <span>Kargo</span>
-                                <span>Sonraki adimda hesaplanir</span>
+                                <span>{{ __('Shipping') }}</span>
+                                <span>{{ __('Calculated at next step') }}</span>
                             </div>
                             <div class="summary-row">
-                                <span>Vergi</span>
-                                <span>Sonraki adimda hesaplanir</span>
+                                <span>{{ __('Tax') }}</span>
+                                <span>{{ __('Calculated at next step') }}</span>
                             </div>
                         </div>
 
                         <div class="terms-wrap">
                             <input type="checkbox" name="terms_accepted" id="terms_accepted" value="1" {{ old('terms_accepted') ? 'checked' : '' }}>
                             <label for="terms_accepted" class="terms-text">
-                                <span>Kullanim Kosullari ve Gizlilik Politikasini kabul ediyorum.</span>
-                                <a href="#">Detaylar</a>
+                                <span>{{ __('Terms acceptance text') }}</span>
+                                <a href="#">{{ __('Details') }}</a>
                             </label>
                         </div>
                         @error('terms_accepted')
@@ -518,11 +518,11 @@
                         @enderror
 
                         <button type="submit" class="theme-btn" {{ !Auth::check() ? 'disabled' : '' }}>
-                            {{ Auth::check() ? 'Odemeye Devam Et' : 'Giris Yaparak Devam Et' }}
+                            {{ Auth::check() ? __('Continue to Payment') : __('Login to Continue') }}
                         </button>
 
                         @if(!Auth::check())
-                            <p class="login-note">Siparisi tamamlamak icin giris yapmaniz gerekir.</p>
+                            <p class="login-note">{{ __('Login required for order') }}</p>
                         @endif
                     </aside>
                 </div>

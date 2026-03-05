@@ -18,8 +18,8 @@
     </div>
     <div class="hero-content">
         <h1 class="hero-title">DecorMotto</h1>
-        <p class="hero-subtitle">Ev dekorasyonunda lüksün adresi</p>
-        <a href="#products" class="hero-cta">Keşfet</a>
+        <p class="hero-subtitle">{{ __('The address of luxury in home decoration') }}</p>
+        <a href="#products" class="hero-cta">{{ __('Discover') }}</a>
     </div>
     <div class="scroll-indicator">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,22 +31,22 @@
 <!-- Marquee -->
 <div class="marquee">
     <div class="marquee-inner">
-        <span class="marquee-item">Ücretsiz Kargo</span>
-        <span class="marquee-item">30 Gün İade</span>
-        <span class="marquee-item">Taksit Seçenekleri</span>
-        <span class="marquee-item">7/24 Destek</span>
-        <span class="marquee-item">Ücretsiz Kargo</span>
-        <span class="marquee-item">30 Gün İade</span>
-        <span class="marquee-item">Taksit Seçenekleri</span>
-        <span class="marquee-item">7/24 Destek</span>
+        <span class="marquee-item">{{ __('Free Shipping') }}</span>
+        <span class="marquee-item">{{ __('30 Day Returns') }}</span>
+        <span class="marquee-item">{{ __('Installment Options') }}</span>
+        <span class="marquee-item">{{ __('24/7 Support') }}</span>
+        <span class="marquee-item">{{ __('Free Shipping') }}</span>
+        <span class="marquee-item">{{ __('30 Day Returns') }}</span>
+        <span class="marquee-item">{{ __('Installment Options') }}</span>
+        <span class="marquee-item">{{ __('24/7 Support') }}</span>
     </div>
 </div>
 
 <!-- Featured Products -->
 <section class="products-section" id="products">
     <div class="section-header">
-        <p class="section-title">Koleksiyonlarımız</p>
-        <h2 class="section-heading">Öne Çıkan Ürünler</h2>
+        <p class="section-title">{{ __('Our Collections') }}</p>
+        <h2 class="section-heading">{{ __('Featured Products') }}</h2>
     </div>
     
     @if($featuredProducts->count() > 0)
@@ -82,7 +82,7 @@
     </div>
     @else
     <div class="text-center" style="padding: 60px 0;">
-        <p class="text-gray-500 text-lg">Henüz ürün bulunmuyor. Yakında döneceğiz!</p>
+        <p class="text-gray-500 text-lg">{{ __('No products yet') }}</p>
     </div>
     @endif
 </section>
@@ -91,8 +91,8 @@
 @if($categories->count() > 0)
 <section class="products-section" style="background:#fafafa;">
     <div class="section-header">
-        <p class="section-title">Kategoriler</p>
-        <h2 class="section-heading">İlginizi Çekebilir</h2>
+        <p class="section-title">{{ __('Categories') }}</p>
+        <h2 class="section-heading">{{ __('May Interest You') }}</h2>
     </div>
     
     <div class="product-grid">
@@ -106,7 +106,7 @@
                     @endif
                 </div>
                 <h3 class="product-name" style="text-align:center;">{{ $category->name }}</h3>
-                <p class="product-price" style="text-align:center;font-size:13px;color:var(--color-muted);">{{ $category->products_count ?? 0 }} Ürün</p>
+                <p class="product-price" style="text-align:center;font-size:13px;color:var(--color-muted);">{{ $category->products_count ?? 0 }} {{ __('products_count') }}</p>
             </a>
         @endforeach
     </div>

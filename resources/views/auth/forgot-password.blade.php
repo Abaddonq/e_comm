@@ -138,8 +138,8 @@
 <div class="auth-page">
     <div class="auth-container">
         <div class="auth-card">
-            <h1 class="auth-title">Sifre Sifirlama</h1>
-            <p class="auth-subtitle">E-posta adresinizi girin, size sifre yenileme baglantisini gonderelim.</p>
+            <h1 class="auth-title">{{ __('Password Reset') }}</h1>
+            <p class="auth-subtitle">{{ __('Password reset subtitle') }}</p>
 
             @if (session('status'))
                 <div class="status-box">{{ session('status') }}</div>
@@ -149,18 +149,18 @@
                 @csrf
 
                 <div class="field">
-                    <label for="email">E-Posta</label>
+                    <label for="email">{{ __('Email') }}</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
                     @error('email')
                         <p class="error-text">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <button type="submit" class="auth-btn">Sifirlama Baglantisi Gonder</button>
+                <button type="submit" class="auth-btn">{{ __('Send Reset Link') }}</button>
             </form>
 
             <p class="auth-footer">
-                <a href="{{ route('login') }}" class="text-link">Giris Ekranina Don</a>
+                <a href="{{ route('login') }}" class="text-link">{{ __('Back to Login') }}</a>
             </p>
         </div>
     </div>

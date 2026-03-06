@@ -88,6 +88,10 @@
         cursor: pointer;
     }
 
+    .filter-toggle-text {
+        display: inline;
+    }
+
     .filter-toggle-btn:hover {
         border-color: #1a1a1a;
     }
@@ -248,6 +252,134 @@
         .products-grid {
             grid-template-columns: repeat(4, 1fr);
             gap: 24px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .category-container {
+            padding: 24px 14px 56px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 14px;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .category-header {
+            margin-bottom: 18px;
+        }
+
+        .category-title {
+            font-size: 30px;
+        }
+
+        .category-count {
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .category-toolbar {
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            gap: 10px;
+        }
+
+        .toolbar-left {
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .filter-toggle-btn {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
+            border-radius: 999px;
+            padding: 0;
+            gap: 0;
+            justify-content: center;
+        }
+
+        .filter-toggle-btn .filter-toggle-text {
+            display: none;
+        }
+
+        .filter-toggle-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .results-count {
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sort-select {
+            height: 42px;
+            font-size: 13px;
+            padding: 0 30px 0 10px;
+        }
+
+        .filter-panel {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .filter-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .filter-group {
+            width: 100%;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .price-inputs {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .price-input {
+            flex: 1;
+            width: auto;
+            min-width: 0;
+            height: 40px;
+        }
+
+        .filter-actions {
+            width: 100%;
+            margin-left: 0;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            min-height: 40px;
+            text-align: center;
+            padding: 8px 12px;
+        }
+
+        .active-filters {
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .active-filter {
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .products-grid {
+            gap: 14px;
         }
     }
 
@@ -470,11 +602,11 @@
 
         <div class="category-toolbar">
             <div class="toolbar-left">
-                <button class="filter-toggle-btn" onclick="toggleFilters()">
+                <button type="button" class="filter-toggle-btn" onclick="toggleFilters()" aria-label="{{ __('Filter') }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                     </svg>
-                    {{ __('Filter') }}
+                    <span class="filter-toggle-text">{{ __('Filter') }}</span>
                 </button>
                 <span class="results-count">{{ $products->count() }} {{ __('showing products') }}</span>
             </div>

@@ -10,13 +10,6 @@ use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
-    public function index()
-    {
-        $wishlists = auth()->user()->wishlist()->with('product.images', 'product.variants')->get();
-        
-        return view('web.profile.wishlist', compact('wishlists'));
-    }
-
     public function toggle(Request $request): JsonResponse
     {
         if (!auth()->check()) {

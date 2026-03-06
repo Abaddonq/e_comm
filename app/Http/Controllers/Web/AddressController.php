@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AddressController extends Controller
 {
-    public function index()
-    {
-        $addresses = Auth::user()->addresses()->get();
-        return view('web.addresses.index', compact('addresses'));
-    }
-
     public function create()
     {
         return view('web.addresses.create');
@@ -50,7 +44,7 @@ class AddressController extends Controller
             return redirect()->route('checkout.index')->with('success', 'Address added successfully.');
         }
 
-        return redirect()->route('addresses.index')->with('success', 'Address added successfully.');
+        return redirect()->route('profile.index', ['tab' => 'addresses'])->with('success', 'Address added successfully.');
     }
 
     public function edit(Address $address)
@@ -85,7 +79,7 @@ class AddressController extends Controller
             return response()->json(['success' => true, 'message' => 'Adres başarıyla güncellendi.']);
         }
 
-        return redirect()->route('addresses.index')->with('success', 'Address updated successfully.');
+        return redirect()->route('profile.index', ['tab' => 'addresses'])->with('success', 'Address updated successfully.');
     }
 
     public function destroy(Request $request, Address $address)
@@ -121,7 +115,7 @@ class AddressController extends Controller
             return response()->json(['success' => true, 'message' => 'Adres başarıyla silindi.']);
         }
 
-        return redirect()->route('addresses.index')->with('success', 'Address deleted successfully.');
+        return redirect()->route('profile.index', ['tab' => 'addresses'])->with('success', 'Address deleted successfully.');
     }
 
     protected function authorizeAddress(Address $address): void

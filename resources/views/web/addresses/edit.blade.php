@@ -99,7 +99,7 @@
             </div>
 
             <div class="mt-6 flex justify-end space-x-4">
-                <a href="{{ route('addresses.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                <a href="{{ route('profile.index', ['tab' => 'addresses']) }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                     Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">

@@ -4,7 +4,7 @@
 
 @php
     $redirectTo = old('redirect_to', request('redirect_to'));
-    $cancelRoute = $redirectTo === 'checkout' ? route('checkout.index') : route('addresses.index');
+    $cancelRoute = $redirectTo === 'checkout' ? route('checkout.index') : route('profile.index', ['tab' => 'addresses']);
 @endphp
 
 <style>

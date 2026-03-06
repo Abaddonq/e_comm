@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
-        <a href="{{ route('orders.index') }}" class="text-indigo-600 hover:text-indigo-800">
+        <a href="{{ route('profile.index', ['tab' => 'orders']) }}" class="text-indigo-600 hover:text-indigo-800">
             &larr; Back to Orders
         </a>
     </div>

@@ -41,7 +41,6 @@ Route::post('/locale/{lang}', function (string $lang) {
 })->name('locale.switch');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('product.show');
@@ -71,13 +70,11 @@ Route::middleware(['auth', 'throttle.checkout'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/profile/wishlist', [WishlistController::class, 'index'])->name('profile.wishlist');
     Route::get('/profile/edit', fn() => redirect()->route('profile.index'))->name('profile.edit');
     Route::post('/profile/update-profile', [ProfileController::class, 'updateProfile'])->name('profile.update-profile');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
     Route::delete('/profile/account', [ProfileController::class, 'destroyAccount'])->name('profile.destroy-account');
     
-    Route::get('/addresses', [AddressController::class, 'index'])->name('addresses.index');
     Route::get('/addresses/create', [AddressController::class, 'create'])->name('addresses.create');
     Route::post('/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::get('/addresses/{address}/edit', [AddressController::class, 'edit'])->name('addresses.edit');
@@ -85,7 +82,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
     Route::post('/addresses/{address}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('addresses.set-default');
 
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 });

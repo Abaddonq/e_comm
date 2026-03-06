@@ -1307,21 +1307,6 @@
                 </div>
             </div>
             <div class="mobile-nav-section">
-                <span class="mobile-nav-label">{{ __('Pages') }}</span>
-                <div class="mobile-nav-list">
-                    <a href="{{ route('home') }}" class="mobile-nav-link">{{ __('Homepage') }}</a>
-                    <a href="{{ route('search') }}" class="mobile-nav-link">{{ __('Search') }}</a>
-                    @auth
-                        <a href="{{ route('profile.wishlist') }}" class="mobile-nav-link">{{ __('Favorites') }}</a>
-                        <a href="{{ route('orders.index') }}" class="mobile-nav-link">{{ __('My Orders') }}</a>
-                        <a href="{{ route('addresses.index') }}" class="mobile-nav-link">{{ __('My Addresses') }}</a>
-                    @else
-                        <a href="{{ route('login') }}" class="mobile-nav-link">{{ __('Sign In') }}</a>
-                        <a href="{{ route('register') }}" class="mobile-nav-link">{{ __('Sign Up Nav') }}</a>
-                    @endauth
-                </div>
-            </div>
-            <div class="mobile-nav-section">
                 <span class="mobile-nav-label">{{ __('Language') }}</span>
                 <div class="mobile-lang-toggle">
                     <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
@@ -1771,7 +1756,10 @@
             searchInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && searchInput.value.trim()) {
                     saveRecentSearch(searchInput.value.trim());
-                    window.location.href = `/search?q=${encodeURIComponent(searchInput.value.trim())}`;
+                    const firstSuggestion = suggestionsList.querySelector('a.suggestion-item');
+                    if (firstSuggestion) {
+                        window.location.href = firstSuggestion.getAttribute('href');
+                    }
                 }
             });
         }

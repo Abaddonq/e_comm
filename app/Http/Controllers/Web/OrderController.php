@@ -9,16 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index()
-    {
-        $orders = Auth::user()->orders()
-            ->with(['shipment', 'payment'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return view('web.orders.index', compact('orders'));
-    }
-
     public function show(int $id)
     {
         $order = Auth::user()->orders()
@@ -42,6 +32,6 @@ class OrderController extends Controller
             'cancellation_reason' => $request->reason ?? 'Müşteri tarafından iptal edildi',
         ]);
 
-        return redirect()->route('orders.index')->with('success', 'Siparişiniz iptal edildi.');
+        return redirect()->route('profile.index', ['tab' => 'orders'])->with('success', 'Siparişiniz iptal edildi.');
     }
 }

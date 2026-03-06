@@ -9,36 +9,6 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class SearchController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = $this->sanitizeQuery($request->get('q', ''));
-        
-        if (empty($query)) {
-            return view('web.search.index', [
-                'query' => '',
-                'products' => collect(),
-            ]);
-        }
-
-        $perPage = 12;
-        $products = Product::active()
-            ->with(['category', 'variants', 'images'])
-            ->where(function ($q) use ($query) {
-                $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%")
-                  ->orWhereHas('category', function ($cq) use ($query) {
-                      $cq->where('name', 'like', "%{$query}%");
-                  });
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
-
-        return view('web.search.index', [
-            'query' => $query,
-            'products' => $products,
-        ]);
-    }
-
     public function suggestions(Request $request)
     {
         if (!RateLimiter::attempt('search-suggestions:' . $request->ip(), 60, function () {})) {

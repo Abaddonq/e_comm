@@ -27,6 +27,7 @@ Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 
 Route::post('/webhooks/payment/callback', [PaymentCallbackController::class, 'handleCallback'])
     ->name('webhooks.payment.callback')
+    ->middleware('throttle:60,1')
     ->withoutMiddleware(['web', 'csrf']);
 
 // Language switcher
@@ -45,8 +46,12 @@ Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->nam
 Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('product.show');
 
-Route::get('/test-payment', [TestPaymentController::class, 'index'])->name('test-payment.index');
-Route::post('/test-payment/create', [TestPaymentController::class, 'createTestOrder'])->name('test-payment.create');
+if (app()->environment(['local', 'testing'])) {
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('/test-payment', [TestPaymentController::class, 'index'])->name('test-payment.index');
+        Route::post('/test-payment/create', [TestPaymentController::class, 'createTestOrder'])->name('test-payment.create');
+    });
+}
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

@@ -52,7 +52,7 @@ class IyzicoGateway implements PaymentGatewayInterface
             $paymentCard->setCardNumber($cardNumber);
             $paymentCard->setExpireMonth($paymentData['expire_month'] ?? '12');
             $paymentCard->setExpireYear($paymentData['expire_year'] ?? '2025');
-            $paymentCard->setCvc($paymentData['cvv'] ?? '123');
+            $paymentCard->setCvc($paymentData['cvv'] ?? '');
             $paymentCard->setRegisterCard(0);
             $request->setPaymentCard($paymentCard);
 
@@ -119,7 +119,7 @@ class IyzicoGateway implements PaymentGatewayInterface
                 'status' => $payment->getStatus(),
                 'errorMessage' => $payment->getErrorMessage(),
                 'paymentId' => $payment->getPaymentId(),
-                'cardNumber' => $this->sanitizeCardNumber($paymentData['card_number'] ?? ''),
+                'cardLast4' => $this->maskCardForLogs($paymentData['card_number'] ?? ''),
             ]);
 
             if ($payment->getStatus() === 'success') {
@@ -149,10 +149,36 @@ class IyzicoGateway implements PaymentGatewayInterface
         }
     }
 
-    public function verifyCallback(array $callbackData): bool
+    public function verifyCallback(
+        array $callbackData,
+        ?string $rawPayload = null,
+        ?string $signature = null,
+        ?string $timestamp = null
+    ): bool
     {
-        return isset($callbackData['paymentStatus']) && 
-               in_array($callbackData['paymentStatus'], ['SUCCESS', 'AUTHENTICATED']);
+        $statusValid = isset($callbackData['paymentStatus'])
+            && in_array($callbackData['paymentStatus'], ['SUCCESS', 'AUTHENTICATED'], true);
+
+        $secret = (string) config('payment.iyzico.webhook_secret', '');
+        $strict = (bool) config('payment.iyzico.webhook_strict', app()->environment('production'));
+
+        if ($secret === '') {
+            return $strict ? false : $statusValid;
+        }
+
+        if (!$rawPayload || !$signature) {
+            return false;
+        }
+
+        if (!$this->verifyWebhookTimestamp($timestamp)) {
+            return false;
+        }
+
+        if (!$this->verifyWebhookSignature($rawPayload, $signature, $timestamp, $secret)) {
+            return false;
+        }
+
+        return $statusValid;
     }
 
     public function getTransactionId(array $callbackData): ?string
@@ -216,5 +242,51 @@ class IyzicoGateway implements PaymentGatewayInterface
         }
         
         return 'unknown';
+    }
+
+    protected function verifyWebhookTimestamp(?string $timestamp): bool
+    {
+        if (!$timestamp) {
+            return false;
+        }
+
+        if (!ctype_digit($timestamp)) {
+            return false;
+        }
+
+        $tolerance = (int) config('payment.iyzico.webhook_tolerance', 300);
+        $delta = abs(time() - (int) $timestamp);
+
+        return $delta <= $tolerance;
+    }
+
+    protected function verifyWebhookSignature(string $rawPayload, string $signature, ?string $timestamp, string $secret): bool
+    {
+        $signature = trim($signature);
+
+        $candidates = [
+            hash_hmac('sha256', $rawPayload, $secret),
+        ];
+
+        if ($timestamp) {
+            $candidates[] = hash_hmac('sha256', $timestamp . '.' . $rawPayload, $secret);
+            $candidates[] = hash_hmac('sha256', $rawPayload . '.' . $timestamp, $secret);
+        }
+
+        foreach ($candidates as $candidate) {
+            if (hash_equals($candidate, $signature)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function maskCardForLogs(string $cardNumber): string
+    {
+        $sanitized = $this->sanitizeCardNumber($cardNumber);
+        $last4 = substr($sanitized, -4);
+
+        return $last4 ? ('****' . $last4) : 'masked';
     }
 }

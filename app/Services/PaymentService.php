@@ -83,9 +83,14 @@ class PaymentService
         return $result;
     }
 
-    public function verifyCallback(array $callbackData): bool
+    public function verifyCallback(
+        array $callbackData,
+        ?string $rawPayload = null,
+        ?string $signature = null,
+        ?string $timestamp = null
+    ): bool
     {
-        return $this->gateway->verifyCallback($callbackData);
+        return $this->gateway->verifyCallback($callbackData, $rawPayload, $signature, $timestamp);
     }
 
     public function processSuccessfulPayment(Order $order, array $callbackData): Payment

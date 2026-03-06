@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class PaymentCallbackController extends Controller
@@ -19,9 +20,24 @@ class PaymentCallbackController extends Controller
 
     public function handleCallback(Request $request)
     {
+        $rawPayload = $request->getContent();
+        $signature = (string) ($request->header('X-Iyzico-Signature')
+            ?? $request->header('X-Stripe-Signature')
+            ?? $request->header('X-Signature')
+            ?? '');
+        $timestamp = $request->header('X-Iyzico-Timestamp')
+            ?? $request->header('X-Timestamp')
+            ?? null;
+
         $callbackData = $request->all();
 
-        Log::info('Payment callback received', $callbackData);
+        Log::info('Payment callback received', [
+            'has_signature' => $signature !== '',
+            'has_timestamp' => $timestamp !== null,
+            'conversation_id' => $callbackData['conversationId'] ?? null,
+            'order_id' => $callbackData['order_id'] ?? null,
+            'gateway' => config('payment.gateway', 'iyzico'),
+        ]);
 
         if (empty($callbackData)) {
             Log::warning('Empty payment callback received');
@@ -31,7 +47,10 @@ class PaymentCallbackController extends Controller
         $orderId = $callbackData['conversationId'] ?? $callbackData['order_id'] ?? null;
 
         if (!$orderId) {
-            Log::warning('Payment callback missing order ID', $callbackData);
+            Log::warning('Payment callback missing order ID', [
+                'has_signature' => $signature !== '',
+                'has_timestamp' => $timestamp !== null,
+            ]);
             return response()->json(['error' => 'Order ID not found'], 400);
         }
 
@@ -43,12 +62,22 @@ class PaymentCallbackController extends Controller
         }
 
         try {
-            $isValid = $this->paymentService->verifyCallback($callbackData);
+            if ($signature !== '') {
+                $cacheKey = 'webhook_sig:' . hash('sha256', $signature);
+                $added = Cache::add($cacheKey, true, now()->addMinutes(10));
+
+                if (!$added) {
+                    Log::warning('Duplicate payment callback blocked', ['order_id' => $orderId]);
+                    return response()->json(['error' => 'Duplicate callback'], 409);
+                }
+            }
+
+            $isValid = $this->paymentService->verifyCallback($callbackData, $rawPayload, $signature, $timestamp);
 
             if (!$isValid) {
                 Log::warning('Invalid payment callback signature', [
                     'order_id' => $orderId,
-                    'callback_data' => $callbackData,
+                    'has_signature' => $signature !== '',
                 ]);
                 return response()->json(['error' => 'Invalid signature'], 400);
             }

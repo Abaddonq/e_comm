@@ -128,9 +128,9 @@ chmod -R 777 storage/uploads
 ### Admin Access
 
 After seeding:
-- URL: `https://yourdomain.com/secure-admin-xyz123`
-- Email: admin@decoremotto.com
-- Password: admin123
+- URL: `https://yourdomain.com/{ADMIN_ROUTE_PREFIX}`
+- Email: `ADMIN_SEED_EMAIL`
+- Password: `ADMIN_SEED_PASSWORD` (must be set securely in environment)
 
 ### Commands
 

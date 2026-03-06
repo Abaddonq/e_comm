@@ -18,6 +18,20 @@ class SecurityHeaders
             $response->headers->set('X-XSS-Protection', '1; mode=block');
             $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+
+            $csp = "default-src 'self'; "
+                . "script-src 'self' 'unsafe-inline' https:; "
+                . "style-src 'self' 'unsafe-inline' https:; "
+                . "img-src 'self' data: blob: https:; "
+                . "font-src 'self' data: https:; "
+                . "connect-src 'self' https:; "
+                . "frame-ancestors 'self'; base-uri 'self'; form-action 'self'";
+
+            if (config('app.debug')) {
+                $response->headers->set('Content-Security-Policy-Report-Only', $csp);
+            } else {
+                $response->headers->set('Content-Security-Policy', $csp);
+            }
         }
 
         $this->setCacheHeaders($request, $response);

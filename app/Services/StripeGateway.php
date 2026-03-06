@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use Stripe\Webhook;
 
 class StripeGateway implements PaymentGatewayInterface
 {
@@ -55,8 +55,32 @@ class StripeGateway implements PaymentGatewayInterface
         }
     }
 
-    public function verifyCallback(array $callbackData): bool
+    public function verifyCallback(
+        array $callbackData,
+        ?string $rawPayload = null,
+        ?string $signature = null,
+        ?string $timestamp = null
+    ): bool
     {
+        $webhookSecret = config('payment.stripe.webhook_secret');
+
+        if ($webhookSecret && $rawPayload && $signature) {
+            try {
+                $event = Webhook::constructEvent($rawPayload, $signature, $webhookSecret);
+
+                return in_array($event->type, [
+                    'checkout.session.completed',
+                    'payment_intent.succeeded',
+                ], true);
+            } catch (\Exception $e) {
+                Log::error('Stripe webhook signature verification failed', [
+                    'error' => $e->getMessage(),
+                ]);
+
+                return false;
+            }
+        }
+
         $eventId = $callbackData['event_id'] ?? null;
         
         if (!$eventId) {

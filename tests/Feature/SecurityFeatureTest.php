@@ -41,7 +41,7 @@ class SecurityFeatureTest extends TestCase
 
     public function test_admin_routes_require_authentication(): void
     {
-        $response = $this->get('/secure-admin-xyz123');
+        $response = $this->get('/' . config('admin.route_prefix'));
 
         $response->assertRedirect('/login');
     }

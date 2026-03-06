@@ -1427,6 +1427,7 @@
             'Product added to wishlist': @json(__('Product added to wishlist')),
             'Product removed from wishlist': @json(__('Product removed from wishlist')),
             'No search results for': @json(__('No search results for')),
+            'No Image': @json(__('No Image')),
             'In Wishlist': @json(__('In Wishlist')),
             'Add to Wishlist': @json(__('Add to Wishlist')),
             'In Stock': @json(__('In Stock')),
@@ -1457,14 +1458,27 @@
 
             const toast = document.createElement('div');
             toast.className = `toast-notification toast-${type}`;
-            toast.innerHTML = `
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    ${type === 'success' 
-                        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
-                        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'}
-                </svg>
-                ${message}
-            `;
+
+            const svgNs = 'http://www.w3.org/2000/svg';
+            const icon = document.createElementNS(svgNs, 'svg');
+            icon.setAttribute('width', '20');
+            icon.setAttribute('height', '20');
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+            icon.setAttribute('viewBox', '0 0 24 24');
+
+            const path = document.createElementNS(svgNs, 'path');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('stroke-width', '2');
+            path.setAttribute('d', type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12');
+            icon.appendChild(path);
+
+            const messageEl = document.createElement('span');
+            messageEl.textContent = String(message ?? '');
+
+            toast.appendChild(icon);
+            toast.appendChild(messageEl);
             document.body.appendChild(toast);
 
             setTimeout(() => {
@@ -1642,15 +1656,81 @@
             showRecentSearches();
         }
 
+        function clearElement(el) {
+            if (!el) return;
+            while (el.firstChild) {
+                el.removeChild(el.firstChild);
+            }
+        }
+
+        function createSuggestionItem(product) {
+            const item = document.createElement('a');
+            item.className = 'suggestion-item';
+
+            const slug = product && product.slug ? String(product.slug) : '';
+            item.setAttribute('href', `/products/${encodeURIComponent(slug)}`);
+
+            const imageUrl = product && product.image ? String(product.image) : '';
+            if (imageUrl) {
+                const image = document.createElement('img');
+                image.className = 'suggestion-image';
+                image.setAttribute('src', imageUrl);
+                image.setAttribute('alt', product && product.title ? String(product.title) : window.__t['No Image']);
+                item.appendChild(image);
+            } else {
+                const imagePlaceholder = document.createElement('div');
+                imagePlaceholder.className = 'suggestion-image';
+                item.appendChild(imagePlaceholder);
+            }
+
+            const info = document.createElement('div');
+            info.className = 'suggestion-info';
+
+            const title = document.createElement('div');
+            title.className = 'suggestion-title';
+            title.textContent = product && product.title ? String(product.title) : '';
+            info.appendChild(title);
+
+            if (product && product.price) {
+                const price = document.createElement('div');
+                price.className = 'suggestion-price';
+                price.textContent = `₺${String(product.price)}`;
+                info.appendChild(price);
+            }
+
+            item.appendChild(info);
+            return item;
+        }
+
+        function renderNoResults(query) {
+            clearElement(suggestionsList);
+            const noResults = document.createElement('div');
+            noResults.style.padding = '20px';
+            noResults.style.textAlign = 'center';
+            noResults.style.color = '#666';
+            noResults.textContent = `"${String(query ?? '')}" ${window.__t['No search results for']}`;
+            suggestionsList.appendChild(noResults);
+        }
+
         function showRecentSearches() {
             const recent = getRecentSearches();
             if (recent.length > 0) {
                 recentSearches.style.display = 'block';
-                recentList.innerHTML = recent.map(s => 
-                    `<span class="recent-item" onclick="document.getElementById('searchInput').value='${s.replace(/'/g, "\\'")}';performSearch();">${s}</span>`
-                ).join('');
+                clearElement(recentList);
+
+                recent.forEach((term) => {
+                    const recentItem = document.createElement('span');
+                    recentItem.className = 'recent-item';
+                    recentItem.textContent = String(term);
+                    recentItem.addEventListener('click', () => {
+                        searchInput.value = String(term);
+                        performSearch();
+                    });
+                    recentList.appendChild(recentItem);
+                });
             } else {
                 recentSearches.style.display = 'none';
+                clearElement(recentList);
             }
         }
 
@@ -1659,14 +1739,14 @@
             document.body.style.overflow = 'hidden';
             setTimeout(() => searchInput.focus(), 100);
             showRecentSearches();
-            suggestionsList.innerHTML = '';
+            clearElement(suggestionsList);
         }
 
         function closeSearchModal() {
             searchModal.classList.remove('active');
             document.body.style.overflow = '';
             searchInput.value = '';
-            suggestionsList.innerHTML = '';
+            clearElement(suggestionsList);
             recentSearches.style.display = 'none';
         }
 
@@ -1706,14 +1786,14 @@
             clearTimeout(searchTimeout);
             
             if (query.length < 2) {
-                suggestionsList.innerHTML = '';
+                clearElement(suggestionsList);
                 recentSearches.style.display = getRecentSearches().length > 0 ? 'block' : 'none';
                 return;
             }
 
             recentSearches.style.display = 'none';
             searchLoading.style.display = 'flex';
-            suggestionsList.innerHTML = '';
+            clearElement(suggestionsList);
 
             searchTimeout = setTimeout(async () => {
                 try {
@@ -1728,21 +1808,12 @@
                     searchLoading.style.display = 'none';
                     
                     if (data.products && data.products.length > 0) {
-                        suggestionsList.innerHTML = data.products.map(p => `
-                            <a href="/products/${p.slug}" class="suggestion-item">
-                                ${p.image ? `<img src="${p.image}" alt="${p.title}" class="suggestion-image">` : '<div class="suggestion-image"></div>'}
-                                <div class="suggestion-info">
-                                    <div class="suggestion-title">${p.title}</div>
-                                    ${p.price ? `<div class="suggestion-price">₺${p.price}</div>` : ''}
-                                </div>
-                            </a>
-                        `).join('');
+                        clearElement(suggestionsList);
+                        data.products.forEach((p) => {
+                            suggestionsList.appendChild(createSuggestionItem(p));
+                        });
                     } else {
-                        suggestionsList.innerHTML = `
-                            <div style="padding: 20px; text-align: center; color: #666;">
-                                "${query}" ${window.__t['No search results for']}
-                            </div>
-                        `;
+                        renderNoResults(query);
                     }
                 } catch (error) {
                     console.error('Search error:', error);

@@ -129,6 +129,10 @@ class CheckoutController extends Controller
     public function cancel(Request $request, int $orderId)
     {
         $order = \App\Models\Order::findOrFail($orderId);
+
+        if (Auth::check() && $order->user_id !== Auth::id()) {
+            abort(403);
+        }
         
         $order->update(['status' => 'cancelled']);
 

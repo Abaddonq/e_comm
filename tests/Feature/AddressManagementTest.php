@@ -48,7 +48,7 @@ class AddressManagementTest extends TestCase
             'country' => 'TR',
         ]);
 
-        $response->assertRedirect('/addresses');
+        $response->assertRedirect(route('profile.index', ['tab' => 'addresses']));
 
         $this->assertDatabaseHas('addresses', [
             'user_id' => $user->id,
@@ -71,7 +71,7 @@ class AddressManagementTest extends TestCase
             'country' => 'TR',
         ]);
 
-        $response->assertRedirect('/addresses');
+        $response->assertRedirect(route('profile.index', ['tab' => 'addresses']));
 
         $this->assertDatabaseHas('addresses', [
             'id' => $address->id,
@@ -170,9 +170,9 @@ class AddressManagementTest extends TestCase
         $this->assertDatabaseMissing('addresses', ['id' => $address->id]);
     }
 
-    public function test_guest_cannot_access_addresses(): void
+    public function test_guest_cannot_access_address_create_page(): void
     {
-        $response = $this->get('/addresses');
+        $response = $this->get('/addresses/create');
 
         $response->assertRedirect('/login');
     }

@@ -90,9 +90,7 @@ class CartController extends Controller
         $validated = $request->validated();
         $cartItem = \App\Models\CartItem::findOrFail($validated['item_id']);
 
-        if (auth()->check() && $cartItem->cart->user_id !== auth()->id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        if (!$this->canAccessCartItem($cartItem)) return response()->json(['error' => 'Unauthorized'], 403);
 
         $this->cartService->updateItemQuantity($cartItem, $validated['quantity']);
 
@@ -114,9 +112,7 @@ class CartController extends Controller
 
         $cartItem = \App\Models\CartItem::findOrFail($request->item_id);
 
-        if (auth()->check() && $cartItem->cart->user_id !== auth()->id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        if (!$this->canAccessCartItem($cartItem)) return response()->json(['error' => 'Unauthorized'], 403);
 
         $this->cartService->removeItem($cartItem);
 
@@ -128,5 +124,16 @@ class CartController extends Controller
             'cart_count' => $cartData['item_count'],
             'subtotal' => $cartData['subtotal'],
         ]);
+    }
+
+    private function canAccessCartItem(\App\Models\CartItem $cartItem): bool
+    {
+        if (auth()->check()) {
+            return (int) $cartItem->cart->user_id === (int) auth()->id();
+        }
+
+        $sessionId = session()->getId();
+
+        return !empty($cartItem->cart->session_id) && hash_equals($cartItem->cart->session_id, $sessionId);
     }
 }

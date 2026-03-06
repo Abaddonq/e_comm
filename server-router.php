@@ -3,13 +3,31 @@
 declare(strict_types=1);
 
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
-$publicPath = __DIR__ . '/public';
+$publicPath = realpath(__DIR__ . '/public') ?: __DIR__ . '/public';
 $storagePublicPath = realpath(__DIR__ . '/storage/app/public');
+
+$normalize = static function (string $path): string {
+    $resolvedPath = realpath($path);
+    $path = $resolvedPath !== false ? $resolvedPath : $path;
+
+    return rtrim($path, DIRECTORY_SEPARATOR);
+};
+
+$isWithin = static function (?string $path, ?string $basePath) use ($normalize): bool {
+    if ($path === null || $path === '' || $basePath === null || $basePath === '') {
+        return false;
+    }
+
+    $normalizedPath = $normalize($path);
+    $normalizedBasePath = $normalize($basePath);
+
+    return $normalizedPath === $normalizedBasePath || str_starts_with($normalizedPath, $normalizedBasePath . DIRECTORY_SEPARATOR);
+};
 
 if ($uri !== '/') {
     $candidatePath = realpath($publicPath . DIRECTORY_SEPARATOR . ltrim($uri, '/'));
-    $isInsidePublic = $candidatePath !== false && str_starts_with($candidatePath, $publicPath);
-    $isInsideStoragePublic = $candidatePath !== false && $storagePublicPath !== false && str_starts_with($candidatePath, $storagePublicPath);
+    $isInsidePublic = $candidatePath !== false && $isWithin($candidatePath, $publicPath);
+    $isInsideStoragePublic = $candidatePath !== false && $storagePublicPath !== false && $isWithin($candidatePath, $storagePublicPath);
 
     if ($candidatePath !== false && is_file($candidatePath) && ($isInsidePublic || $isInsideStoragePublic)) {
         $extension = strtolower(pathinfo($candidatePath, PATHINFO_EXTENSION));

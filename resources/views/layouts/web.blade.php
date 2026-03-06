@@ -750,17 +750,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transform: translateY(10px);
+            opacity: 1;
+            transform: none;
             transition: all var(--transition-base);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             cursor: pointer;
             border: none;
         }
-        
-        .product-card:hover .product-quick-add {
-            opacity: 1;
-            transform: translateY(0);
+
+        .product-quick-add:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
         
         .product-quick-add:hover {

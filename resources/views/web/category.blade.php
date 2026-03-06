@@ -333,29 +333,38 @@
     .quick-add-btn {
         position: absolute;
         bottom: 12px;
-        left: 12px;
         right: 12px;
-        background: #1a1a1a;
-        color: white;
+        width: 44px;
+        height: 44px;
+        background: #fff;
+        color: #1a1a1a;
         border: none;
-        border-radius: 8px;
-        padding: 12px;
-        font-size: 13px;
-        font-weight: 500;
+        border-radius: 50%;
+        padding: 0;
         cursor: pointer;
-        opacity: 0;
-        transform: translateY(10px);
+        opacity: 1;
+        transform: none;
         transition: all 0.3s ease;
         min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
     }
 
-    .product-card:hover .quick-add-btn {
-        opacity: 1;
-        transform: translateY(0);
+    .quick-add-btn svg {
+        width: 20px;
+        height: 20px;
     }
 
     .quick-add-btn:hover {
-        background: #333;
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    .quick-add-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
     }
 
     .product-info {
@@ -553,7 +562,11 @@
                                 <button class="wishlist-btn{{ in_array($product->id, $wishlistProductIds ?? []) ? ' active' : '' }}" id="wishlist-btn-{{ $product->id }}" onclick="toggleWishlist({{ $product->id }}, event)">
                                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                                 </button>
-                                <button class="quick-add-btn" onclick="quickAdd({{ $product->id }}, event)">{{ __('Add to Cart') }}</button>
+                                <button type="button" class="quick-add-btn" onclick="quickAdd({{ $product->id }}, event)" aria-label="{{ __('Add to Cart') }}" title="{{ __('Add to Cart') }}">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                    </svg>
+                                </button>
                             </div>
                         </a>
                         <div class="product-info">

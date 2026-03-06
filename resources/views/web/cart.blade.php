@@ -567,11 +567,7 @@
                         <strong>₺{{ number_format($cartData['subtotal'], 2) }}</strong>
                     </div>
 
-                    @auth
-                        <a href="{{ route('checkout.index') }}" class="theme-btn">{{ __('Proceed to Checkout') }}</a>
-                    @else
-                        <a href="{{ route('login') . '?redirect=' . urlencode(route('checkout.index')) }}" class="theme-btn">{{ __('Login to Checkout') }}</a>
-                    @endauth
+                    @include('web.cart.partials.checkout-cta')
                 </div>
 
                 <div class="cart-mobile-bar">
@@ -579,11 +575,7 @@
                         <span class="cart-mobile-bar-label">{{ __('Total') }}</span>
                         <strong class="cart-mobile-bar-value">₺{{ number_format($cartData['subtotal'], 2) }}</strong>
                     </div>
-                    @auth
-                        <a href="{{ route('checkout.index') }}" class="theme-btn">{{ __('Proceed to Checkout') }}</a>
-                    @else
-                        <a href="{{ route('login') . '?redirect=' . urlencode(route('checkout.index')) }}" class="theme-btn">{{ __('Login to Checkout') }}</a>
-                    @endauth
+                    @include('web.cart.partials.checkout-cta')
                 </div>
             </div>
         @else

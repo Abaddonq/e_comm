@@ -102,7 +102,11 @@ class StockController extends Controller
 
     public function history(ProductVariant $variant)
     {
-        $history = $this->stockService->getStockHistory($variant->id);
+        $history = StockMovement::with('creator')
+            ->where('product_variant_id', $variant->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+
         $currentStock = $this->stockService->getCurrentStock($variant->id);
 
         return view('admin.stock.history', compact('variant', 'history', 'currentStock'));

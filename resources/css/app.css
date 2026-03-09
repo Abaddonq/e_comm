@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global mobile-safe defaults */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+img,
+video,
+canvas,
+svg,
+iframe {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Admin Panel Styles */
 .admin-nav {
     position: fixed;
@@ -130,6 +153,7 @@
 
 .admin-main {
     padding-top: 64px;
+    overflow-x: clip;
 }
 
 .admin-toast {
@@ -163,6 +187,15 @@
 
 .admin-table-hint {
     display: none;
+}
+
+nav[aria-label="Pagination Navigation"] {
+    width: 100%;
+    max-width: 100%;
+}
+
+nav[aria-label="Pagination Navigation"] > div {
+    min-width: 0;
 }
 
 @keyframes slideIn {
@@ -219,11 +252,51 @@
     .admin-main button {
         min-height: 44px;
     }
+
+    nav[aria-label="Pagination Navigation"] > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    nav[aria-label="Pagination Navigation"] > div:first-child > * {
+        width: 100%;
+        min-width: 0;
+    }
+
+    nav[aria-label="Pagination Navigation"] > div:first-child a,
+    nav[aria-label="Pagination Navigation"] > div:first-child span {
+        justify-content: center;
+        text-align: center;
+    }
 }
 
 @media (min-width: 768px) {
     .admin-mobile-menu {
         display: none !important;
+    }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+    nav[aria-label="Pagination Navigation"] > div:last-child {
+        gap: 12px;
+    }
+
+    nav[aria-label="Pagination Navigation"] > div:last-child > div:last-child {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+    }
+}
+
+@media (max-width: 375px) {
+    .admin-nav-content {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .admin-logo {
+        font-size: 15px;
     }
 }
 

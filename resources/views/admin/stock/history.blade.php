@@ -40,7 +40,8 @@
     </div>
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="admin-table-hint px-4 pt-3 text-xs text-gray-500">Swipe horizontally to view full table.</div>
+        <div class="admin-table-scroll">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>

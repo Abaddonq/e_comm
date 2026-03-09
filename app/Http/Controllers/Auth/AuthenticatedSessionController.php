@@ -41,7 +41,7 @@ class AuthenticatedSessionController extends Controller
 
         $this->mergeCartOnLogin($request->user(), $guestCartId);
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::HOME);
     }
 
     protected function mergeCartOnLogin($user, ?int $guestCartId): void

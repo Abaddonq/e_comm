@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="px-6 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Order {{ $order->order_number }}</h1>
-        <a href="{{ route('admin.orders.index') }}" class="text-indigo-600 hover:text-indigo-800">
+    <div class="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Order {{ $order->order_number }}</h1>
+        <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 min-h-[44px]">
             &larr; Back to Orders
         </a>
     </div>
@@ -19,6 +19,8 @@
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
+                <div class="admin-table-hint pb-2 text-xs text-gray-500">Swipe horizontally to view full table.</div>
+                <div class="admin-table-scroll">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -68,6 +70,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                </div>
             </div>
 
             <div class="bg-white rounded-lg shadow p-6">
@@ -133,7 +136,7 @@
                     @method('PUT')
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Change Status</label>
-                        <select name="status" class="w-full border rounded-lg px-3 py-2">
+                        <select name="status" class="w-full border rounded-lg px-3 py-2 min-h-[44px]">
                             <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
                             <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Shipped</option>
@@ -146,10 +149,10 @@
                     
                     <div id="cancellation-reason" class="mb-4 hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Cancellation Reason</label>
-                        <textarea name="cancellation_reason" rows="2" class="w-full border rounded-lg px-3 py-2" placeholder="Reason for cancellation..."></textarea>
+                        <textarea name="cancellation_reason" rows="2" class="w-full border rounded-lg px-3 py-2 min-h-[44px]" placeholder="Reason for cancellation..."></textarea>
                     </div>
 
-                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 min-h-[44px]">
                         Update Status
                     </button>
                 </form>
@@ -180,16 +183,16 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tracking Number</label>
                         <input type="text" name="tracking_number" value="{{ $order->shipment->tracking_number ?? '' }}" 
-                            class="w-full border rounded-lg px-3 py-2">
+                            class="w-full border rounded-lg px-3 py-2 min-h-[44px]">
                     </div>
                     
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Courier Name</label>
                         <input type="text" name="courier_name" value="{{ $order->shipment->courier_name ?? '' }}" 
-                            class="w-full border rounded-lg px-3 py-2" placeholder="e.g., UPS, FedEx, PTT">
+                            class="w-full border rounded-lg px-3 py-2 min-h-[44px]" placeholder="e.g., UPS, FedEx, PTT">
                     </div>
 
-                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 min-h-[44px]">
                         {{ $order->shipment ? 'Update' : 'Create' }} Shipment
                     </button>
                 </form>

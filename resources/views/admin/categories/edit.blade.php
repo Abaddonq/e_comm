@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Edit Category</h1>
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Edit Category</h1>
 </div>
 
 <div class="bg-white shadow rounded-lg p-6">
@@ -79,11 +79,11 @@
             </div>
         </div>
 
-        <div class="flex gap-4">
-            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 min-h-[44px] w-full sm:w-auto">
                 Update Category
             </button>
-            <a href="{{ route('admin.categories.index') }}" class="text-gray-600 hover:text-gray-800 px-6 py-2">
+            <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center justify-center text-gray-600 hover:text-gray-800 px-6 py-2 min-h-[44px] w-full sm:w-auto">
                 Cancel
             </a>
         </div>

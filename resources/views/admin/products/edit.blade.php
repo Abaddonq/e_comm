@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Edit Product</h1>
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Edit Product</h1>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -78,11 +78,11 @@
                     </label>
                 </div>
 
-                <div class="flex gap-4">
-                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 min-h-[44px] w-full sm:w-auto">
                         Update Product
                     </button>
-                    <a href="{{ route('admin.products.index') }}" class="text-gray-600 hover:text-gray-800 px-6 py-2">
+                    <a href="{{ route('admin.products.index') }}" class="inline-flex items-center justify-center text-gray-600 hover:text-gray-800 px-6 py-2 min-h-[44px] w-full sm:w-auto">
                         Cancel
                     </a>
                 </div>
@@ -91,7 +91,8 @@
 
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <h2 class="text-xl font-bold mb-4">Variants</h2>
-            
+            <div class="admin-table-hint pb-2 text-xs text-gray-500">Swipe horizontally to view full table.</div>
+            <div class="admin-table-scroll">
             <table class="min-w-full divide-y divide-gray-200 mb-4">
                 <thead>
                     <tr>
@@ -112,8 +113,15 @@
                                 </span>
                             </td>
                             <td class="py-2 text-right">
-                                <button type="button" onclick="editVariant({{ $variant->id }}, '{{ $variant->sku }}', {{ $variant->price }})" 
-                                    class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</button>
+                                <button
+                                    type="button"
+                                    class="variant-edit-btn text-indigo-600 hover:text-indigo-900 mr-2"
+                                    data-id="{{ $variant->id }}"
+                                    data-sku="{{ $variant->sku }}"
+                                    data-price="{{ $variant->price }}"
+                                >
+                                    Edit
+                                </button>
                                 <form action="{{ route('admin.products.variants.destroy', [$product->id, $variant->id]) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
@@ -128,24 +136,25 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
 
             <h3 class="text-lg font-medium mb-2">Add Variant</h3>
             <form action="{{ route('admin.products.variants.store', $product->id) }}" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 @csrf
                 <div>
                     <input type="text" name="sku" placeholder="SKU *" required
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500">
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 min-h-[44px]">
                 </div>
                 <div>
                     <input type="number" name="price" placeholder="Price *" step="0.01" min="0" required
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500">
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 min-h-[44px]">
                 </div>
                 <div>
                     <input type="number" name="initial_stock" placeholder="Initial Stock" min="0"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500">
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 min-h-[44px]">
                 </div>
                 <div>
-                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 min-h-[44px]">
                         Add
                     </button>
                 </div>
@@ -185,9 +194,9 @@
             <form action="{{ route('admin.products.images.store', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="file" name="images[]" multiple accept="image/avif,image/webp" 
-                    class="w-full rounded-md border-gray-300 shadow-sm mb-2">
+                    class="w-full rounded-md border-gray-300 shadow-sm mb-2 min-h-[44px]">
                 <p class="text-sm text-gray-500 mb-2">Max 5MB per file. AVIF and WebP only.</p>
-                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 min-h-[44px]">
                     Upload
                 </button>
             </form>
@@ -229,6 +238,14 @@
 
 @push('scripts')
 <script>
+    document.querySelectorAll('.variant-edit-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+            if (typeof window.editVariant === 'function') {
+                window.editVariant(button.dataset.id, button.dataset.sku, button.dataset.price);
+            }
+        });
+    });
+
     const slugInput = document.getElementById('slugInput');
     const titleInput = document.querySelector('input[name="title"]');
     

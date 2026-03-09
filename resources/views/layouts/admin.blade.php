@@ -68,6 +68,27 @@
                         </button>
                     </form>
                 </div>
+                <button type="button" class="admin-nav-toggle" id="adminNavToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="adminMobileMenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            <div class="admin-mobile-menu" id="adminMobileMenu">
+                <div class="admin-mobile-links">
+                    <a href="{{ route('admin.dashboard') }}" class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Dashboard</a>
+                    <a href="{{ route('admin.products.index') }}" class="admin-nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">Products</a>
+                    <a href="{{ route('admin.categories.index') }}" class="admin-nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">Categories</a>
+                    <a href="{{ route('admin.stock.index') }}" class="admin-nav-link {{ request()->routeIs('admin.stock.*') ? 'active' : '' }}">Stock</a>
+                    <a href="{{ route('admin.orders.index') }}" class="admin-nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">Orders</a>
+                    <div class="admin-nav-link" style="justify-content: space-between;">
+                        <span>{{ auth()->user()->name }}</span>
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="admin-logout">Cikis</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </nav>
 
@@ -100,6 +121,32 @@
         </main>
     </div>
     <script>
+        (function() {
+            var toggle = document.getElementById('adminNavToggle');
+            var menu = document.getElementById('adminMobileMenu');
+
+            if (toggle && menu) {
+                toggle.addEventListener('click', function() {
+                    var isOpen = menu.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+
+                menu.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        menu.classList.remove('open');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth >= 768) {
+                        menu.classList.remove('open');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        })();
+
         setTimeout(function() {
             var toastSuccess = document.getElementById('toast-success');
             var toastError = document.getElementById('toast-error');

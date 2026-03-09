@@ -584,6 +584,24 @@
             background: white;
             color: var(--color-secondary);
         }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta-admin {
+            border-color: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .hero-cta-admin:hover {
+            background: #ffffff;
+            color: var(--color-secondary);
+        }
         
         .scroll-indicator {
             position: absolute;
@@ -691,7 +709,8 @@
             /* Hero Mobile */
             .hero-title { font-size: 36px; }
             .hero-subtitle { font-size: 12px; letter-spacing: 0.2em; }
-            .hero-cta { padding: 14px 32px; font-size: 12px; }
+            .hero-actions { gap: 10px; }
+            .hero-cta { padding: 14px 26px; font-size: 12px; }
             
             /* Header Mobile */
             .header { height: 70px; }

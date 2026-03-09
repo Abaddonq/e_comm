@@ -19,7 +19,14 @@
     <div class="hero-content">
         <h1 class="hero-title">DecorMotto</h1>
         <p class="hero-subtitle">{{ __('The address of luxury in home decoration') }}</p>
-        <a href="#products" class="hero-cta">{{ __('Discover') }}</a>
+        <div class="hero-actions">
+            <a href="#products" class="hero-cta">{{ __('Discover') }}</a>
+            @auth
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.dashboard') }}" class="hero-cta hero-cta-admin">{{ __('Admin Panel') }}</a>
+                @endif
+            @endauth
+        </div>
     </div>
     <div class="scroll-indicator">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

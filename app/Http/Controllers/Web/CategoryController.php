@@ -45,10 +45,10 @@ class CategoryController extends Controller
         // Sorting
         $sort = $request->get('sort', 'newest');
         match ($sort) {
-            'price_asc' => $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-                ->orderBy('product_variants.price')->groupBy('products.id'),
-            'price_desc' => $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-                ->orderByDesc('product_variants.price')->groupBy('products.id'),
+            'price_asc' => $query->withMin('variants', 'price')
+                ->orderBy('variants_min_price'),
+            'price_desc' => $query->withMin('variants', 'price')
+                ->orderByDesc('variants_min_price'),
             'name_asc' => $query->orderBy('title', 'asc'),
             'name_desc' => $query->orderBy('title', 'desc'),
             default => $query->orderBy('created_at', 'desc'),

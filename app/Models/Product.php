@@ -70,7 +70,7 @@ class Product extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where($this->qualifyColumn('is_active'), true);
     }
 
     /**
@@ -78,7 +78,7 @@ class Product extends Model
      */
     public function scopeFeatured($query)
     {
-        return $query->where('featured', true);
+        return $query->where($this->qualifyColumn('featured'), true);
     }
 
     /**

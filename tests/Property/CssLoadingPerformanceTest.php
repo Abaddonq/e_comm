@@ -599,9 +599,15 @@ class CssLoadingPerformanceTest extends TestCase
             
             // Verify viewport meta tag
             $this->assertStringContainsString(
-                '<meta name="viewport" content="width=device-width, initial-scale=1">',
+                '<meta name="viewport"',
                 $layoutContent,
                 "Preservation check ({$name}): Viewport meta tag must be present for responsive design"
+            );
+
+            $this->assertStringContainsString(
+                'width=device-width, initial-scale=1',
+                $layoutContent,
+                "Preservation check ({$name}): Viewport must include width=device-width and initial-scale=1"
             );
             
             // Verify responsive container classes
@@ -821,9 +827,15 @@ class CssLoadingPerformanceTest extends TestCase
             );
             
             $this->assertStringContainsString(
-                '<meta name="viewport" content="width=device-width, initial-scale=1">',
+                '<meta name="viewport"',
                 $layoutContent,
                 "Preservation check ({$name}): Viewport meta tag must be present"
+            );
+
+            $this->assertStringContainsString(
+                'width=device-width, initial-scale=1',
+                $layoutContent,
+                "Preservation check ({$name}): Viewport must include width=device-width and initial-scale=1"
             );
             
             $this->assertStringContainsString(

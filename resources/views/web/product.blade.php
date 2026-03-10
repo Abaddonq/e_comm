@@ -77,6 +77,8 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         display: flex;
         align-items: center;
         gap: 8px;
+        flex-wrap: wrap;
+        min-width: 0;
         font-size: 12px;
         color: var(--color-muted);
         margin-bottom: 32px;
@@ -211,6 +213,8 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         color: var(--color-secondary);
         margin-bottom: 24px;
         line-height: 1.2;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
     
     .product-title-row {
@@ -218,6 +222,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         align-items: flex-start;
         justify-content: space-between;
         gap: 16px;
+        min-width: 0;
     }
     
     .product-title-row .product-title {
@@ -237,6 +242,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         cursor: pointer;
         transition: all 0.2s;
         flex-shrink: 0;
+        min-height: 44px;
     }
     
     .wishlist-btn-detail:hover {
@@ -297,6 +303,10 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         cursor: pointer;
         font-size: 13px;
         transition: all 0.2s;
+        white-space: normal;
+        text-align: left;
+        line-height: 1.4;
+        min-height: 44px;
     }
     
     .variant-option:hover {
@@ -372,6 +382,9 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         cursor: pointer;
         transition: background 0.2s;
         border-radius: 4px;
+        min-height: 44px;
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
     
     .add-to-cart-btn:hover {
@@ -422,6 +435,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
     .tab-buttons {
         display: flex;
         border-bottom: 1px solid var(--color-border);
+        flex-wrap: wrap;
     }
     
     .tab-btn {
@@ -436,6 +450,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         cursor: pointer;
         position: relative;
         transition: color 0.2s;
+        min-height: 44px;
     }
     
     .tab-btn:hover {
@@ -497,6 +512,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         padding: 24px 0;
         border-top: 1px solid var(--color-border);
         margin-top: 32px;
+        flex-wrap: wrap;
     }
     
     .trust-badge {
@@ -550,6 +566,108 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
         
         .related-section {
             padding: 60px 24px;
+        }
+    }
+
+
+    @media (max-width: 640px) {
+        .product-container {
+            padding: 0 16px 48px;
+            gap: 24px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .product-title-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .product-title {
+            font-size: 28px;
+        }
+
+        .wishlist-btn-detail {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .product-price {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .product-price .original-price {
+            display: block;
+            margin-left: 0;
+            margin-top: 6px;
+        }
+
+        .variant-options {
+            gap: 8px;
+        }
+
+        .variant-option {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            width: 100%;
+        }
+
+        .quantity-input {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .add-to-cart-btn {
+            padding: 14px 16px;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+        }
+
+        .stock-status {
+            line-height: 1.4;
+            flex-wrap: wrap;
+        }
+
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .tab-btn {
+            width: 100%;
+            text-align: left;
+            padding: 14px 0;
+            letter-spacing: 0.08em;
+        }
+
+        .tab-btn.active::after {
+            left: 0;
+            right: auto;
+            width: 100%;
+        }
+
+        .trust-badges {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .trust-badge {
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .related-section {
+            padding: 50px 16px;
         }
     }
 </style>

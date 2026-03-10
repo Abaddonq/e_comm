@@ -1392,11 +1392,11 @@
                 <div>
                     <h4 class="footer-title">{{ __('Categories') }}</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Berjer</a></li>
-                        <li><a href="#">Sehpa</a></li>
-                        <li><a href="#">Puf</a></li>
-                        <li><a href="#">{{ __('Cushion') }}</a></li>
-                        <li><a href="#">Aksesuar</a></li>
+                        @forelse(($menuCategories ?? collect())->take(6) as $category)
+                            <li><a href="{{ route('category.show', $category->slug) }}">{{ $category->name }}</a></li>
+                        @empty
+                            <li><a href="#">{{ __('No categories') }}</a></li>
+                        @endforelse
                     </ul>
                 </div>
                 <div>

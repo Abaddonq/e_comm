@@ -14,9 +14,17 @@ class StoreProductRequest extends FormRequest
 
     public function rules(): array
     {
+        $product = $this->route('product');
+        $productId = is_object($product) ? $product->id : $product;
+
         return [
             'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:products,slug',
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('products', 'slug')->ignore($productId),
+            ],
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'meta_title' => 'nullable|string|max:60',

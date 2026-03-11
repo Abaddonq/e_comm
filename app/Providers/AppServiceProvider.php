@@ -9,6 +9,7 @@ use App\Observers\ProductObserver;
 use App\Services\CartService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -40,15 +41,17 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function shareCartCount(): void
     {
-        View::composer('*', function ($view) {
+        View::composer(['layouts.web', 'web.*'], function ($view) {
             $cartCount = 0;
-            $menuCategories = Category::query()
-                ->active()
-                ->whereNull('parent_id')
-                ->orderBy('sort_order')
-                ->orderBy('name')
-                ->limit(12)
-                ->get(['id', 'name', 'slug']);
+            $menuCategories = Cache::remember('menu_categories_top_12', now()->addMinutes(15), function () {
+                return Category::query()
+                    ->active()
+                    ->whereNull('parent_id')
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->limit(12)
+                    ->get(['id', 'name', 'slug']);
+            });
 
             if (auth()->check()) {
                 $cartService = app(CartService::class);

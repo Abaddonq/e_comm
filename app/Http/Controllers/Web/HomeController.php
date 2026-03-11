@@ -13,7 +13,12 @@ class HomeController extends Controller
     {
         $featuredProducts = Product::active()
             ->featured()
-            ->with(['category', 'variants', 'images'])
+            ->select(['id', 'category_id', 'title', 'slug'])
+            ->withMin('variants', 'price')
+            ->with([
+                'variants:id,product_id,price',
+                'images:id,product_id,path,is_primary,sort_order',
+            ])
             ->limit(8)
             ->get();
 

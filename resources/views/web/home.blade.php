@@ -75,7 +75,6 @@
         @foreach($featuredProducts as $product)
             @php
                 $firstVariant = $product->variants->first();
-                $minPrice = $product->variants->min('price');
                 $firstImage = $product->images->first();
                 $variantId = $firstVariant ? $firstVariant->id : 0;
             @endphp
@@ -97,7 +96,7 @@
                 <a href="{{ route('product.show', $product->slug) }}">
                     <h3 class="product-name">{{ $product->title }}</h3>
                 </a>
-                <p class="product-price">₺{{ number_format($minPrice ?? 0, 2) }}</p>
+                <p class="product-price">₺{{ number_format($product->variants_min_price ?? 0, 2) }}</p>
             </div>
         @endforeach
     </div>

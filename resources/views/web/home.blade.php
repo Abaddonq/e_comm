@@ -6,15 +6,29 @@
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-bg">
-        <img 
-            src="/img/background.webp" 
-            srcset="/img/background.webp 1920w, /img/background.webp 1280w, /img/background.webp 640w"
-            sizes="100vw"
-            alt="Luxury Furniture" 
-            width="1534"
-            height="1080"
-            style="width:100%;height:100%;object-fit:cover;"
-            fetchpriority="high">
+        <picture>
+            <source
+                type="image/avif"
+                srcset="/img/background.avif 1920w, /img/background.avif 1280w, /img/background.avif 640w"
+                sizes="100vw"
+            >
+            <source
+                type="image/webp"
+                srcset="/img/background.webp 1920w, /img/background.webp 1280w, /img/background.webp 640w"
+                sizes="100vw"
+            >
+            <img
+                class="hero-bg-image"
+                src="/img/background.webp"
+                srcset="/img/background.webp 1920w, /img/background.webp 1280w, /img/background.webp 640w"
+                sizes="100vw"
+                alt="Luxury Furniture"
+                width="1534"
+                height="1080"
+                decoding="async"
+                fetchpriority="high"
+            >
+        </picture>
     </div>
     <div class="hero-content">
         <h1 class="hero-title">DecorMotto</h1>
@@ -159,6 +173,23 @@ document.addEventListener('click', function(e) {
     .catch(error => {
         console.error('Error:', error);
     });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const heroBg = document.querySelector('.hero-bg');
+    const heroImage = document.querySelector('.hero-bg-image');
+
+    if (!heroBg || !heroImage) return;
+
+    const markHeroReady = () => heroBg.classList.add('is-loaded');
+
+    if (heroImage.complete && heroImage.naturalWidth > 0) {
+        markHeroReady();
+        return;
+    }
+
+    heroImage.addEventListener('load', markHeroReady, { once: true });
+    heroImage.addEventListener('error', markHeroReady, { once: true });
 });
 </script>
 @endsection

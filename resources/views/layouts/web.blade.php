@@ -531,6 +531,43 @@
             height: 100%;
             background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
         }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.12));
+            animation: heroImagePulse 2.2s ease-in-out infinite;
+            transition: opacity 0.45s ease;
+            z-index: 0;
+        }
+
+        .hero-bg picture {
+            position: absolute;
+            inset: 0;
+            display: block;
+            z-index: 1;
+        }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.015);
+            transition: opacity 0.6s ease, transform 1.1s ease;
+            will-change: opacity, transform;
+        }
+
+        .hero-bg.is-loaded::before {
+            opacity: 0;
+            animation: none;
+        }
+
+        .hero-bg.is-loaded img {
+            opacity: 1;
+            transform: scale(1);
+        }
         
         .hero-bg::after {
             content: '';
@@ -540,6 +577,7 @@
             right: 0;
             height: 50%;
             background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+            z-index: 2;
         }
         
         .hero-content {
@@ -621,6 +659,23 @@
             0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
             40% { transform: translateX(-50%) translateY(-10px); }
             60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        @keyframes heroImagePulse {
+            0% { opacity: 0.35; transform: translateX(-12%); }
+            50% { opacity: 0.65; transform: translateX(0); }
+            100% { opacity: 0.35; transform: translateX(12%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-bg::before {
+                animation: none;
+            }
+
+            .hero-bg img {
+                transition: opacity 0.2s ease;
+                transform: none;
+            }
         }
         
         /* Marquee */

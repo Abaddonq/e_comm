@@ -594,6 +594,29 @@ iframe {
     opacity: 0.5;
 }
 
+/* Home Page */
+.home-empty-state {
+    padding: 60px 0;
+}
+
+.home-categories-section {
+    background: #fafafa;
+}
+
+.home-category-card {
+    text-decoration: none;
+}
+
+.home-category-name {
+    text-align: center;
+}
+
+.home-category-count {
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-muted);
+}
+
 @keyframes marquee {
     0% {
         transform: translateX(0);

@@ -101,7 +101,7 @@
         @endforeach
     </div>
     @else
-    <div class="text-center" style="padding: 60px 0;">
+    <div class="text-center home-empty-state">
         <p class="text-gray-500 text-lg">{{ __('No products yet') }}</p>
     </div>
     @endif
@@ -109,7 +109,7 @@
 
 <!-- Categories Section -->
 @if($categories->count() > 0)
-<section class="products-section" style="background:#fafafa;">
+<section class="products-section home-categories-section">
     <div class="section-header">
         <p class="section-title">{{ __('Categories') }}</p>
         <h2 class="section-heading">{{ __('May Interest You') }}</h2>
@@ -117,7 +117,7 @@
     
     <div class="product-grid">
         @foreach($categories as $category)
-            <a href="{{ route('category.show', $category->slug) }}" class="product-card" style="text-decoration:none;">
+            <a href="{{ route('category.show', $category->slug) }}" class="product-card home-category-card">
                 <div class="product-image">
                     @if($category->image)
                         <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" loading="lazy" decoding="async">
@@ -125,8 +125,8 @@
                         <img src="/img/mock-img.jpg" alt="{{ $category->name }}" loading="lazy" decoding="async" width="401" height="400">
                     @endif
                 </div>
-                <h3 class="product-name" style="text-align:center;">{{ $category->name }}</h3>
-                <p class="product-price" style="text-align:center;font-size:13px;color:var(--color-muted);">{{ $category->products_count ?? 0 }} {{ __('products_count') }}</p>
+                <h3 class="product-name home-category-name">{{ $category->name }}</h3>
+                <p class="product-price home-category-count">{{ $category->products_count ?? 0 }} {{ __('products_count') }}</p>
             </a>
         @endforeach
     </div>

@@ -782,3 +782,136 @@ function initProductDetailPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initProductDetailPage);
+
+function initCategoryPage() {
+    const categoryPage = document.querySelector('.category-page');
+    if (!categoryPage) {
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+
+    function toggleFilters() {
+        const panel = document.getElementById('filterPanel');
+        if (panel) {
+            panel.classList.toggle('active');
+        }
+    }
+
+    function removeFilter(param) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete(param);
+        window.location.href = url.toString();
+    }
+
+    async function quickAdd(productId, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (!csrfToken) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken.content,
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: 1,
+                }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = data.cart_count;
+                }
+                showToast(window.__t['Product added to cart'], 'success');
+            } else {
+                showToast(data.error || window.__t['Add to cart failed'], 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast(window.__t['An error occurred'], 'error');
+        }
+    }
+
+    window.toggleFilters = toggleFilters;
+    window.removeFilter = removeFilter;
+    window.quickAdd = quickAdd;
+}
+
+document.addEventListener('DOMContentLoaded', initCategoryPage);
+
+function initCartPage() {
+    const cartPage = document.querySelector('.cart-page');
+    if (!cartPage) {
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        return;
+    }
+
+    async function updateQuantity(itemId, quantity) {
+        try {
+            const response = await fetch('/cart/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken.content,
+                },
+                body: JSON.stringify({
+                    item_id: itemId,
+                    quantity: parseInt(quantity, 10),
+                }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast(window.__t['An error occurred'], 'error');
+        }
+    }
+
+    async function removeItem(itemId) {
+        if (!window.confirm(window.__t['Confirm Remove Item'])) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/cart/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken.content,
+                },
+                body: JSON.stringify({ item_id: itemId }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast(window.__t['An error occurred'], 'error');
+        }
+    }
+
+    window.updateQuantity = updateQuantity;
+    window.removeItem = removeItem;
+}
+
+document.addEventListener('DOMContentLoaded', initCartPage);

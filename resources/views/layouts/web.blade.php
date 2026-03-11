@@ -417,6 +417,16 @@
             'Add to Cart': @json(__('Add to Cart'))
         };
 
+        function clearElement(el) {
+            if (!el) {
+                return;
+            }
+
+            while (el.firstChild) {
+                el.removeChild(el.firstChild);
+            }
+        }
+
     </script>
     
     @yield('scripts')

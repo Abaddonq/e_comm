@@ -712,48 +712,6 @@
             100% { transform: translateX(-50%); }
         }
         
-        /* Product Grid */
-        .products-section {
-            padding: 100px 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--color-muted);
-            margin-bottom: 16px;
-        }
-        
-        .section-heading {
-            font-size: 42px;
-            font-weight: 300;
-            letter-spacing: 0.05em;
-            color: var(--color-secondary);
-        }
-        
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-        }
-        
-        @media (max-width: 1200px) {
-            .product-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        
-        @media (max-width: 900px) {
-            .product-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        
         @media (max-width: 640px) {
             * {
                 max-width: 100vw;

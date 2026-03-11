@@ -69,7 +69,7 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
 @endphp
 
 @section('content')
-<div class="product-page">
+<div class="product-page" data-product-id="{{ $product->id }}">
     <!-- Breadcrumb -->
     <div class="product-container">
         <nav class="breadcrumb">
@@ -211,9 +211,9 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
             <!-- Product Tabs -->
             <div class="product-tabs">
                 <div class="tab-buttons">
-                    <button type="button" class="tab-btn active" onclick="openTab('description')">{{ __('Description') }}</button>
-                    <button type="button" class="tab-btn" onclick="openTab('specs')">{{ __('Specifications') }}</button>
-                    <button type="button" class="tab-btn" onclick="openTab('shipping')">{{ __('Shipping & Returns') }}</button>
+                    <button type="button" class="tab-btn active" onclick="openTab('description', this)">{{ __('Description') }}</button>
+                    <button type="button" class="tab-btn" onclick="openTab('specs', this)">{{ __('Specifications') }}</button>
+                    <button type="button" class="tab-btn" onclick="openTab('shipping', this)">{{ __('Shipping & Returns') }}</button>
                 </div>
                 
                 <div id="description" class="tab-content active">
@@ -274,189 +274,3 @@ $inStock = $selectedVariant && $selectedVariant->current_stock > 0;
 </div>
 @endsection
 
-@section('scripts')
-<script>
-    let currentVariant = null;
-
-    // Check if product is in wishlist on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        checkWishlistStatus();
-    });
-
-    function checkWishlistStatus() {
-        const productId = {{ $product->id }};
-        
-        fetch('{{ route("wishlist.check") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ product_id: productId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.is_wishlisted) {
-                const btn = document.getElementById('wishlistBtnDetail');
-                btn.classList.add('active');
-                document.getElementById('wishlistText').textContent = window.__t['In Wishlist'];
-            }
-        })
-        .catch(error => {
-            console.error('Error checking wishlist:', error);
-        });
-    }
-
-    function toggleWishlistDetail(productId) {
-        fetch('{{ route("wishlist.toggle") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ product_id: productId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const btn = document.getElementById('wishlistBtnDetail');
-                const text = document.getElementById('wishlistText');
-                
-                if (data.is_added) {
-                    btn.classList.add('active');
-                    text.textContent = window.__t['In Wishlist'];
-                    showToast(window.__t['Product added to wishlist'], 'success');
-                } else {
-                    btn.classList.remove('active');
-                    text.textContent = window.__t['Add to Wishlist'];
-                    showToast(window.__t['Product removed from wishlist'], 'success');
-                }
-            } else if (data.error) {
-                showToast(data.error, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast(window.__t['An error occurred'], 'error');
-        });
-    }
-
-    function initVariant() {
-        const firstVariant = document.querySelector('.variant-option');
-        if (firstVariant) {
-            selectVariant(firstVariant);
-        }
-    }
-
-    function selectVariant(element) {
-        // Update selected state
-        document.querySelectorAll('.variant-option').forEach(opt => opt.classList.remove('selected'));
-        element.classList.add('selected');
-        
-        // Update data
-        currentVariant = {
-            id: element.dataset.id,
-            price: parseFloat(element.dataset.price),
-            stock: parseInt(element.dataset.stock),
-            sku: element.dataset.sku
-        };
-        
-        // Update price display
-        document.querySelector('.product-price').innerHTML = '₺' + currentVariant.price.toLocaleString('tr-TR', {minimumFractionDigits: 2});
-        
-        // Update stock status
-        const stockStatus = document.querySelector('.stock-status');
-        if (currentVariant.stock > 0) {
-            stockStatus.className = 'stock-status in-stock';
-            stockStatus.innerHTML = '<span class="stock-dot"></span>' + window.__t['In Stock'] + ' (' + currentVariant.stock + ' ' + window.__t['pieces'] + ')';
-            document.getElementById('addToCartBtn').disabled = false;
-            document.getElementById('addToCartBtn').textContent = window.__t['Add to Cart'];
-            document.getElementById('quantity').max = currentVariant.stock;
-        } else {
-            stockStatus.className = 'stock-status out-of-stock';
-            stockStatus.innerHTML = '<span class="stock-dot"></span>' + window.__t['Out of Stock'];
-            document.getElementById('addToCartBtn').disabled = true;
-            document.getElementById('addToCartBtn').textContent = window.__t['Out of Stock'];
-        }
-    }
-
-    function changeImage(url, element) {
-        document.getElementById('mainImage').src = url;
-        document.querySelectorAll('.thumbnail-item').forEach(item => item.classList.remove('active'));
-        element.classList.add('active');
-    }
-
-    function changeQuantity(delta) {
-        const input = document.getElementById('quantity');
-        let value = parseInt(input.value) + delta;
-        const max = parseInt(input.max) || 99;
-        
-        if (value < 1) value = 1;
-        if (value > max) value = max;
-        
-        input.value = value;
-    }
-
-    function openTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        
-        document.getElementById(tabName).classList.add('active');
-        event.target.classList.add('active');
-    }
-
-    function addToCartFromDetail() {
-        if (!currentVariant) {
-            initVariant();
-        }
-        
-        if (!currentVariant || currentVariant.stock <= 0) {
-            showToast(window.__t['Product not in stock'], 'error');
-            return;
-        }
-        
-        const quantity = parseInt(document.getElementById('quantity').value);
-        
-        fetch('{{ route("cart.add") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-                variant_id: currentVariant.id,
-                quantity: quantity
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('cart-count').textContent = data.cart_count;
-                document.getElementById('addToCartBtn').textContent = window.__t['Added to Cart!'];
-                showToast(window.__t['Product added to cart'], 'success');
-                setTimeout(() => {
-                    document.getElementById('addToCartBtn').textContent = window.__t['Add to Cart'];
-                }, 2000);
-            } else {
-                showToast(data.error || window.__t['Add to cart failed'], 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast(window.__t['An error occurred'], 'error');
-        });
-    }
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        initVariant();
-        
-        // Thumbnail click handlers
-        document.querySelectorAll('.thumbnail-item').forEach(item => {
-            item.addEventListener('click', function() {
-                changeImage(this.dataset.image, this);
-            });
-        });
-    });
-</script>
-@endsection

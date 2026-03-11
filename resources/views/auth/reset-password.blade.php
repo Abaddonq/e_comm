@@ -2,8 +2,6 @@
 
 @section('title', ' - Reset Password')
 
-@include('auth.partials.styles')
-
 @section('content')
 <x-auth.card :title="__('Set New Password')" :subtitle="__('Set new password subtitle')">
 

@@ -2,8 +2,6 @@
 
 @section('title', ' - Register')
 
-@include('auth.partials.styles')
-
 @section('content')
 <x-auth.card :title="__('Register')" :subtitle="__('Register subtitle')">
 

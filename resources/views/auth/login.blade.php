@@ -2,8 +2,6 @@
 
 @section('title', ' - Login')
 
-@include('auth.partials.styles')
-
 @section('content')
 <x-auth.card :title="__('Login')" :subtitle="__('Login subtitle')" max-width="520px">
 
@@ -43,7 +41,7 @@
                     @endif
                 </div>
 
-                <x-auth.button style="margin-top: 18px;">{{ __('Login') }}</x-auth.button>
+                <x-auth.button class="auth-btn-spaced">{{ __('Login') }}</x-auth.button>
             </form>
 
             <p class="auth-footer">

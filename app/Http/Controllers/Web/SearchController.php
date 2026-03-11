@@ -52,7 +52,6 @@ class SearchController extends Controller
     private function sanitizeQuery(string $query): string
     {
         $query = strip_tags($query);
-        $query = htmlspecialchars($query, ENT_QUOTES, 'UTF-8');
         $query = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $query);
         $query = preg_replace('/\s+/', ' ', $query);
         return mb_substr(trim($query), 0, 100);

@@ -15,9 +15,13 @@ class SecurityHeaders
         if (!app()->environment('local')) {
             $response->headers->set('X-Content-Type-Options', 'nosniff');
             $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-            $response->headers->set('X-XSS-Protection', '1; mode=block');
             $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+            $response->headers->set('Cross-Origin-Resource-Policy', 'same-origin');
+
+            if ($request->isSecure()) {
+                $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            }
 
             $csp = "default-src 'self'; "
                 . "script-src 'self' 'unsafe-inline' https:; "
@@ -44,7 +48,7 @@ class SecurityHeaders
         $path = $request->getPathInfo();
         $extension = pathinfo($path, PATHINFO_EXTENSION);
 
-        $cacheExtensions = ['css', 'js', 'woff2', 'webp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico'];
+        $cacheExtensions = ['css', 'js', 'woff2', 'avif', 'webp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico'];
 
         if (in_array($extension, $cacheExtensions)) {
             $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');

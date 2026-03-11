@@ -712,35 +712,6 @@
             100% { transform: translateX(-50%); }
         }
         
-        @media (max-width: 640px) {
-            * {
-                max-width: 100vw;
-            }
-            
-            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-            
-            /* Hero Mobile */
-            .hero-title { font-size: 36px; }
-            .hero-subtitle { font-size: 12px; letter-spacing: 0.2em; }
-            .hero-actions { gap: 10px; }
-            .hero-cta { padding: 14px 26px; font-size: 12px; }
-            
-            /* Header Mobile */
-            .header { height: 70px; }
-            .header-inner { padding: 0 16px; }
-            .logo { font-size: 18px; }
-            
-            /* Sections */
-            .products-section { padding: 60px 16px; }
-            .footer { padding: 60px 16px 40px; }
-            
-            /* Touch-friendly buttons */
-            .quick-add-btn, .wishlist-btn, .hero-cta {
-                min-height: 44px;
-                min-width: 44px;
-            }
-        }
-        
         /* Smooth scroll snap for sections */
         html {
             scroll-behavior: smooth;

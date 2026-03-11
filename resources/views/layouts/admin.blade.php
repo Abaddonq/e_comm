@@ -60,8 +60,8 @@
                 </div>
                 <div class="admin-nav-right">
                     <span class="admin-user-name">{{ auth()->user()->name }}</span>
-                    <span style="color: #d1d5db;">|</span>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    <span class="admin-divider">|</span>
+                    <form method="POST" action="{{ route('logout') }}" class="admin-inline-form">
                         @csrf
                         <button type="submit" class="admin-logout">
                             Çıkış
@@ -81,9 +81,9 @@
                     <a href="{{ route('admin.categories.index') }}" class="admin-nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">Categories</a>
                     <a href="{{ route('admin.stock.index') }}" class="admin-nav-link {{ request()->routeIs('admin.stock.*') ? 'active' : '' }}">Stock</a>
                     <a href="{{ route('admin.orders.index') }}" class="admin-nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">Orders</a>
-                    <div class="admin-nav-link" style="justify-content: space-between;">
+                    <div class="admin-nav-link admin-nav-link-split">
                         <span>{{ auth()->user()->name }}</span>
-                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                        <form method="POST" action="{{ route('logout') }}" class="admin-inline-form">
                             @csrf
                             <button type="submit" class="admin-logout">Cikis</button>
                         </form>
@@ -150,8 +150,8 @@
         setTimeout(function() {
             var toastSuccess = document.getElementById('toast-success');
             var toastError = document.getElementById('toast-error');
-            if (toastSuccess) toastSuccess.style.display = 'none';
-            if (toastError) toastError.style.display = 'none';
+            if (toastSuccess) toastSuccess.classList.add('hidden');
+            if (toastError) toastError.classList.add('hidden');
         }, 4000);
     </script>
     @stack('scripts')

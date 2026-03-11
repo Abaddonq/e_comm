@@ -34,6 +34,10 @@ iframe {
     display: none !important;
 }
 
+[x-cloak] {
+    display: none !important;
+}
+
 /* Web Search Modal */
 .search-modal {
     position: fixed;
@@ -4996,6 +5000,18 @@ nav[aria-label="Pagination Navigation"] > div {
     color: #444;
     text-decoration: none;
     transition: all 0.2s;
+}
+
+.admin-nav-link-split {
+    justify-content: space-between;
+}
+
+.admin-divider {
+    color: #d1d5db;
+}
+
+.admin-inline-form {
+    display: inline;
 }
 
 .address-actions button:hover,

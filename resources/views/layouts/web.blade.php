@@ -206,11 +206,11 @@
             
             <div class="header-icons">
                 <div class="lang-toggle" role="radiogroup" aria-label="{{ __('Language') }}">
-                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
+                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" class="locale-switch-form">
                         @csrf
                         <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'tr' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'tr' ? 'true' : 'false' }}">TR</button>
                     </form>
-                    <form method="POST" action="{{ route('locale.switch', 'en') }}" style="display:contents;">
+                    <form method="POST" action="{{ route('locale.switch', 'en') }}" class="locale-switch-form">
                         @csrf
                         <button type="submit" class="lang-toggle-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}">EN</button>
                     </form>
@@ -221,23 +221,23 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </button>
-                <div class="header-user-icon" style="position: relative;">
+                <div class="header-user-icon">
                     <a href="{{ auth()->check() ? route('profile.index') : route('login') }}" class="header-icon">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
                     </a>
-                    <div class="user-dropdown" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-radius: 8px; min-width: 150px; display: none; z-index: 100;">
+                    <div class="user-dropdown" aria-hidden="true">
                         @auth
-                            <span style="display: block; padding: 12px 16px; color: #666; font-size: 12px; border-bottom: 1px solid #eee;">{{ auth()->user()->name }}</span>
-                            <a href="{{ route('profile.index') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">{{ __('My Account') }}</a>
-                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">{{ __('Logout') }}</a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <span class="user-dropdown-user user-dropdown-divider">{{ auth()->user()->name }}</span>
+                            <a href="{{ route('profile.index') }}" class="user-dropdown-link user-dropdown-divider">{{ __('My Account') }}</a>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="user-dropdown-link">{{ __('Logout') }}</a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                                 @csrf
                             </form>
                         @else
-                            <a href="{{ route('login') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">{{ __('Sign In') }}</a>
-                            <a href="{{ route('register') }}" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; font-size: 14px;">{{ __('Sign Up Nav') }}</a>
+                            <a href="{{ route('login') }}" class="user-dropdown-link user-dropdown-divider">{{ __('Sign In') }}</a>
+                            <a href="{{ route('register') }}" class="user-dropdown-link">{{ __('Sign Up Nav') }}</a>
                         @endauth
                     </div>
                 </div>
@@ -288,11 +288,11 @@
             <div class="mobile-nav-section">
                 <span class="mobile-nav-label">{{ __('Language') }}</span>
                 <div class="mobile-lang-toggle">
-                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" style="display:contents;">
+                    <form method="POST" action="{{ route('locale.switch', 'tr') }}" class="locale-switch-form">
                         @csrf
                         <button type="submit" class="mobile-lang-btn {{ app()->getLocale() === 'tr' ? 'active' : '' }}">TR</button>
                     </form>
-                    <form method="POST" action="{{ route('locale.switch', 'en') }}" style="display:contents;">
+                    <form method="POST" action="{{ route('locale.switch', 'en') }}" class="locale-switch-form">
                         @csrf
                         <button type="submit" class="mobile-lang-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</button>
                     </form>
@@ -318,11 +318,11 @@
                 </div>
             </div>
             <div class="search-suggestions" id="searchSuggestions">
-                <div class="search-loading" id="searchLoading" style="display: none;">
+                <div class="search-loading hidden" id="searchLoading">
                     <div class="spinner"></div>
                 </div>
                 <div class="suggestions-list" id="suggestionsList"></div>
-                <div class="recent-searches" id="recentSearches" style="display: none;">
+                <div class="recent-searches hidden" id="recentSearches">
                     <div class="recent-header">
                         <span>{{ __('Recent Searches') }}</span>
                         <button type="button" id="clearRecentSearches">{{ __('Clear') }}</button>

@@ -107,7 +107,7 @@ function initWebSearchModal() {
     function showRecentSearches() {
         const recent = getRecentSearches();
         if (recent.length > 0) {
-            recentSearches.style.display = 'block';
+            recentSearches.classList.remove('hidden');
             clearElement(recentList);
 
             recent.forEach((term) => {
@@ -121,7 +121,7 @@ function initWebSearchModal() {
                 recentList.appendChild(recentItem);
             });
         } else {
-            recentSearches.style.display = 'none';
+            recentSearches.classList.add('hidden');
             clearElement(recentList);
         }
     }
@@ -139,7 +139,8 @@ function initWebSearchModal() {
         document.body.style.overflow = '';
         searchInput.value = '';
         clearElement(suggestionsList);
-        recentSearches.style.display = 'none';
+        recentSearches.classList.add('hidden');
+        searchLoading.classList.add('hidden');
     }
 
     async function fetchSuggestions(query) {
@@ -160,18 +161,19 @@ function initWebSearchModal() {
 
         if (query.length < 2) {
             clearElement(suggestionsList);
-            recentSearches.style.display = getRecentSearches().length > 0 ? 'block' : 'none';
+            recentSearches.classList.toggle('hidden', getRecentSearches().length === 0);
+            searchLoading.classList.add('hidden');
             return;
         }
 
-        recentSearches.style.display = 'none';
-        searchLoading.style.display = 'flex';
+        recentSearches.classList.add('hidden');
+        searchLoading.classList.remove('hidden');
         clearElement(suggestionsList);
 
         searchTimeout = setTimeout(async () => {
             try {
                 const data = await fetchSuggestions(query);
-                searchLoading.style.display = 'none';
+                searchLoading.classList.add('hidden');
 
                 if (data.products && data.products.length > 0) {
                     clearElement(suggestionsList);
@@ -183,7 +185,7 @@ function initWebSearchModal() {
                 }
             } catch (error) {
                 console.error('Search error:', error);
-                searchLoading.style.display = 'none';
+                searchLoading.classList.add('hidden');
             }
         }, 300);
     }
@@ -359,15 +361,25 @@ function initWebLayoutChrome() {
     const hasDropdownMenu = Boolean(userDropdown);
 
     if (userIcon && userDropdown) {
+        const openDropdown = () => {
+            userDropdown.classList.add('active');
+            userDropdown.setAttribute('aria-hidden', 'false');
+        };
+
+        const closeDropdown = () => {
+            userDropdown.classList.remove('active');
+            userDropdown.setAttribute('aria-hidden', 'true');
+        };
+
         userIcon.addEventListener('mouseenter', () => {
             if (window.innerWidth > 768) {
-                userDropdown.style.display = 'block';
+                openDropdown();
             }
         });
 
         userIcon.addEventListener('mouseleave', () => {
             if (window.innerWidth > 768) {
-                userDropdown.style.display = 'none';
+                closeDropdown();
             }
         });
 
@@ -375,14 +387,18 @@ function initWebLayoutChrome() {
             userIconLink.addEventListener('click', (e) => {
                 if (window.innerWidth <= 768 && hasDropdownMenu) {
                     e.preventDefault();
-                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                    if (userDropdown.classList.contains('active')) {
+                        closeDropdown();
+                    } else {
+                        openDropdown();
+                    }
                 }
             });
         }
 
         document.addEventListener('click', (e) => {
             if (!userIcon.contains(e.target)) {
-                userDropdown.style.display = 'none';
+                closeDropdown();
             }
         });
     }

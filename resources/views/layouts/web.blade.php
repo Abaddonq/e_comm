@@ -712,15 +712,6 @@
             100% { transform: translateX(-50%); }
         }
         
-        /* Smooth scroll snap for sections */
-        html {
-            scroll-behavior: smooth;
-            scroll-snap-type: y proximity;
-        }
-        
-        /* Utility Classes */
-        .hidden { display: none !important; }
-
     </style>
     
     @yield('schema')

@@ -16,6 +16,11 @@ body {
     overflow-x: clip;
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+}
+
 img,
 video,
 canvas,
@@ -23,6 +28,10 @@ svg,
 iframe {
     max-width: 100%;
     height: auto;
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* Web Footer Styles */

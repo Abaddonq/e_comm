@@ -392,3 +392,139 @@ function initWebLayoutChrome() {
 }
 
 document.addEventListener('DOMContentLoaded', initWebLayoutChrome);
+
+function showToast(message, type = 'success') {
+    const existing = document.querySelector('.toast-notification');
+    if (existing) {
+        existing.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+
+    const svgNs = 'http://www.w3.org/2000/svg';
+    const icon = document.createElementNS(svgNs, 'svg');
+    icon.setAttribute('width', '20');
+    icon.setAttribute('height', '20');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('viewBox', '0 0 24 24');
+
+    const path = document.createElementNS(svgNs, 'path');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('d', type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12');
+    icon.appendChild(path);
+
+    const messageEl = document.createElement('span');
+    messageEl.textContent = String(message ?? '');
+
+    toast.appendChild(icon);
+    toast.appendChild(messageEl);
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function toggleWishlist(productId, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        return;
+    }
+
+    const btn = document.getElementById(`wishlist-btn-${productId}`);
+
+    fetch('/wishlist/toggle', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken.content,
+        },
+        body: JSON.stringify({ product_id: productId }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                if (btn) {
+                    btn.classList.toggle('active');
+                }
+                showToast(data.is_added ? window.__t['Product added to wishlist'] : window.__t['Product removed from wishlist'], 'success');
+            } else if (data.error) {
+                showToast(data.error, 'error');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            showToast(window.__t['An error occurred'], 'error');
+        });
+}
+
+window.showToast = showToast;
+window.toggleWishlist = toggleWishlist;
+
+function initHomeQuickAdd() {
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.product-quick-add');
+        if (!btn) {
+            return;
+        }
+
+        const variantId = btn.dataset.variantId;
+        if (!variantId) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.content,
+            },
+            body: JSON.stringify({
+                variant_id: variantId,
+                quantity: 1,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (!data.success) {
+                    return;
+                }
+
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = data.cart_count;
+                }
+
+                btn.style.background = '#22c55e';
+                btn.style.color = 'white';
+
+                setTimeout(() => {
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 1000);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initHomeQuickAdd);

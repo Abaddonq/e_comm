@@ -7,8 +7,6 @@
     $cancelRoute = $redirectTo === 'checkout' ? route('checkout.index') : route('profile.index', ['tab' => 'addresses']);
 @endphp
 
-@include('web.addresses.partials.styles')
-
 @section('content')
 <div class="address-page">
     <div class="address-container">

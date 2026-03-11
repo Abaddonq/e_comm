@@ -2,8 +2,6 @@
 
 @section('title', ' - ' . __('Edit Address'))
 
-@include('web.addresses.partials.styles')
-
 @section('content')
 <div class="address-page">
     <div class="address-container">

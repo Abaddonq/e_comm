@@ -30,10 +30,6 @@ iframe {
     height: auto;
 }
 
-.hidden {
-    display: none !important;
-}
-
 [x-cloak] {
     display: none !important;
 }
@@ -4605,6 +4601,15 @@ iframe {
     display: none;
 }
 
+.admin-mobile-only {
+    display: block;
+}
+
+.admin-desktop-block,
+.admin-desktop-table {
+    display: none;
+}
+
 nav[aria-label="Pagination Navigation"] {
     width: 100%;
     max-width: 100%;
@@ -4688,6 +4693,18 @@ nav[aria-label="Pagination Navigation"] > div {
 }
 
 @media (min-width: 768px) {
+    .admin-mobile-only {
+        display: none !important;
+    }
+
+    .admin-desktop-block {
+        display: block !important;
+    }
+
+    .admin-desktop-table {
+        display: table !important;
+    }
+
     .admin-mobile-menu {
         display: none !important;
     }

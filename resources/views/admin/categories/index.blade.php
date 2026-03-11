@@ -9,7 +9,7 @@
 </div>
 
 <div class="bg-white shadow overflow-hidden rounded-lg">
-    <div class="md:hidden divide-y divide-gray-200">
+    <div class="admin-mobile-only divide-y divide-gray-200">
         @forelse($categories as $category)
             <div class="p-4 space-y-3">
                 <div class="flex items-center justify-between gap-3">
@@ -43,7 +43,7 @@
         @endforelse
     </div>
 
-    <div class="hidden md:block">
+    <div class="admin-desktop-block">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>

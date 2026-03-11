@@ -39,7 +39,7 @@
             ];
         @endphp
 
-        <div class="md:hidden divide-y divide-gray-200">
+        <div class="admin-mobile-only divide-y divide-gray-200">
             @forelse($orders as $order)
                 <div class="p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
@@ -61,7 +61,7 @@
             @endforelse
         </div>
 
-        <table class="hidden md:table min-w-full divide-y divide-gray-200">
+        <table class="admin-desktop-table min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>

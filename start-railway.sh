@@ -10,7 +10,10 @@ cd /var/www
 
 # Ensure storage directory exists and is writable
 mkdir -p storage/framework/{cache,sessions,views}
-chmod -R 775 storage bootstrap/cache
+
+# Some Railway mounted volumes include files not owned by this user.
+# Do not fail startup if permission normalization cannot be applied.
+chmod -R 775 storage/framework bootstrap/cache 2>/dev/null || true
 
 # Clear and rebuild caches for production
 echo "Caching configuration and routes..."

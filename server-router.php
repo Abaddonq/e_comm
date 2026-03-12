@@ -5,6 +5,7 @@ declare(strict_types=1);
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $publicPath = realpath(__DIR__ . '/public') ?: __DIR__ . '/public';
 $storagePublicPath = realpath(__DIR__ . '/storage/app/public');
+$publicStoragePath = realpath($publicPath . '/storage');
 
 $normalize = static function (string $path): string {
     $resolvedPath = realpath($path);
@@ -27,9 +28,11 @@ $isWithin = static function (?string $path, ?string $basePath) use ($normalize):
 if ($uri !== '/') {
     $candidatePath = null;
 
-    if (str_starts_with($uri, '/storage/') && $storagePublicPath !== false) {
+    $preferredStoragePath = $storagePublicPath !== false ? $storagePublicPath : $publicStoragePath;
+
+    if (str_starts_with($uri, '/storage/') && $preferredStoragePath !== false) {
         $storageRelativePath = ltrim(substr($uri, strlen('/storage/')), '/');
-        $candidatePath = realpath($storagePublicPath . DIRECTORY_SEPARATOR . $storageRelativePath);
+        $candidatePath = realpath($preferredStoragePath . DIRECTORY_SEPARATOR . $storageRelativePath);
     }
 
     if ($candidatePath === null || $candidatePath === false) {
@@ -38,8 +41,9 @@ if ($uri !== '/') {
 
     $isInsidePublic = $candidatePath !== false && $isWithin($candidatePath, $publicPath);
     $isInsideStoragePublic = $candidatePath !== false && $storagePublicPath !== false && $isWithin($candidatePath, $storagePublicPath);
+    $isInsidePublicStorage = $candidatePath !== false && $publicStoragePath !== false && $isWithin($candidatePath, $publicStoragePath);
 
-    if ($candidatePath !== false && is_file($candidatePath) && ($isInsidePublic || $isInsideStoragePublic)) {
+    if ($candidatePath !== false && is_file($candidatePath) && ($isInsidePublic || $isInsideStoragePublic || $isInsidePublicStorage)) {
         $extension = strtolower(pathinfo($candidatePath, PATHINFO_EXTENSION));
         $mimeTypeMap = [
             'css' => 'text/css; charset=UTF-8',

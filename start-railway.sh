@@ -8,12 +8,13 @@ echo "Starting Railway Deployment Environment Setup..."
 # Ensure we are in the correct directory
 cd /var/www
 
-# Ensure storage directory exists and is writable
-mkdir -p storage/framework/{cache,sessions,views}
+# Ensure storage directories exist on mounted volumes
+mkdir -p storage/app/public storage/framework/{cache,sessions,views}
 
 # Some Railway mounted volumes include files not owned by this user.
 # Do not fail startup if permission normalization cannot be applied.
 chmod -R 775 storage/framework bootstrap/cache 2>/dev/null || true
+chmod -R 775 storage/app/public 2>/dev/null || true
 
 # Clear and rebuild caches for production
 echo "Caching configuration and routes..."

@@ -85,7 +85,7 @@
                         <span>{{ auth()->user()->name }}</span>
                         <form method="POST" action="{{ route('logout') }}" class="admin-inline-form">
                             @csrf
-                            <button type="submit" class="admin-logout">Cikis</button>
+                            <button type="submit" class="admin-logout">{{ __('Logout') }}</button>
                         </form>
                     </div>
                 </div>

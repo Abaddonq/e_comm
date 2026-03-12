@@ -2,19 +2,17 @@
 
 @section('title', ' - ' . __('My Account'))
 
-@php
-$activeTab = request()->query('tab', 'account');
-@endphp
-
 @section('content')
 <div
     class="profile-page"
+    data-active-tab="{{ $activeTab }}"
     data-profile-update-url="{{ route('profile.update-profile') }}"
     data-password-update-url="{{ route('profile.update-password') }}"
     data-destroy-account-url="{{ route('profile.destroy-account') }}"
     data-address-store-url="{{ route('addresses.store') }}"
     data-home-url="{{ route('home') }}"
     data-wishlist-toggle-url="{{ route('wishlist.toggle') }}"
+    data-profile-tab-content-url="{{ route('profile.tab-content', ['tab' => '__TAB__']) }}"
     data-addresses='@json($addresses)'
     data-new-address-label="{{ __('New Address') }}"
     data-edit-address-label="{{ __('Edit Address') }}"
@@ -30,23 +28,23 @@ $activeTab = request()->query('tab', 'account');
         <div class="profile-layout">
             <!-- Sidebar -->
             <div class="profile-sidebar desktop">
-                <button class="profile-nav-item {{ $activeTab === 'account' ? 'active' : '' }}" onclick="switchTab('account')">
+                <button class="profile-nav-item {{ $activeTab === 'account' ? 'active' : '' }}" data-tab="account" onclick="switchTab('account')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     {{ __('Account Information') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'orders' ? 'active' : '' }}" onclick="switchTab('orders')">
+                <button class="profile-nav-item {{ $activeTab === 'orders' ? 'active' : '' }}" data-tab="orders" onclick="switchTab('orders')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     {{ __('My Orders') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'wishlist' ? 'active' : '' }}" onclick="switchTab('wishlist')">
+                <button class="profile-nav-item {{ $activeTab === 'wishlist' ? 'active' : '' }}" data-tab="wishlist" onclick="switchTab('wishlist')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     {{ __('My Wishlist') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'addresses' ? 'active' : '' }}" onclick="switchTab('addresses')">
+                <button class="profile-nav-item {{ $activeTab === 'addresses' ? 'active' : '' }}" data-tab="addresses" onclick="switchTab('addresses')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     {{ __('My Addresses') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'logout' ? 'active' : '' }}" onclick="switchTab('logout')">
+                <button class="profile-nav-item {{ $activeTab === 'logout' ? 'active' : '' }}" data-tab="logout" onclick="switchTab('logout')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                     {{ __('Logout') }}
                 </button>
@@ -54,23 +52,23 @@ $activeTab = request()->query('tab', 'account');
 
             <!-- Mobile Tabs -->
             <div class="profile-sidebar mobile">
-                <button class="profile-nav-item {{ $activeTab === 'account' ? 'active' : '' }}" onclick="switchTab('account')">
+                <button class="profile-nav-item {{ $activeTab === 'account' ? 'active' : '' }}" data-tab="account" onclick="switchTab('account')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     {{ __('Account') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'orders' ? 'active' : '' }}" onclick="switchTab('orders')">
+                <button class="profile-nav-item {{ $activeTab === 'orders' ? 'active' : '' }}" data-tab="orders" onclick="switchTab('orders')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     {{ __('Orders') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'wishlist' ? 'active' : '' }}" onclick="switchTab('wishlist')">
+                <button class="profile-nav-item {{ $activeTab === 'wishlist' ? 'active' : '' }}" data-tab="wishlist" onclick="switchTab('wishlist')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     {{ __('Favorites') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'addresses' ? 'active' : '' }}" onclick="switchTab('addresses')">
+                <button class="profile-nav-item {{ $activeTab === 'addresses' ? 'active' : '' }}" data-tab="addresses" onclick="switchTab('addresses')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     {{ __('Addresses') }}
                 </button>
-                <button class="profile-nav-item {{ $activeTab === 'logout' ? 'active' : '' }}" onclick="switchTab('logout')">
+                <button class="profile-nav-item {{ $activeTab === 'logout' ? 'active' : '' }}" data-tab="logout" onclick="switchTab('logout')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                     {{ __('Logout') }}
                 </button>
@@ -131,102 +129,25 @@ $activeTab = request()->query('tab', 'account');
                 <!-- Orders Section -->
                 <div class="profile-section {{ $activeTab === 'orders' ? 'active' : '' }}" id="section-orders">
                     <h2 class="section-title">{{ __('My Orders') }}</h2>
-                    
-                    @if($orders->count() > 0)
-                        <div class="orders-list">
-                            @foreach($orders as $order)
-                                <div class="order-card">
-                                    <div class="order-header">
-                                        <div>
-                                            <div class="order-number">{{ __('Order') }} {{ $order->order_number }}</div>
-                                            <div class="order-date">{{ $order->created_at->format('d.m.Y') }}</div>
-                                        </div>
-                                        <span class="order-status {{ $order->effective_fulfillment_status }}">
-                                            {{ $order->customer_status_label }}
-                                        </span>
-                                    </div>
-                                    <div class="order-products-preview">
-                                        @foreach($order->items->take(4) as $item)
-                                            @php
-                                                $product = $item->variant->product ?? null;
-                                                $image = $product && $product->images->first() ? $product->images->first() : null;
-                                            @endphp
-                                            @if($image)
-                                                <div class="order-product-thumb">
-                                                    <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $product->title }}">
-                                                </div>
-                                            @else
-                                                <div class="order-product-thumb placeholder">
-                                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                        @if($order->items->count() > 4)
-                                            <div class="order-product-more">+{{ $order->items->count() - 4 }}</div>
-                                        @endif
-                                    </div>
-                                    <div class="order-summary">
-                                        <span class="order-items-count">{{ $order->items->count() }} {{ __('products_count') }}</span>
-                                        <span class="order-total">₺{{ number_format($order->total, 2) }}</span>
-                                    </div>
-                                    <div class="order-actions">
-                                        <a href="{{ route('orders.show', $order->id) }}" class="btn btn-secondary btn-sm">{{ __('Order Details') }}</a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="empty-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <h3>{{ __('No Orders Yet') }}</h3>
-                            <p>{{ __('Start shopping to place your first order') }}</p>
-                            <a href="{{ route('home') }}" class="btn btn-primary">{{ __('Start Shopping') }}</a>
-                        </div>
-                    @endif
+
+                    <div id="ordersTabContent" data-tab-content="orders" data-loaded="{{ $activeTab === 'orders' ? 'true' : 'false' }}">
+                        @if($activeTab === 'orders')
+                            @include('web.profile.partials.orders-tab', ['orders' => $orders])
+                        @else
+                            <div class="empty-state"><p>{{ __('Loading orders...') }}</p></div>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Wishlist Section -->
                 <div class="profile-section {{ $activeTab === 'wishlist' ? 'active' : '' }}" id="section-wishlist">
                     <h2 class="section-title">{{ __('My Wishlist') }}</h2>
-                    
-                    <div class="wishlist-grid" id="wishlistGrid">
-                        @php
-                        $wishlistProducts = \App\Models\Wishlist::where('user_id', auth()->id())->with('product.images', 'product.variants')->get();
-                        @endphp
-                        
-                        @if($wishlistProducts->count() > 0)
-                            @foreach($wishlistProducts as $wishlist)
-                                @php
-                                    $product = $wishlist->product;
-                                    if (!$product) continue;
-                                    $minPrice = $product->variants->count() > 0 ? $product->variants->min('price') : 0;
-                                    $image = $product->images->first();
-                                @endphp
-                                <div class="wishlist-item">
-                                    <a href="{{ route('product.show', $product->slug) }}" class="wishlist-image">
-                                        @if($image)
-                                            <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $product->title }}">
-                                        @else
-                                            <div class="no-image">{{ __('No Image') }}</div>
-                                        @endif
-                                    </a>
-                                    <div class="wishlist-info">
-                                        <h3><a href="{{ route('product.show', $product->slug) }}">{{ $product->title }}</a></h3>
-                                        <div class="wishlist-price">₺{{ number_format($minPrice, 2) }}</div>
-                                        <div class="wishlist-actions">
-                                            <button class="btn btn-sm btn-primary" onclick="quickAdd({{ $product->id }}, event)">{{ __('Add to Cart') }}</button>
-                                            <button class="btn btn-sm btn-secondary" onclick="removeFromWishlist({{ $product->id }})">{{ __('Remove') }}</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
+
+                    <div id="wishlistTabContent" data-tab-content="wishlist" data-loaded="{{ $activeTab === 'wishlist' ? 'true' : 'false' }}">
+                        @if($activeTab === 'wishlist')
+                            @include('web.profile.partials.wishlist-tab', ['wishlistProducts' => $wishlistProducts])
                         @else
-                            <div class="empty-wishlist">
-                                <svg width="64" height="64" fill="none" stroke="#ccc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                <h3>{{ __('No Wishlist Yet') }}</h3>
-                                <p>{{ __('Add products you like to your wishlist') }}</p>
-                                <a href="{{ route('home') }}" class="btn btn-primary">{{ __('Start Shopping') }}</a>
-                            </div>
+                            <div class="empty-wishlist"><p>{{ __('Loading wishlist...') }}</p></div>
                         @endif
                     </div>
                 </div>

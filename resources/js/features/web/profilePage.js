@@ -14,6 +14,7 @@ export function initProfilePage() {
     const addressStoreUrl = profilePage.dataset.addressStoreUrl;
     const homeUrl = profilePage.dataset.homeUrl;
     const wishlistToggleUrl = profilePage.dataset.wishlistToggleUrl;
+    const profileTabContentUrlTemplate = profilePage.dataset.profileTabContentUrl;
 
     const addressesRaw = profilePage.dataset.addresses || '[]';
     let addresses = [];
@@ -28,11 +29,76 @@ export function initProfilePage() {
     const confirmDeleteAddressText = profilePage.dataset.confirmDeleteAddress || 'Are you sure?';
     const confirmDeleteAccountText = profilePage.dataset.confirmDeleteAccount || 'Are you sure?';
 
-    function switchTab(tab) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('tab', tab);
-        window.location.href = url.toString();
+    const validTabs = ['account', 'orders', 'wishlist', 'addresses', 'logout'];
+
+    async function ensureTabContentLoaded(tab) {
+        if (!['orders', 'wishlist'].includes(tab)) {
+            return;
+        }
+
+        const container = document.querySelector(`[data-tab-content="${tab}"]`);
+        if (!container || container.dataset.loaded === 'true') {
+            return;
+        }
+
+        if (!profileTabContentUrlTemplate) {
+            return;
+        }
+
+        try {
+            const response = await fetch(profileTabContentUrlTemplate.replace('__TAB__', tab), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load tab content');
+            }
+
+            const data = await response.json();
+            if (data.success && typeof data.html === 'string') {
+                container.innerHTML = data.html;
+                container.dataset.loaded = 'true';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            container.innerHTML = `<div class="empty-state"><p>${window.__t['An error occurred']}</p></div>`;
+        }
     }
+
+    async function activateTab(tab, { updateHistory = true } = {}) {
+        const nextTab = validTabs.includes(tab) ? tab : 'account';
+
+        await ensureTabContentLoaded(nextTab);
+
+        document.querySelectorAll('.profile-section').forEach((section) => {
+            section.classList.toggle('active', section.id === `section-${nextTab}`);
+        });
+
+        document.querySelectorAll('.profile-nav-item').forEach((item) => {
+            item.classList.toggle('active', item.dataset.tab === nextTab);
+        });
+
+        if (updateHistory) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', nextTab);
+            window.history.pushState({ tab: nextTab }, '', url.toString());
+        }
+    }
+
+    function switchTab(tab) {
+        activateTab(tab);
+    }
+
+    activateTab(profilePage.dataset.activeTab || new URL(window.location.href).searchParams.get('tab') || 'account', {
+        updateHistory: false,
+    });
+
+    window.addEventListener('popstate', () => {
+        const tab = new URL(window.location.href).searchParams.get('tab') || 'account';
+        activateTab(tab, { updateHistory: false });
+    });
 
     async function quickAdd(productId, event) {
         if (event) {

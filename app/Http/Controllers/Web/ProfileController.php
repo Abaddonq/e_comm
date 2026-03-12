@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,14 +16,72 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $orders = Order::where('user_id', $user->id)
-            ->with(['items.variant.product.images', 'shipment'])
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+        $activeTab = request()->query('tab', 'account');
+
+        if (!in_array($activeTab, ['account', 'orders', 'wishlist', 'addresses', 'logout'], true)) {
+            $activeTab = 'account';
+        }
+
+        $orders = $activeTab === 'orders' ? $this->loadOrders($user->id) : collect();
+
         $addresses = Address::where('user_id', $user->id)->get();
 
-        return view('web.profile.index', compact('user', 'orders', 'addresses'));
+        $wishlistProducts = $activeTab === 'wishlist' ? $this->loadWishlistProducts($user->id) : collect();
+
+        return view('web.profile.index', compact('user', 'orders', 'addresses', 'wishlistProducts', 'activeTab'));
+    }
+
+    public function tabContent(string $tab)
+    {
+        $userId = Auth::id();
+
+        if ($tab === 'orders') {
+            return response()->json([
+                'success' => true,
+                'html' => view('web.profile.partials.orders-tab', [
+                    'orders' => $this->loadOrders($userId),
+                ])->render(),
+            ]);
+        }
+
+        if ($tab === 'wishlist') {
+            return response()->json([
+                'success' => true,
+                'html' => view('web.profile.partials.wishlist-tab', [
+                    'wishlistProducts' => $this->loadWishlistProducts($userId),
+                ])->render(),
+            ]);
+        }
+
+        abort(404);
+    }
+
+    private function loadOrders(int $userId)
+    {
+        return Order::where('user_id', $userId)
+            ->with([
+                'items' => function ($query) {
+                    $query->select(['id', 'order_id', 'product_variant_id', 'product_title', 'quantity']);
+                },
+                'items.variant:id,product_id',
+                'items.variant.product:id,title,slug',
+                'items.variant.product.images:id,product_id,path,is_primary,sort_order',
+                'shipment:id,order_id,status',
+            ])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get(['id', 'user_id', 'order_number', 'fulfillment_status', 'status', 'total', 'created_at']);
+    }
+
+    private function loadWishlistProducts(int $userId)
+    {
+        return Wishlist::where('user_id', $userId)
+            ->with([
+                'product:id,title,slug',
+                'product.images:id,product_id,path,is_primary,sort_order',
+                'product.variants:id,product_id,price',
+            ])
+            ->get(['id', 'user_id', 'product_id']);
     }
 
     public function updateProfile(Request $request)

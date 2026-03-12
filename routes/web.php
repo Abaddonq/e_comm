@@ -70,6 +70,9 @@ Route::middleware(['auth', 'throttle.checkout'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/tabs/{tab}', [ProfileController::class, 'tabContent'])
+        ->whereIn('tab', ['orders', 'wishlist'])
+        ->name('profile.tab-content');
     Route::get('/profile/edit', fn() => redirect()->route('profile.index'))->name('profile.edit');
     Route::post('/profile/update-profile', [ProfileController::class, 'updateProfile'])->name('profile.update-profile');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');

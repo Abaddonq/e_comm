@@ -22,8 +22,10 @@ RUN npm install && npm run build
 RUN chmod +x /var/www/start-railway.sh
 
 RUN mkdir -p /var/www/storage/app/public /var/www/storage/uploads /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views && \
-    chmod -R 755 /var/www/storage /var/www/bootstrap/cache && \
-    chmod -R 777 /var/www/storage/app/public
+    chmod -R 775 /var/www/storage /var/www/bootstrap/cache && \
+    chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+USER www-data
 
 EXPOSE 9000
 

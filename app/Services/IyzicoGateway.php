@@ -161,9 +161,10 @@ class IyzicoGateway implements PaymentGatewayInterface
 
         $secret = (string) config('payment.iyzico.webhook_secret', '');
         $strict = (bool) config('payment.iyzico.webhook_strict', app()->environment('production'));
+        $allowUnsigned = app()->environment(['local', 'testing']) && !$strict;
 
         if ($secret === '') {
-            return $strict ? false : $statusValid;
+            return $allowUnsigned ? $statusValid : false;
         }
 
         if (!$rawPayload || !$signature) {

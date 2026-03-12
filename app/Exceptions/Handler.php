@@ -55,13 +55,13 @@ class Handler extends ExceptionHandler
             Log::channel('payment')->error('Payment processing failed', [
                 'order_id' => $e->getOrderId(),
                 'message' => $e->getMessage(),
-                'gateway_response' => $e->getGatewayResponse(),
+                'gateway_response_present' => !empty($e->getGatewayResponse()),
             ]);
         });
 
         $this->reportable(function (PaymentVerificationException $e) {
             Log::channel('payment')->warning('Payment verification failed', [
-                'callback_data' => $e->getCallbackData(),
+                'callback_data_present' => !empty($e->getCallbackData()),
                 'message' => $e->getMessage(),
             ]);
         });
@@ -86,7 +86,7 @@ class Handler extends ExceptionHandler
                 Log::channel('security')->critical('Unhandled exception', [
                     'exception' => get_class($e),
                     'message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
+                    'code' => $e->getCode(),
                 ]);
             }
         });

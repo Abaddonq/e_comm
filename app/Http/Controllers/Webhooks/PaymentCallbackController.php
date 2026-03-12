@@ -37,6 +37,7 @@ class PaymentCallbackController extends Controller
             'conversation_id' => $callbackData['conversationId'] ?? null,
             'order_id' => $callbackData['order_id'] ?? null,
             'gateway' => config('payment.gateway', 'iyzico'),
+            'request_id' => $request->headers->get('X-Request-Id'),
         ]);
 
         if (empty($callbackData)) {
@@ -78,6 +79,7 @@ class PaymentCallbackController extends Controller
                 Log::warning('Invalid payment callback signature', [
                     'order_id' => $orderId,
                     'has_signature' => $signature !== '',
+                    'request_id' => $request->headers->get('X-Request-Id'),
                 ]);
                 return response()->json(['error' => 'Invalid signature'], 400);
             }
@@ -86,10 +88,17 @@ class PaymentCallbackController extends Controller
 
             if ($status === 'completed') {
                 $this->paymentService->processSuccessfulPayment($order, $callbackData);
-                Log::info('Payment successful', ['order_id' => $orderId]);
+                Log::info('Payment successful', [
+                    'order_id' => $orderId,
+                    'request_id' => $request->headers->get('X-Request-Id'),
+                ]);
             } else {
                 $this->paymentService->processFailedPayment($order, $callbackData);
-                Log::warning('Payment failed', ['order_id' => $orderId, 'status' => $status]);
+                Log::warning('Payment failed', [
+                    'order_id' => $orderId,
+                    'status' => $status,
+                    'request_id' => $request->headers->get('X-Request-Id'),
+                ]);
             }
 
             return response()->json(['success' => true]);
@@ -97,6 +106,7 @@ class PaymentCallbackController extends Controller
             Log::error('Payment callback processing error', [
                 'order_id' => $orderId,
                 'error' => $e->getMessage(),
+                'request_id' => $request->headers->get('X-Request-Id'),
             ]);
             return response()->json(['error' => 'Processing error'], 500);
         }

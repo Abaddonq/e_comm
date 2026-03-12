@@ -32,7 +32,9 @@ class SecurityHeaders
                 . "connect-src 'self' https:; "
                 . "frame-ancestors 'self'; base-uri 'self'; form-action 'self'";
 
-            if (config('app.debug')) {
+            $cspReportOnly = (bool) env('SECURITY_CSP_REPORT_ONLY', false);
+
+            if ($cspReportOnly || config('app.debug')) {
                 $response->headers->set('Content-Security-Policy-Report-Only', $csp);
             } else {
                 $response->headers->set('Content-Security-Policy', $csp);

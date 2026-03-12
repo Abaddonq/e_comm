@@ -25,8 +25,6 @@ RUN mkdir -p /var/www/storage/app/public /var/www/storage/uploads /var/www/stora
     chmod -R 775 /var/www/storage /var/www/bootstrap/cache && \
     chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-USER www-data
-
 EXPOSE 9000
 
 CMD ["/var/www/start-railway.sh"]

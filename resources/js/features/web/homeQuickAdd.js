@@ -30,12 +30,10 @@ export function initHomeQuickAdd() {
                 cartCount.textContent = data.cart_count;
             }
 
-            btn.style.background = '#22c55e';
-            btn.style.color = 'white';
+            btn.classList.add('product-quick-add-success');
 
             setTimeout(() => {
-                btn.style.background = '';
-                btn.style.color = '';
+                btn.classList.remove('product-quick-add-success');
             }, 1000);
         } catch (error) {
             console.error('Error:', error);

@@ -125,6 +125,12 @@ iframe {
     overflow-y: auto;
 }
 
+.search-no-results {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
 .search-loading {
     display: flex;
     justify-content: center;
@@ -657,6 +663,11 @@ iframe {
     text-align: center;
     font-size: 13px;
     color: var(--color-muted);
+}
+
+.product-quick-add-success {
+    background: #22c55e !important;
+    color: #ffffff !important;
 }
 
 /* Category Page */

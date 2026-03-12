@@ -89,9 +89,7 @@ export function initWebSearchModal() {
         clearElement(suggestionsList);
 
         const noResults = document.createElement('div');
-        noResults.style.padding = '20px';
-        noResults.style.textAlign = 'center';
-        noResults.style.color = '#666';
+        noResults.className = 'search-no-results';
         noResults.textContent = `"${String(query ?? '')}" ${window.__t['No search results for']}`;
         suggestionsList.appendChild(noResults);
     }

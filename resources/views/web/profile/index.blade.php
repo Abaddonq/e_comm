@@ -82,7 +82,7 @@ $activeTab = request()->query('tab', 'account');
                 <div class="profile-section {{ $activeTab === 'account' ? 'active' : '' }}" id="section-account">
                     <h2 class="section-title">{{ __('Account Information') }}</h2>
                     
-                    <div class="alert alert-success" id="profileAlert"></div>
+                    <div class="alert alert-success hidden-alert" id="profileAlert"></div>
                     
                     <form id="profileForm">
                         <div class="form-group">
@@ -104,8 +104,8 @@ $activeTab = request()->query('tab', 'account');
 
                     <h2 class="section-title section-title-spaced">{{ __('Change Password') }}</h2>
                     
-                    <div class="alert alert-success" id="passwordAlert"></div>
-                    <div class="alert alert-error" id="passwordError"></div>
+                    <div class="alert alert-success hidden-alert" id="passwordAlert"></div>
+                    <div class="alert alert-error hidden-alert" id="passwordError"></div>
                     
                     <form id="passwordForm">
                         <div class="form-group">

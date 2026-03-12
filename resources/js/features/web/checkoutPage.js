@@ -14,7 +14,6 @@ export function initCheckoutPage() {
 
         const selected = document.querySelector('input[name="payment_method"]:checked');
         const showCardFields = selected && selected.value === 'iyzico';
-        cardFields.style.display = showCardFields ? 'block' : 'none';
         cardFields.classList.toggle('card-fields-hidden', !showCardFields);
     }
 

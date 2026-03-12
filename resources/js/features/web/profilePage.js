@@ -8,11 +8,6 @@ export function initProfilePage() {
         return;
     }
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]');
-    if (!csrfToken) {
-        return;
-    }
-
     const profileUpdateUrl = profilePage.dataset.profileUpdateUrl;
     const passwordUpdateUrl = profilePage.dataset.passwordUpdateUrl;
     const destroyAccountUrl = profilePage.dataset.destroyAccountUrl;
@@ -92,7 +87,7 @@ export function initProfilePage() {
 
                 if (data.success && alert) {
                     alert.textContent = data.message;
-                    alert.style.display = 'block';
+                    alert.classList.remove('hidden-alert');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -109,10 +104,10 @@ export function initProfilePage() {
             const errorAlert = document.getElementById('passwordError');
 
             if (successAlert) {
-                successAlert.style.display = 'none';
+                successAlert.classList.add('hidden-alert');
             }
             if (errorAlert) {
-                errorAlert.style.display = 'none';
+                errorAlert.classList.add('hidden-alert');
             }
 
             try {
@@ -121,12 +116,12 @@ export function initProfilePage() {
                 if (data.success) {
                     if (successAlert) {
                         successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
+                        successAlert.classList.remove('hidden-alert');
                     }
                     e.target.reset();
                 } else if (errorAlert) {
                     errorAlert.textContent = data.errors?.current_password?.[0] || window.__t['An error occurred'];
-                    errorAlert.style.display = 'block';
+                    errorAlert.classList.remove('hidden-alert');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -283,10 +278,10 @@ export function initProfilePage() {
             const successAlert = document.getElementById('deleteAccountSuccess');
 
             if (errorAlert) {
-                errorAlert.style.display = 'none';
+                errorAlert.classList.add('hidden-alert');
             }
             if (successAlert) {
-                successAlert.style.display = 'none';
+                successAlert.classList.add('hidden-alert');
             }
 
             if (!window.confirm(confirmDeleteAccountText)) {
@@ -299,20 +294,20 @@ export function initProfilePage() {
                 if (data.success) {
                     if (successAlert) {
                         successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
+                        successAlert.classList.remove('hidden-alert');
                     }
                     setTimeout(() => {
                         window.location.href = homeUrl || '/';
                     }, 2000);
                 } else if (errorAlert) {
                     errorAlert.textContent = data.message;
-                    errorAlert.style.display = 'block';
+                    errorAlert.classList.remove('hidden-alert');
                 }
             } catch (error) {
                 console.error('Error:', error);
                 if (errorAlert) {
                     errorAlert.textContent = window.__t['An error occurred'];
-                    errorAlert.style.display = 'block';
+                    errorAlert.classList.remove('hidden-alert');
                 }
             }
         });

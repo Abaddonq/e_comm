@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Support\OrderStatusMapper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +29,9 @@ class OrderController extends Controller
 
         $order->update([
             'status' => 'cancelled',
+            'fulfillment_status' => OrderStatusMapper::FULFILLMENT_CANCELLED,
+            'payment_status' => $order->isPaid() ? OrderStatusMapper::PAYMENT_CANCELLED : OrderStatusMapper::PAYMENT_PENDING,
+            'status_updated_at' => now(),
             'cancelled_at' => now(),
             'cancellation_reason' => $request->reason ?? 'Müşteri tarafından iptal edildi',
         ]);

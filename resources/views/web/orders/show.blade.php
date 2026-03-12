@@ -14,18 +14,8 @@
                 <h1 class="text-2xl font-bold text-gray-900">Order #{{ $order->order_number }}</h1>
                 <p class="text-sm text-gray-500">Placed on {{ $order->created_at->format('M d, Y') }}</p>
             </div>
-            @php
-                $statusClasses = [
-                    'pending' => 'bg-yellow-100 text-yellow-800',
-                    'processing' => 'bg-blue-100 text-blue-800',
-                    'shipped' => 'bg-purple-100 text-purple-800',
-                    'delivered' => 'bg-green-100 text-green-800',
-                    'cancelled' => 'bg-red-100 text-red-800',
-                    'payment_failed' => 'bg-red-100 text-red-800',
-                ];
-            @endphp
-            <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
-                {{ ucfirst($order->status) }}
+            <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $order->status_badge_class }}">
+                {{ $order->customer_status_label }}
             </span>
         </div>
     </div>

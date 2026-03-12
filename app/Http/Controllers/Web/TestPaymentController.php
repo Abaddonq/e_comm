@@ -15,6 +15,7 @@ use App\Models\StockMovement;
 use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
+use App\Support\OrderStatusMapper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -141,7 +142,13 @@ class TestPaymentController extends Controller
         $paymentResult = $this->paymentService->initiatePayment($order, $customerData, $cardData);
 
         if ($paymentResult['success']) {
-            $order->update(['status' => 'paid']);
+            $order->update([
+                'status' => 'processing',
+                'fulfillment_status' => OrderStatusMapper::FULFILLMENT_PROCESSING,
+                'payment_status' => OrderStatusMapper::PAYMENT_PAID,
+                'status_updated_at' => now(),
+                'paid_at' => now(),
+            ]);
             $order->payment->update(['status' => 'completed', 'paid_at' => now()]);
             
             return redirect()->route('checkout.success', ['orderId' => $order->id])

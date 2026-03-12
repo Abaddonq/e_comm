@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\OrderStatusMapper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +23,10 @@ class Order extends Model
         'address_id',
         'order_number',
         'status',
+        'fulfillment_status',
+        'payment_status',
+        'return_status',
+        'status_updated_at',
         'payment_method',
         'shipping_name',
         'shipping_phone',
@@ -53,6 +58,7 @@ class Order extends Model
         'total' => 'decimal:2',
         'paid_at' => 'datetime',
         'cancelled_at' => 'datetime',
+        'status_updated_at' => 'datetime',
     ];
 
     /**
@@ -100,7 +106,14 @@ class Order extends Model
      */
     public function scopePaid($query)
     {
-        return $query->where('status', 'paid');
+        return $query->where(function ($innerQuery) {
+            $innerQuery
+                ->where('payment_status', OrderStatusMapper::PAYMENT_PAID)
+                ->orWhere('status', 'paid')
+                ->orWhere('status', 'processing')
+                ->orWhere('status', 'shipped')
+                ->orWhere('status', 'delivered');
+        });
     }
 
     /**
@@ -108,7 +121,13 @@ class Order extends Model
      */
     public function scopePending($query)
     {
-        return $query->where('status', 'pending');
+        return $query->where(function ($innerQuery) {
+            $innerQuery
+                ->where('fulfillment_status', OrderStatusMapper::FULFILLMENT_PENDING)
+                ->orWhere(function ($legacyQuery) {
+                    $legacyQuery->whereNull('fulfillment_status')->where('status', 'pending');
+                });
+        });
     }
 
     /**
@@ -116,7 +135,11 @@ class Order extends Model
      */
     public function isPaid(): bool
     {
-        return $this->status !== 'pending';
+        return in_array($this->effective_payment_status, [
+            OrderStatusMapper::PAYMENT_PAID,
+            OrderStatusMapper::PAYMENT_PARTIALLY_REFUNDED,
+            OrderStatusMapper::PAYMENT_REFUNDED,
+        ], true);
     }
 
     /**
@@ -124,7 +147,55 @@ class Order extends Model
      */
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['paid', 'processing']);
+        return in_array($this->effective_fulfillment_status, [
+            OrderStatusMapper::FULFILLMENT_PENDING,
+            OrderStatusMapper::FULFILLMENT_PROCESSING,
+            OrderStatusMapper::FULFILLMENT_PACKED,
+        ], true);
+    }
+
+    public function getEffectiveFulfillmentStatusAttribute(): string
+    {
+        if (!empty($this->fulfillment_status)) {
+            return $this->fulfillment_status;
+        }
+
+        return OrderStatusMapper::mapLegacyStatus((string) $this->status)['fulfillment_status'];
+    }
+
+    public function getEffectivePaymentStatusAttribute(): string
+    {
+        if (!empty($this->payment_status)) {
+            return $this->payment_status;
+        }
+
+        return OrderStatusMapper::mapLegacyStatus((string) $this->status)['payment_status'];
+    }
+
+    public function getEffectiveReturnStatusAttribute(): string
+    {
+        if (!empty($this->return_status)) {
+            return $this->return_status;
+        }
+
+        return OrderStatusMapper::mapLegacyStatus((string) $this->status)['return_status'];
+    }
+
+    public function getCustomerStatusLabelAttribute(): string
+    {
+        return OrderStatusMapper::customerStatusLabel($this->effective_fulfillment_status);
+    }
+
+    public function getInternalStatusLabelAttribute(): string
+    {
+        $labels = OrderStatusMapper::adminStatusOptions();
+
+        return $labels[$this->effective_fulfillment_status] ?? ucfirst(str_replace('_', ' ', $this->effective_fulfillment_status));
+    }
+
+    public function getStatusBadgeClassAttribute(): string
+    {
+        return OrderStatusMapper::badgeClass($this->effective_fulfillment_status);
     }
 
     /**

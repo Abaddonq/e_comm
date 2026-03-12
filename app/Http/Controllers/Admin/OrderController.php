@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderService;
 use App\Services\ShippingService;
+use App\Support\OrderStatusMapper;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -24,7 +25,15 @@ class OrderController extends Controller
         $query = Order::with(['user', 'shipment']);
 
         if ($request->status && $request->status !== 'all') {
-            $query->where('status', $request->status);
+            $mappedLegacyStatus = OrderStatusMapper::legacyStatusForFulfillment($request->status);
+
+            $query->where(function ($statusQuery) use ($request, $mappedLegacyStatus) {
+                $statusQuery
+                    ->where('fulfillment_status', $request->status)
+                    ->orWhere(function ($legacyQuery) use ($mappedLegacyStatus) {
+                        $legacyQuery->whereNull('fulfillment_status')->where('status', $mappedLegacyStatus);
+                    });
+            });
         }
 
         if ($request->search) {
@@ -48,20 +57,31 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+            'status' => 'required|in:' . implode(',', OrderStatusMapper::fulfillmentStatuses()),
         ]);
 
-        if ($request->status === 'cancelled' && !$order->canBeCancelled()) {
+        if ($request->status === OrderStatusMapper::FULFILLMENT_CANCELLED && !$order->canBeCancelled()) {
             return back()->withErrors(['error' => 'This order cannot be cancelled.']);
         }
 
-        if ($request->status === 'cancelled') {
+        if ($request->status === OrderStatusMapper::FULFILLMENT_CANCELLED) {
             $reason = $request->cancellation_reason ?? 'Cancelled by admin';
             $this->orderService->cancelOrder($order, $reason);
             return back()->with('success', 'Order cancelled successfully.');
         }
 
-        $order->update(['status' => $request->status]);
+        $newPaymentStatus = $order->effective_payment_status;
+
+        if ($request->status !== OrderStatusMapper::FULFILLMENT_PENDING && $newPaymentStatus === OrderStatusMapper::PAYMENT_PENDING) {
+            $newPaymentStatus = OrderStatusMapper::PAYMENT_PAID;
+        }
+
+        $order->update([
+            'status' => OrderStatusMapper::legacyStatusForFulfillment($request->status),
+            'fulfillment_status' => $request->status,
+            'payment_status' => $newPaymentStatus,
+            'status_updated_at' => now(),
+        ]);
 
         return back()->with('success', 'Order status updated successfully.');
     }

@@ -138,19 +138,11 @@ $activeTab = request()->query('tab', 'account');
                                 <div class="order-card">
                                     <div class="order-header">
                                         <div>
-                                            <div class="order-number">{{ __('Order') }} #{{ $loop->iteration }}</div>
+                                            <div class="order-number">{{ __('Order') }} {{ $order->order_number }}</div>
                                             <div class="order-date">{{ $order->created_at->format('d.m.Y') }}</div>
                                         </div>
-                                        <span class="order-status {{ $order->status }}">
-                                            @switch($order->status)
-                                                @case('pending') {{ __('Pending') }} @break
-                                                @case('paid') {{ __('Paid') }} @break
-                                                @case('processing') {{ __('Processing') }} @break
-                                                @case('shipped') {{ __('Shipped') }} @break
-                                                @case('delivered') {{ __('Delivered') }} @break
-                                                @case('cancelled') {{ __('Cancelled') }} @break
-                                                @default {{ $order->status }}
-                                            @endswitch
+                                        <span class="order-status {{ $order->effective_fulfillment_status }}">
+                                            {{ $order->customer_status_label }}
                                         </span>
                                     </div>
                                     <div class="order-products-preview">

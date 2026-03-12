@@ -128,7 +128,15 @@ class ProfileController extends Controller
         }
 
         $hasActiveOrders = \App\Models\Order::where('address_id', $address->id)
-            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+            ->where(function ($query) {
+                $query
+                    ->whereIn('fulfillment_status', ['pending', 'processing', 'packed', 'shipped', 'out_for_delivery'])
+                    ->orWhere(function ($legacyQuery) {
+                        $legacyQuery
+                            ->whereNull('fulfillment_status')
+                            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid']);
+                    });
+            })
             ->exists();
 
         if (!$hasActiveOrders) {
@@ -136,7 +144,15 @@ class ProfileController extends Controller
                 ->where('shipping_phone', $address->phone)
                 ->where('shipping_address_line1', $address->address_line1)
                 ->where('shipping_city', $address->city)
-                ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+                ->where(function ($query) {
+                    $query
+                        ->whereIn('fulfillment_status', ['pending', 'processing', 'packed', 'shipped', 'out_for_delivery'])
+                        ->orWhere(function ($legacyQuery) {
+                            $legacyQuery
+                                ->whereNull('fulfillment_status')
+                                ->whereIn('status', ['pending', 'processing', 'shipped', 'paid']);
+                        });
+                })
                 ->exists();
         }
         
@@ -181,7 +197,15 @@ class ProfileController extends Controller
         }
 
         $hasActiveOrders = \App\Models\Order::where('user_id', $userId)
-            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid'])
+            ->where(function ($query) {
+                $query
+                    ->whereIn('fulfillment_status', ['pending', 'processing', 'packed', 'shipped', 'out_for_delivery'])
+                    ->orWhere(function ($legacyQuery) {
+                        $legacyQuery
+                            ->whereNull('fulfillment_status')
+                            ->whereIn('status', ['pending', 'processing', 'shipped', 'paid']);
+                    });
+            })
             ->exists();
 
         if ($hasActiveOrders) {

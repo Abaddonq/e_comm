@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Support\OrderStatusMapper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -83,6 +84,10 @@ class OrderService
                 'address_id' => $address->id,
                 'order_number' => $this->generateOrderNumber(),
                 'status' => 'pending',
+                'fulfillment_status' => OrderStatusMapper::FULFILLMENT_PENDING,
+                'payment_status' => OrderStatusMapper::PAYMENT_PENDING,
+                'return_status' => OrderStatusMapper::RETURN_NONE,
+                'status_updated_at' => now(),
                 'subtotal' => $totals['subtotal'],
                 'shipping_cost' => $totals['shipping_cost'],
                 'tax' => $totals['tax'],
@@ -151,6 +156,9 @@ class OrderService
         if ($paymentStatus === 'completed') {
             $order->update([
                 'status' => 'processing',
+                'fulfillment_status' => OrderStatusMapper::FULFILLMENT_PROCESSING,
+                'payment_status' => OrderStatusMapper::PAYMENT_PAID,
+                'status_updated_at' => now(),
                 'paid_at' => now(),
             ]);
 
@@ -159,6 +167,9 @@ class OrderService
         else {
             $order->update([
                 'status' => 'cancelled',
+                'fulfillment_status' => OrderStatusMapper::FULFILLMENT_CANCELLED,
+                'payment_status' => OrderStatusMapper::PAYMENT_FAILED,
+                'status_updated_at' => now(),
             ]);
 
             Log::warning('Payment failed for order', ['order_id' => $order->id]);
@@ -172,6 +183,9 @@ class OrderService
         return DB::transaction(function () use ($order, $reason) {
             $order->update([
                 'status' => 'cancelled',
+                'fulfillment_status' => OrderStatusMapper::FULFILLMENT_CANCELLED,
+                'payment_status' => $order->isPaid() ? OrderStatusMapper::PAYMENT_CANCELLED : OrderStatusMapper::PAYMENT_PENDING,
+                'status_updated_at' => now(),
                 'cancellation_reason' => $reason,
                 'cancelled_at' => now(),
             ]);

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Payment;
 use App\Models\Order;
+use App\Support\OrderStatusMapper;
 use Illuminate\Support\Facades\Log;
 
 class PaymentService
@@ -107,6 +108,9 @@ class PaymentService
 
         $order->update([
             'status' => 'processing',
+            'fulfillment_status' => OrderStatusMapper::FULFILLMENT_PROCESSING,
+            'payment_status' => OrderStatusMapper::PAYMENT_PAID,
+            'status_updated_at' => now(),
             'paid_at' => now(),
         ]);
 
@@ -131,6 +135,9 @@ class PaymentService
 
         $order->update([
             'status' => 'cancelled',
+            'fulfillment_status' => OrderStatusMapper::FULFILLMENT_CANCELLED,
+            'payment_status' => OrderStatusMapper::PAYMENT_FAILED,
+            'status_updated_at' => now(),
         ]);
 
         Log::warning('Payment failed', [

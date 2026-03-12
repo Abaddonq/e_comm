@@ -16,7 +16,7 @@
         <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <dt class="text-sm font-medium text-gray-500 truncate">Pending Orders</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ \App\Models\Order::where('status', 'pending')->count() }}</dd>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ \App\Models\Order::where(function ($query) { $query->where('fulfillment_status', 'pending')->orWhere(function ($legacy) { $legacy->whereNull('fulfillment_status')->where('status', 'pending'); }); })->count() }}</dd>
             </div>
         </div>
         
@@ -37,7 +37,7 @@
                         <li class="py-3">
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="flex justify-between items-center">
                                 <span class="text-sm font-medium text-gray-900">{{ $order->order_number }}</span>
-                                <span class="text-sm text-gray-500">{{ $order->status }}</span>
+                                <span class="text-sm text-gray-500">{{ $order->internal_status_label }}</span>
                             </a>
                         </li>
                     @empty

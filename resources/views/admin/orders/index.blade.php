@@ -15,11 +15,9 @@
                 
                 <select name="status" class="px-4 py-2 border rounded-lg min-h-[44px]">
                     <option value="all">All Status</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
-                    <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    @foreach(\App\Support\OrderStatusMapper::adminStatusOptions() as $code => $label)
+                        <option value="{{ $code }}" {{ request('status') == $code ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
                 </select>
                 
                 <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 min-h-[44px]">
@@ -28,24 +26,13 @@
             </form>
         </div>
 
-        @php
-            $statusClasses = [
-                'pending' => 'bg-yellow-100 text-yellow-800',
-                'processing' => 'bg-blue-100 text-blue-800',
-                'shipped' => 'bg-purple-100 text-purple-800',
-                'delivered' => 'bg-green-100 text-green-800',
-                'cancelled' => 'bg-red-100 text-red-800',
-                'payment_failed' => 'bg-red-100 text-red-800',
-            ];
-        @endphp
-
         <div class="md:hidden divide-y divide-gray-200">
             @forelse($orders as $order)
                 <div class="p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
                         <span class="font-medium text-indigo-600 text-sm">{{ $order->order_number }}</span>
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
-                            {{ ucfirst($order->status) }}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $order->status_badge_class }}">
+                            {{ $order->internal_status_label }}
                         </span>
                     </div>
                     <div class="text-sm text-gray-900">{{ $order->user?->name ?? 'Guest' }}</div>
@@ -90,8 +77,8 @@
                             <span class="font-medium">₺{{ number_format($order->total, 2) }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                {{ ucfirst($order->status) }}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $order->status_badge_class }}">
+                                {{ $order->internal_status_label }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

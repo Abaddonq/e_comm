@@ -27,7 +27,7 @@
                     </div>
                     <div>
                         <p class="details-item-label">{{ __('Status') }}</p>
-                        <p class="details-item-value details-item-value-capitalize">{{ $order->status }}</p>
+                        <p class="details-item-value">{{ $order->customer_status_label }}</p>
                     </div>
                     <div>
                         <p class="details-item-label">{{ __('Date') }}</p>

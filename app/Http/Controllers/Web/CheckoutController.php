@@ -10,6 +10,7 @@ use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use App\Services\ShippingService;
+use App\Support\OrderStatusMapper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -100,7 +101,12 @@ class CheckoutController extends Controller
         $paymentResult = $this->paymentService->initiatePayment($order, $customerData, $cardData);
 
         if (!$paymentResult['success']) {
-            $order->update(['status' => 'cancelled']);
+            $order->update([
+                'status' => 'cancelled',
+                'fulfillment_status' => OrderStatusMapper::FULFILLMENT_CANCELLED,
+                'payment_status' => OrderStatusMapper::PAYMENT_FAILED,
+                'status_updated_at' => now(),
+            ]);
             return back()->withErrors(['payment' => $paymentResult['error'] ?? 'Payment initiation failed.']);
         }
 
@@ -109,7 +115,13 @@ class CheckoutController extends Controller
         }
 
         // For direct payment (no redirect), update status immediately
-        $order->update(['status' => 'paid']);
+        $order->update([
+            'status' => 'processing',
+            'fulfillment_status' => OrderStatusMapper::FULFILLMENT_PROCESSING,
+            'payment_status' => OrderStatusMapper::PAYMENT_PAID,
+            'status_updated_at' => now(),
+            'paid_at' => now(),
+        ]);
         $order->payment->update(['status' => 'completed', 'paid_at' => now()]);
 
         return redirect()->route('checkout.success', $order->id);
@@ -134,7 +146,12 @@ class CheckoutController extends Controller
             abort(403);
         }
         
-        $order->update(['status' => 'cancelled']);
+        $order->update([
+            'status' => 'cancelled',
+            'fulfillment_status' => OrderStatusMapper::FULFILLMENT_CANCELLED,
+            'payment_status' => OrderStatusMapper::PAYMENT_CANCELLED,
+            'status_updated_at' => now(),
+        ]);
 
         return redirect()->route('cart.index')->with('error', 'Payment was cancelled.');
     }

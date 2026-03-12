@@ -25,7 +25,17 @@ $isWithin = static function (?string $path, ?string $basePath) use ($normalize):
 };
 
 if ($uri !== '/') {
-    $candidatePath = realpath($publicPath . DIRECTORY_SEPARATOR . ltrim($uri, '/'));
+    $candidatePath = null;
+
+    if (str_starts_with($uri, '/storage/') && $storagePublicPath !== false) {
+        $storageRelativePath = ltrim(substr($uri, strlen('/storage/')), '/');
+        $candidatePath = realpath($storagePublicPath . DIRECTORY_SEPARATOR . $storageRelativePath);
+    }
+
+    if ($candidatePath === null || $candidatePath === false) {
+        $candidatePath = realpath($publicPath . DIRECTORY_SEPARATOR . ltrim($uri, '/'));
+    }
+
     $isInsidePublic = $candidatePath !== false && $isWithin($candidatePath, $publicPath);
     $isInsideStoragePublic = $candidatePath !== false && $storagePublicPath !== false && $isWithin($candidatePath, $storagePublicPath);
 

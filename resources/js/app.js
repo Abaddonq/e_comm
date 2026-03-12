@@ -15,6 +15,7 @@ import { initCategoryPage } from './features/web/categoryPage';
 import { initCartPage } from './features/web/cartPage';
 import { initCheckoutPage } from './features/web/checkoutPage';
 import { initProfilePage } from './features/web/profilePage';
+import { initStockAdjustModal } from './features/admin/stockAdjustModal';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -32,3 +33,4 @@ onDomReady(initCategoryPage);
 onDomReady(initCartPage);
 onDomReady(initCheckoutPage);
 onDomReady(initProfilePage);
+onDomReady(initStockAdjustModal);

@@ -135,37 +135,4 @@
     </div>
 </div>
 
-<script>
-function showAdjustModal() {
-    document.getElementById('adjustModal').classList.remove('hidden');
-}
-
-function hideAdjustModal() {
-    document.getElementById('adjustModal').classList.add('hidden');
-}
-
-let adjustmentCount = 1;
-
-function addAdjustmentRow() {
-    const container = document.getElementById('adjustmentsContainer');
-    const row = document.createElement('div');
-    row.className = 'grid grid-cols-1 md:grid-cols-4 gap-4 adjustment-row';
-    row.innerHTML = `
-        <div class="col-span-1">
-            <input type="text" name="adjustments[${adjustmentCount}][sku]" placeholder="Enter SKU" required
-                class="w-full rounded-md border-gray-300 shadow-sm min-h-[44px]">
-        </div>
-        <div class="col-span-1">
-            <input type="number" name="adjustments[${adjustmentCount}][quantity]" placeholder="e.g. 10 or -5" required
-                class="w-full rounded-md border-gray-300 shadow-sm min-h-[44px]">
-        </div>
-        <div class="col-span-2">
-            <input type="text" name="adjustments[${adjustmentCount}][reason]" placeholder="Reason for adjustment" required
-                class="w-full rounded-md border-gray-300 shadow-sm min-h-[44px]">
-        </div>
-    `;
-    container.appendChild(row);
-    adjustmentCount++;
-}
-</script>
 @endsection

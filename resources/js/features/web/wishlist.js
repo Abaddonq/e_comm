@@ -1,4 +1,5 @@
 import { postJson } from '../../shared/http';
+import { registerGlobals } from '../../shared/globals';
 import { showToast } from '../../shared/toast';
 
 export async function toggleWishlist(productId, event) {
@@ -27,5 +28,5 @@ export async function toggleWishlist(productId, event) {
 }
 
 export function exposeWishlistGlobals() {
-    window.toggleWishlist = toggleWishlist;
+    registerGlobals({ toggleWishlist });
 }

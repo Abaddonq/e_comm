@@ -1,4 +1,5 @@
 import { postJson } from '../../shared/http';
+import { registerGlobals } from '../../shared/globals';
 import { showToast } from '../../shared/toast';
 
 export function initCartPage() {
@@ -39,6 +40,5 @@ export function initCartPage() {
         }
     }
 
-    window.updateQuantity = updateQuantity;
-    window.removeItem = removeItem;
+    registerGlobals({ updateQuantity, removeItem });
 }

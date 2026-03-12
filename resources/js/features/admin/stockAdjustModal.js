@@ -1,3 +1,5 @@
+import { registerGlobals } from '../../shared/globals';
+
 export function initStockAdjustModal() {
     const adjustModal = document.getElementById('adjustModal');
     const adjustmentsContainer = document.getElementById('adjustmentsContainer');
@@ -38,7 +40,5 @@ export function initStockAdjustModal() {
         adjustmentCount += 1;
     }
 
-    window.showAdjustModal = showAdjustModal;
-    window.hideAdjustModal = hideAdjustModal;
-    window.addAdjustmentRow = addAdjustmentRow;
+    registerGlobals({ showAdjustModal, hideAdjustModal, addAdjustmentRow });
 }

@@ -1,3 +1,5 @@
+import { registerGlobals } from './globals';
+
 export function showToast(message, type = 'success') {
     const existing = document.querySelector('.toast-notification');
     if (existing) {
@@ -36,5 +38,5 @@ export function showToast(message, type = 'success') {
 }
 
 export function exposeToastGlobally() {
-    window.showToast = showToast;
+    registerGlobals({ showToast });
 }

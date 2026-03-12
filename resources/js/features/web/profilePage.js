@@ -1,3 +1,5 @@
+import { deleteJson, postJson, putJson } from '../../shared/http';
+import { registerGlobals } from '../../shared/globals';
 import { showToast } from '../../shared/toast';
 
 export function initProfilePage() {
@@ -44,19 +46,10 @@ export function initProfilePage() {
         }
 
         try {
-            const response = await fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken.content,
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                    quantity: 1,
-                }),
+            const data = await postJson('/cart/add', {
+                product_id: productId,
+                quantity: 1,
             });
-
-            const data = await response.json();
             if (data.success) {
                 const cartCount = document.getElementById('cart-count');
                 if (cartCount) {
@@ -74,16 +67,7 @@ export function initProfilePage() {
 
     async function removeFromWishlist(productId) {
         try {
-            const response = await fetch(wishlistToggleUrl || '/wishlist/toggle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken.content,
-                },
-                body: JSON.stringify({ product_id: productId }),
-            });
-
-            const data = await response.json();
+            const data = await postJson(wishlistToggleUrl || '/wishlist/toggle', { product_id: productId });
             if (data.success) {
                 showToast(window.__t['Product removed from wishlist'], 'success');
                 setTimeout(() => {
@@ -103,16 +87,7 @@ export function initProfilePage() {
             const formData = new FormData(e.target);
 
             try {
-                const response = await fetch(profileUpdateUrl, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken.content,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(Object.fromEntries(formData)),
-                });
-
-                const data = await response.json();
+                const data = await postJson(profileUpdateUrl, Object.fromEntries(formData));
                 const alert = document.getElementById('profileAlert');
 
                 if (data.success && alert) {
@@ -141,16 +116,7 @@ export function initProfilePage() {
             }
 
             try {
-                const response = await fetch(passwordUpdateUrl, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken.content,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(Object.fromEntries(formData)),
-                });
-
-                const data = await response.json();
+                const data = await postJson(passwordUpdateUrl, Object.fromEntries(formData));
 
                 if (data.success) {
                     if (successAlert) {
@@ -218,19 +184,11 @@ export function initProfilePage() {
             const url = isEdit ? `/addresses/${addressId}` : addressStoreUrl || '/addresses';
 
             try {
-                const response = await fetch(url, {
-                    method: isEdit ? 'PUT' : 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken.content,
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                });
+                const result = isEdit
+                    ? await putJson(url, payload)
+                    : await postJson(url, payload);
 
-                const result = await response.json();
-
-                if (response.ok && result.success) {
+                if (result.success) {
                     closeModal();
                     window.location.reload();
                 } else {
@@ -277,17 +235,9 @@ export function initProfilePage() {
         }
 
         try {
-            const response = await fetch(`/addresses/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken.content,
-                    Accept: 'application/json',
-                },
-            });
+            const data = await deleteJson(`/addresses/${id}`);
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
+            if (data.success) {
                 showToast(data.message, 'success');
                 setTimeout(() => window.location.reload(), 1000);
             } else {
@@ -301,14 +251,7 @@ export function initProfilePage() {
 
     async function setDefaultAddress(id) {
         try {
-            const response = await fetch(`/addresses/${id}/set-default`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken.content,
-                },
-            });
-
-            const data = await response.json();
+            const data = await postJson(`/addresses/${id}/set-default`, {});
 
             if (data.success) {
                 window.location.reload();
@@ -351,17 +294,7 @@ export function initProfilePage() {
             }
 
             try {
-                const response = await fetch(destroyAccountUrl, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken.content,
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(Object.fromEntries(formData)),
-                });
-
-                const data = await response.json();
+                const data = await deleteJson(destroyAccountUrl, Object.fromEntries(formData));
 
                 if (data.success) {
                     if (successAlert) {
@@ -385,12 +318,14 @@ export function initProfilePage() {
         });
     }
 
-    window.switchTab = switchTab;
-    window.quickAdd = quickAdd;
-    window.removeFromWishlist = removeFromWishlist;
-    window.openModal = openModal;
-    window.closeModal = closeModal;
-    window.editAddress = editAddress;
-    window.deleteAddress = deleteAddress;
-    window.setDefaultAddress = setDefaultAddress;
+    registerGlobals({
+        switchTab,
+        quickAdd,
+        removeFromWishlist,
+        openModal,
+        closeModal,
+        editAddress,
+        deleteAddress,
+        setDefaultAddress,
+    });
 }

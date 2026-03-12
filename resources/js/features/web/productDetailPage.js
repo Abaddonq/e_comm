@@ -1,4 +1,5 @@
 import { postJson } from '../../shared/http';
+import { registerGlobals } from '../../shared/globals';
 import { showToast } from '../../shared/toast';
 
 export function initProductDetailPage() {
@@ -212,11 +213,13 @@ export function initProductDetailPage() {
         });
     });
 
-    window.toggleWishlistDetail = toggleWishlistDetail;
-    window.selectVariant = selectVariant;
-    window.changeQuantity = changeQuantity;
-    window.openTab = openTab;
-    window.addToCartFromDetail = addToCartFromDetail;
+    registerGlobals({
+        toggleWishlistDetail,
+        selectVariant,
+        changeQuantity,
+        openTab,
+        addToCartFromDetail,
+    });
 
     checkWishlistStatus();
     initVariant();

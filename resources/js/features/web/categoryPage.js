@@ -1,4 +1,5 @@
 import { postJson } from '../../shared/http';
+import { registerGlobals } from '../../shared/globals';
 import { showToast } from '../../shared/toast';
 
 export function initCategoryPage() {
@@ -47,7 +48,5 @@ export function initCategoryPage() {
         }
     }
 
-    window.toggleFilters = toggleFilters;
-    window.removeFilter = removeFilter;
-    window.quickAdd = quickAdd;
+    registerGlobals({ toggleFilters, removeFilter, quickAdd });
 }

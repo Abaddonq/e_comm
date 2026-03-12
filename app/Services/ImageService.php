@@ -6,6 +6,7 @@ use App\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class ImageService
 {
@@ -26,7 +27,10 @@ class ImageService
         $nextSortOrder = (int) ProductImage::where('product_id', $productId)->max('sort_order') + 1;
 
         // Save the original file directly
-        Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
+        $writeSucceeded = Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
+        if ($writeSucceeded === false) {
+            throw new RuntimeException('Failed to write image to public storage. Check disk permissions and mount path.');
+        }
 
         $image = ProductImage::create([
             'product_id' => $productId,
